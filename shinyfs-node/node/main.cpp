@@ -52,7 +52,7 @@ int main (int argc, const char * argv[]) {
     peers.push_back( new ShinyPeer() );
     peers.push_back( new ShinyPeer() );
     peers.push_back( new ShinyPeer() );
-    ShinyPartitioner part( &fs, (ShinyMetaDir *)fs.findNode("/"), &peers );
+    ShinyPartitioner part( &fs, (ShinyMetaDir *)fs.findNode("/"), &peers, NULL );
     
     for( std::list<ShinyPeer *>::iterator itty = peers.begin(); itty != peers.end(); ++itty )
         delete( *itty );
