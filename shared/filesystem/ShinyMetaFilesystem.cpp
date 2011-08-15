@@ -208,7 +208,7 @@ inode_t ShinyMetaFilesystem::genNewInode() {
 
 void ShinyMetaFilesystem::printDir( ShinyMetaDir * dir, const char * prefix ) {
     //prefix contains the current dir's name
-    printf( "%s/\n", prefix );
+    LOG( "[%llu] %s/\n", dir->getInode(), prefix );
     
     //Iterate over all children
     const std::list<inode_t> * listing = dir->getListing();
@@ -221,7 +221,7 @@ void ShinyMetaFilesystem::printDir( ShinyMetaDir * dir, const char * prefix ) {
             this->printDir( (ShinyMetaDir *)this->nodes[*itty], newPrefix );
         } else {
             //Only print it out here if it's not a directory, because directories print themselves
-            printf( "%s\n", newPrefix );
+            LOG( "[%llu] %s\n", childInode, newPrefix );
         }
         delete( newPrefix );
     }
