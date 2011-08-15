@@ -25,6 +25,9 @@ ShinyMetaNode::ShinyMetaNode(ShinyMetaFilesystem * fs, const char * newName) {
     this->name = NULL;
     this->setName( newName );
     
+    //Set parent
+    this->parent = 0;
+    
     //It's HAMMAH TIME!!!
     this->ctime = this->atime = this->mtime = time(NULL);
     
