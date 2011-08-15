@@ -4,7 +4,7 @@
 
 ShinyMetaRootDir::ShinyMetaRootDir( ShinyMetaFilesystem * fs ) : ShinyMetaDir( fs, "" ) {
     //We set ourselves as our own parent.  How...... cute.  :P
-    this->addParent( this->inode );
+    this->setParent( this->inode );
 }
 
 ShinyMetaRootDir::ShinyMetaRootDir( const char * serializedInput, ShinyMetaFilesystem * fs ) : ShinyMetaDir( serializedInput, fs ) {

@@ -14,7 +14,10 @@ ShinyMetaDir::ShinyMetaDir( const char * serializedInput, ShinyMetaFilesystem * 
 }
 
 void ShinyMetaDir::addNode( ShinyMetaNode *newNode ) {
-    LOG( "Check for cycles here!" );
+    if( newNode->getParent() ) {
+        ERROR( "Cannot add a node that already has a parent!" );
+        return;
+    }
     //Insert so that list is always sorted in ascending inode order
     std::list<inode_t>::iterator itty = nodes.begin();
     while( newNode->getInode() >= (*itty) ) {
@@ -23,12 +26,12 @@ void ShinyMetaDir::addNode( ShinyMetaNode *newNode ) {
         ++itty;
     }
     nodes.insert(itty, newNode->getInode() );
-    newNode->addParent( this->inode );
+    newNode->setParent( this->inode );
 }
 
 void ShinyMetaDir::delNode(ShinyMetaNode *delNode) {
     this->nodes.remove( delNode->getInode() );
-    delNode->delParent( this->inode );
+    delNode->setParent( this->inode );
 }
 
 const std::list<inode_t> * ShinyMetaDir::getListing( void ) {
@@ -42,21 +45,10 @@ bool ShinyMetaDir::check_childrenHaveUsAsParent( void ) {
     while( itty != this->nodes.end() ) {
         //Find the child node
         ShinyMetaNode * node = this->fs->findNode( *itty );
-        const std::list<inode_t> * parents = node->getParents();
-        bool has_us_as_parent = false;
-        //Iterate through all children, looking for us
-        for( std::list<inode_t>::const_iterator cItty = parents->begin(); cItty != parents->end(); ++cItty ) {
-            if( *cItty == this->inode ) {
-                has_us_as_parent = true;
-                break;
-            }
-        }
-        
-        //If it's not there, then, fix it!
-        if( !has_us_as_parent ) {
+        if( node->getParent() == NULL ) {
             const char * path = this->getPath();
-            WARN( "Child %s/%s [%llu] did not point to parent %s [%llu], when it should have!\n", path, node->getName(), node->getInode(), path, this->inode );
-            node->addParent( this->inode );
+            WARN( "Child %s/%s [%llu] pointed to NULL instead of to parent %s [%llu]!  Fixing...\n", path, node->getName(), node->getInode(), path, this->inode );
+            node->setParent( this->inode );
             delete( path );
             retVal = false;
         }

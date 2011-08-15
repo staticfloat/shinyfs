@@ -66,18 +66,12 @@ public:
     //Get the unique id for this node
     virtual inode_t getInode();
     
-    //Get the unique ids of all parents of this node
-    virtual const std::list<inode_t> * getParents( void );
-
-    //Returns the first non-null parent
-    virtual ShinyMetaNode * getPrimaryParent( void );
+    //Get the inode of the  parents of this node
+    virtual const inode_t getParent( void );
     
-    //Adds a new parent to this node
-    virtual void addParent( inode_t parent );
-    
-    //Removes a parent from this node
-    virtual void delParent( inode_t parent );
-    
+    //Sets the parent of this node to newParent
+    virtual void setParent( inode_t newParent );
+        
     //Performs any necessary checks (e.g. directories check for multiple entries of the same node, etc...)
     virtual bool sanityCheck( void );
     
@@ -108,8 +102,8 @@ protected:
     //Pointer to fs so that we can traverse the tree if we must (and believe me, we must!)
     ShinyMetaFilesystem * fs;
     
-    //List of parents, due to the possibility of hardlinks
-    std::list<inode_t> parents;
+    //Parent of this inode
+    inode_t parent;
     
     //Filename (+ extension, if you so wish)
     char * name;
