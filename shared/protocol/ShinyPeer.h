@@ -12,6 +12,7 @@
 class ShinyPeer {
 public:
     ShinyPeer();
+    ShinyPeer( const char * name );
     ~ShinyPeer();
     
     
