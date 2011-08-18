@@ -147,8 +147,7 @@ bool ShinyMetaNode::check_existsInFs( std::list<inode_t> * list, const char * li
     std::list<inode_t>::iterator itty = list->begin();
     while( itty != list->end() ) {
         if( !this->fs->findNode( *itty ) ) {
-            const char * path = this->getPath();
-            WARN( "Orphaned member of %s pointing to [%llu], belonging to %s [%llu]", listName, *itty, path, this->inode );
+            WARN( "Orphaned member of %s pointing to [%llu], belonging to %s [%llu]", listName, *itty, this->getPath(), this->inode );
             std::list<inode_t>::iterator delItty = itty++;
             list->erase( delItty );
             retVal = false;
@@ -158,7 +157,7 @@ bool ShinyMetaNode::check_existsInFs( std::list<inode_t> * list, const char * li
     return retVal;
 }
 
-bool ShinyMetaNode::check_parentsHaveUsAsChild( void ) {
+bool ShinyMetaNode::check_parentHasUsAsChild( void ) {
     //First, check to make sure the parent node exists.....
     ShinyMetaDir * parentNode = (ShinyMetaDir *)fs->findNode( this->parent );
     if( parent ) {
@@ -169,12 +168,8 @@ bool ShinyMetaNode::check_parentsHaveUsAsChild( void ) {
                 return true;
         }
         //If we can't find ourselves, FIX IT!
-        const char * path = this->getPath();
-        const char * parentPath = parentNode->getPath();
-        WARN( "Parent %s [%llu] did not point to child %s [%llu], when it should have!  Add us as a child!\n", parentPath, parentNode->getInode(), path, this->inode );
+        WARN( "Parent %s [%llu] did not point to child %s [%llu], when it should have! Fixing...\n", parentNode->getPath(), parentNode->getInode(), this->getPath(), this->inode );
         parentNode->addNode( this );
-        delete( path );
-        delete( parentPath );
     } else {
         ERROR( "parent [%d] of node %s [%d] could not be found in fs!", this->parent, this->name, this->inode );
         return false;
@@ -188,15 +183,12 @@ bool ShinyMetaNode::check_noDuplicates( std::list<inode_t> * list, const char * 
     std::list<inode_t>::iterator last_iterator = itty++;
     while( itty != list->end() ) {
         if( *itty == *last_iterator ) {
-            const char * path = this->getPath();
-            const char * listPath = NULL;
             ShinyMetaNode * listNode = this->fs->findNode( *itty );
-            if( listNode )
-                listPath = listNode->getPath();
-
-            WARN( "Warning, %s for node %s [%d] has duplicate entries for %s [%d] in it!", listName, path, this->inode, listPath, *itty );
-            delete( listPath );
-            delete( path );
+            if( listNode ) {
+                WARN( "Warning, %s for node %s [%llu] has duplicate entries for %s [%llu] in it!", listName, this->getPath(), this->inode, listNode->getPath(), *itty );
+            } else {
+                WARN( "Warning, %s for node %s [%llu] has duplicate entries for a child that could not be found [%llu]! Erasing...", listName, this->getPath(), this->inode, *itty );
+            }
             
             list->erase( last_iterator );
             last_iterator = itty++;
@@ -210,13 +202,11 @@ bool ShinyMetaNode::check_noDuplicates( std::list<inode_t> * list, const char * 
 bool ShinyMetaNode::sanityCheck() {
     bool retVal = true;
     if( permissions == 0 ) {
-        const char * path = this->getPath();
-        WARN( "permissions == 0 for %s", path );
-        delete( path );
+        WARN( "permissions == 0 for %s", this->getPath() );
         retVal = false;
     }
     
-    retVal &= this->check_parentsHaveUsAsChild();
+    retVal &= this->check_parentHasUsAsChild();
     return retVal;
 }
 

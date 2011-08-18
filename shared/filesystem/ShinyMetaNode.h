@@ -91,7 +91,7 @@ protected:
     virtual bool check_existsInFs( std::list<inode_t> * list, const char * listName );
     
     //Checks to make sure all parents have us as children
-    virtual bool check_parentsHaveUsAsChild( void );
+    virtual bool check_parentHasUsAsChild( void );
     
     //Checks to make sure we don't have any duplicates in a list of inodes
     virtual bool check_noDuplicates( std::list<inode_t> * list, const char * listName );
