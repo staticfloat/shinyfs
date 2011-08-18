@@ -27,6 +27,7 @@ void ShinyMetaDir::addNode( ShinyMetaNode *newNode ) {
     }
     nodes.insert(itty, newNode->getInode() );
     newNode->setParent( this->inode );
+    this->fs->setDirty();
 }
 
 void ShinyMetaDir::delNode(ShinyMetaNode *delNode) {
@@ -45,11 +46,9 @@ bool ShinyMetaDir::check_childrenHaveUsAsParent( void ) {
     while( itty != this->nodes.end() ) {
         //Find the child node
         ShinyMetaNode * node = this->fs->findNode( *itty );
-        if( node->getParent() == NULL ) {
-            const char * path = this->getPath();
-            WARN( "Child %s/%s [%llu] pointed to NULL instead of to parent %s [%llu]!  Fixing...\n", path, node->getName(), node->getInode(), path, this->inode );
+        if( !node->getParent() ) {
+            WARN( "Child %s/%s [%llu] pointed to NULL instead of to parent %s [%llu]!  Fixing...\n", this->getPath(), node->getName(), node->getInode(), this->getPath(), this->inode );
             node->setParent( this->inode );
-            delete( path );
             retVal = false;
         }
         ++itty;
