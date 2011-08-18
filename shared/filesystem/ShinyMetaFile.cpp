@@ -13,15 +13,18 @@
 
 ShinyMetaFile::ShinyMetaFile( ShinyMetaFilesystem * fs, const char * newName ) : ShinyMetaNode( fs, newName ) {
     this->setFileLen( 0 );
+    memset( this->hash, NULL, sizeof(Filehash) );
 }
 
 ShinyMetaFile::ShinyMetaFile( ShinyMetaFilesystem * fs, const char * newName, ShinyMetaDir * parent ) : ShinyMetaNode( fs, newName ) {
     this->setFileLen( 0 );
+    memset( this->hash, NULL, sizeof(Filehash) );
     parent->addNode( this );
 }
 
 ShinyMetaFile::ShinyMetaFile( const char * serializedInput, ShinyMetaFilesystem * fs ) : ShinyMetaNode( serializedInput, fs ) {
     this->unserialize( serializedInput + ShinyMetaNode::serializedLen() );
+    
 }
 
 void ShinyMetaFile::setFileLen( inode_t newLen ) {
@@ -38,9 +41,7 @@ bool ShinyMetaFile::sanityCheck( void ) {
     //First, the basic stuff
     bool retVal = ShinyMetaNode::sanityCheck();
     
-    const char * path = this->getPath();
-    LOG( "Do file integrity checking here for %s [%d]", path, this->inode );
-    delete( path );
+    LOG( "Do file integrity checking here for %s [%d]", this->getPath(), this->inode );
     
     return retVal;
 }

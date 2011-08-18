@@ -3,6 +3,19 @@
 #define SHINYMETAFILE_H
 #include <sys/types.h>
 #include "ShinyMetaNode.h"
+#include <cryptopp/cryptlib.h>
+#include <cryptopp/whrlpool.h>
+#include <cryptopp/sha.h>
+
+using namespace CryptoPP;
+
+//This is a hash of the entire file
+typedef Whirlpool Filehasher;
+typedef unsigned char Filehash[Filehasher::DIGESTSIZE];
+
+//This is a hash of a small chunk of a file
+typedef SHA256 Chunkhasher;
+typedef unsigned char Chunkhash[Chunkhasher::DIGESTSIZE];
 
 class ShinyMetaDir;
 class ShinyMetaFile : public ShinyMetaNode {
@@ -30,6 +43,8 @@ protected:
     virtual void unserialize( const char * input );
 private:
     uint64_t filelen;                   //Length of the file
+
+    Filehash hash;                      //Hash of the whole file
 };
 
 #endif //SHINYMETAFILE_H
