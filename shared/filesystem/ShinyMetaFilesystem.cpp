@@ -4,7 +4,17 @@
 #include "ShinyMetaRootDir.h"
 #include <base/Logger.h>
 
-ShinyMetaFilesystem::ShinyMetaFilesystem( const char * serializedData ) : nextInode(1), root(NULL) {
+//Used to stat() to tell if the directory exists
+#include <sys/stat.h>
+
+ShinyMetaFilesystem::ShinyMetaFilesystem( const char * serializedData, const char * fileCache ) : nextInode(1), root(NULL) {
+    struct stat st;
+    if( stat( fileCache, &st ) != 0 ) {
+        ERROR( "fileCache %s does not exist!", fileCache );
+        return;
+    }
+    
+    
     if( serializedData && serializedData[0] ) {
         unserialize( serializedData );
     } else {
@@ -84,10 +94,6 @@ bool ShinyMetaFilesystem::isDirty( void ) {
     return this->dirty;
 }
 
-void ShinyMetaFilesystem::setClean( void ) {
-    this->dirty = false;
-}
-
 bool ShinyMetaFilesystem::sanityCheck( void ) {
     bool retVal = true;
     //Call sanity check on all of them.
@@ -146,7 +152,7 @@ uint64_t ShinyMetaFilesystem::serialize( char ** store ) {
         output += (*itty).second->serializedLen();
     }
     
-    setClean();
+    this->dirty = false;
     return len;
 }
 

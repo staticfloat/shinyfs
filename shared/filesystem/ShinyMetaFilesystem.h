@@ -28,7 +28,7 @@ public:
     static const uint16_t VERSION = 1;
     
     //Loads the filesystem from disk, saving to that same filename
-    ShinyMetaFilesystem( const char * serializedData = NULL );
+    ShinyMetaFilesystem( const char * serializedData = NULL, const char * fileCache = "shinyfscache/" );
     ~ShinyMetaFilesystem();
     
     /*******************
@@ -47,14 +47,14 @@ public:
     
     //Returns the revision this tree is at, (increments with every write)
     uint64_t getRevision();
-    
+
     //Performs various checks on the tree, making sure everything is in order
     bool sanityCheck();
     
     //Called by ShinyMetaNode whenever a change is made, notifying that the tree has changed somehow.
     void setDirty( void );
     bool isDirty( void );
-    
+
     //Serializes the entire tree into a bytestream, returning the length of said stream
     uint64_t serialize( char ** output );
     
@@ -62,27 +62,27 @@ public:
     void print( void );
     void printDir( ShinyMetaDir * dir, const char * prefix );
 protected:
-    //Called by ShinyMetaNode when a new one is created.  So far, this method is exceedingly boring. >_>
+    //Called by ShinyMetaNode when a new one is created.
     inode_t genNewInode();
-    
-    //Called by ShinyMetaDir when a node is added/removed from a 
     
     //All files are stored in this enormous map.  The key is the inode (unique id) of each file.
     //directories just give lists of inodes rather than pointers to ShinyMetaNodes.
     std::tr1::unordered_map<inode_t, ShinyMetaNode *> nodes;
-    
+
     //The root dir.  Come on, what do you want from me?!
     ShinyMetaRootDir * root;
 private:
     void unserialize( const char * input );
-    
+
     //Helper 
     ShinyMetaNode * findMatchingChild( ShinyMetaDir * parent, const char * childName, uint64_t childNameLen );
+
+    //nextInode to pass out with genNewInode()
+    inode_t nextInode;
     
-    //Called by serialize() to show that the tree is no longer dirty
-    void setClean( void );
     
-    inode_t nextInode;      //nextInode to pass out with genNewInode()
+    
+    //Set to true on every write
     bool dirty;
 };
 
