@@ -96,9 +96,6 @@ protected:
     //Checks to make sure we don't have any duplicates in a list of inodes
     virtual bool check_noDuplicates( std::list<inode_t> * list, const char * listName );
     
-    //Utility function for getPath() when it fails miserably
-    virtual const char * getNameCopy( void );
-    
     //Pointer to fs so that we can traverse the tree if we must (and believe me, we must!)
     ShinyMetaFilesystem * fs;
     
@@ -107,6 +104,10 @@ protected:
     
     //Filename (+ extension, if you so wish)
     char * name;
+    
+    //This is the path of the node, destroyed everytime the parent is set, and cached
+    //whenever getPath() is called.
+    char * path;
     
     //Unique identifier for this node, whether it be directory or file
     inode_t inode;

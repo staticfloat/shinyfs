@@ -25,21 +25,24 @@ ShinyMetaNode::ShinyMetaNode(ShinyMetaFilesystem * fs, const char * newName) {
     this->name = NULL;
     this->setName( newName );
     
-    //Set parent
-    this->parent = 0;
+    //Force ourselves to recalculate path next time someone asks for it
+    this->path = NULL;
+    
+    //Set parent to NULL for now
+    this->parent = NULL;
     
     //It's HAMMAH TIME!!!
     this->ctime = this->atime = this->mtime = time(NULL);
     
     LOG( "Does FUSE initialize default permissions?\n" );
-    this->setPermissions( 0x1f );   //0b111111111
+    this->setPermissions( 0x1f );   //0b111111111, aka rwxrwxrwx
     
     //Set these to nothing right now
     LOG( "need to init uid/gid!\n" );
     this->uid = this->gid = NULL;
 }
 
-ShinyMetaNode::ShinyMetaNode( const char * serializedInput, ShinyMetaFilesystem * fs ) : fs( fs ) {
+ShinyMetaNode::ShinyMetaNode( const char * serializedInput, ShinyMetaFilesystem * fs ) : fs( fs ), path( NULL ) {
     this->unserialize(serializedInput);
     
     //Add this Node into the inode map
@@ -49,6 +52,8 @@ ShinyMetaNode::ShinyMetaNode( const char * serializedInput, ShinyMetaFilesystem 
 ShinyMetaNode::~ShinyMetaNode() {
     if( this->name )
         delete( this->name );
+    if( this->path )
+        delete( this->path );
 }
 
 inode_t ShinyMetaNode::getInode() {
@@ -61,6 +66,10 @@ const inode_t ShinyMetaNode::getParent( void ) {
 
 void ShinyMetaNode::setParent( inode_t newParent ) {
     this->parent = newParent;
+    if( this->path ) {
+        delete( this->path );
+        this->path = NULL;
+    }
 }
 
 
@@ -78,13 +87,12 @@ const char * ShinyMetaNode::getName( void ) {
     return (const char *)this->name;
 }
 
-const char * ShinyMetaNode::getNameCopy( void ) {
-    char * nameCopy = new char[strlen(this->name)+1];
-    strcpy( nameCopy, this->name );
-    return nameCopy;
-}
-
 const char * ShinyMetaNode::getPath() {
+    //If we've cached the result from a previous call, then just return that!
+    if( this->path )
+        return this->path;
+    //Otherwise, let's calculate it!
+    
     //First, get the length:
     uint64_t len = 0;
 
@@ -97,14 +105,15 @@ const char * ShinyMetaNode::getPath() {
     while( currNode != (ShinyMetaNode *) fs->root ) {
         //Move up in the chain of parents
         ShinyMetaNode * nextNode = fs->findNode( currNode->getParent() );
+        
+        //If our parental chain is broken, just return ?/name
         if( !nextNode )
-            return this->getNameCopy();
+            return this->getName();
         else if( nextNode != (ShinyMetaNode *)fs->root ) {
             //Push this parent's path onto the list, and add its length to len
             paths.push_front( nextNode->getName() );
             len += strlen( nextNode->getName() );
         }
-        
         currNode = nextNode;
     }
     
@@ -112,7 +121,7 @@ const char * ShinyMetaNode::getPath() {
     len += paths.size();
     
     //Add another 1 for the NULL character
-    char * path = new char[len+1];
+    this->path = new char[len+1];
     path[len] = NULL;
 
     len = 0;
@@ -271,6 +280,11 @@ void ShinyMetaNode::unserialize( const char * input ) {
     
     this->name = new char[strlen(input) + 1];
     strcpy( this->name, input );
+    
+    if( this->path ) {
+        delete( this->path );
+        this->path = NULL;
+    }
 }
 
 ShinyNodeType ShinyMetaNode::getNodeType( void ) {
