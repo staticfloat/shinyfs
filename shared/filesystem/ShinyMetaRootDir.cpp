@@ -20,7 +20,7 @@ bool ShinyMetaRootDir::check_parentsHaveUsAsChild( void ) {
 }
 
 const char * ShinyMetaRootDir::getPath( void ) {
-    char * path = new char[2];
+    this->path = new char[2];
     path[0] = '/';
     path[1] = 0;
     return path;
