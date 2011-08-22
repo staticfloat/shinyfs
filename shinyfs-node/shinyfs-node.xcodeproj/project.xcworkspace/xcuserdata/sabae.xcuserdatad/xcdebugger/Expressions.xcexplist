@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "ShinyPartitioner::partitionRegion(std::list&lt;unsigned long long, std::allocator&lt;unsigned long long&gt; &gt;*, std::list&lt;ShinyPeer*, std::allocator&lt;ShinyPeer*&gt; &gt;*):ShinyPartitioner.cpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "(*regionPeers)[*region_itty].size()">
+            </PersistentString>
+            <PersistentString
+               value = "regionSizes[*region_itty]">
+            </PersistentString>
+            <PersistentString
+               value = "regionSizes.size()">
+            </PersistentString>
+            <PersistentString
+               value = "regionSizes">
+            </PersistentString>
+            <PersistentString
+               value = "regionSizes">
+            </PersistentString>
+            <PersistentString
+               value = "(*regionPeers)[*region_itty].size()">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "ShinyMetaFile::ShinyMetaFile(ShinyMetaFilesystem*, char const*, ShinyMetaDir*):ShinyMetaFile.cpp">
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>
