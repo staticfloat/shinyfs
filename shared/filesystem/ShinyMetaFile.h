@@ -3,19 +3,9 @@
 #define SHINYMETAFILE_H
 #include <sys/types.h>
 #include "ShinyMetaNode.h"
-#include <cryptopp/cryptlib.h>
-#include <cryptopp/whrlpool.h>
-#include <cryptopp/sha.h>
+#include "ShinyFileChunk.h"
+#include <vector>
 
-using namespace CryptoPP;
-
-//This is a hash of the entire file
-typedef Whirlpool Filehasher;
-typedef unsigned char Filehash[Filehasher::DIGESTSIZE];
-
-//This is a hash of a small chunk of a file
-typedef SHA256 Chunkhasher;
-typedef unsigned char Chunkhash[Chunkhasher::DIGESTSIZE];
 
 class ShinyMetaDir;
 class ShinyMetaFile : public ShinyMetaNode {
@@ -26,25 +16,50 @@ public:
     //Same as above, but adds this guy as a child to given parent (this is just for convenience, this just calls "addNode()" for you)
     ShinyMetaFile( ShinyMetaFilesystem * fs, const char * newName, ShinyMetaDir * parent );
     
+    //Load from a serialized stream
     ShinyMetaFile( const char * serializedInput, ShinyMetaFilesystem * fs );
     
+    //Cleanup before DESTRUCTION
+    ~ShinyMetaFile();
+    
+    //Have to override this so that we can invalidate our cached prefix
+    virtual void setName( const char * newName );
+    
     //Set a new length for this file (Is this really how it should work?)
-    virtual void setFileLen( uint64_t newLen );
+    virtual void truncate( uint64_t newLen );
     virtual uint64_t getFileLen();
     
     //Performs various checks to make sure this node is all right
     virtual bool sanityCheck();
+
+    //Helper function to generate the path used to access the file on disk
+    //Note that this is a _prefix_, and that actual file cache chunks will be
+    //stored on disk with postfixes of what byte they start at
+    virtual const char * getCachePrefix( void );
     
-    //Get the length of 
+    //Get the length of the serialized output first
     virtual uint64_t serializedLen( void );
     virtual void serialize( char * output );
+    
+    //Pass flush() messages on to chunks
+    virtual void flush( void );
+
+    //Returns how many bytes we were able to read/write.  Note that both operations
+    //require us to have the files loaded in the segments where we read from/write to.
+    //There is no writing to files that we don't have yet yet.
+    virtual uint64_t read( uint64_t offset, char * buffer, uint64_t len );
+    virtual uint64_t write( uint64_t offset, const char * buffer, uint64_t len );
+    
+    //Always returns SHINY_NODE_TYPE_FILE, imagine that!
     virtual ShinyNodeType getNodeType( void );
 protected:
     virtual void unserialize( const char * input );
 private:
-    uint64_t filelen;                   //Length of the file
-
-    Filehash hash;                      //Hash of the whole file
+    /********** TRANSIENT/GENERATED STUFF - NOT SERIALIZED ****************/
+    char * cachePrefix;
+    
+    //A new file 
+    std::vector<ShinyFileChunk *> chunks;
 };
 
 #endif //SHINYMETAFILE_H
