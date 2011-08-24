@@ -9,11 +9,13 @@ public:
     ShinyMetaRootDir( const char * serializedInput, ShinyMetaFilesystem * fs );
     
     virtual ShinyNodeType getNodeType( void );
-        
-    virtual const char * getPath();
+    
+    //Override this just as a performance boost to always return '/'
+    virtual const char * getPath( void );
+    
 protected:
-    //Override this guy so that we don't check if our parents have us as children
-    virtual bool check_parentsHaveUsAsChild( void );
+    //LOL, Override this guy so that we don't check if our parent (us) has us as a child
+    virtual bool check_parentHasUsAsChild( void );
 };
 
 

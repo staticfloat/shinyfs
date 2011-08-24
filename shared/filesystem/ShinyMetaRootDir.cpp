@@ -15,7 +15,7 @@ ShinyNodeType ShinyMetaRootDir::getNodeType( void ) {
 }
 
 //Always return true as our parent is ourself, therefore there's nothing special to be done here
-bool ShinyMetaRootDir::check_parentsHaveUsAsChild( void ) {
+bool ShinyMetaRootDir::check_parentHasUsAsChild( void ) {
     return true;
 }
 
@@ -25,3 +25,4 @@ const char * ShinyMetaRootDir::getPath( void ) {
     path[1] = 0;
     return path;
 }
+
