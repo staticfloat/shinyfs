@@ -123,6 +123,9 @@ bool ShinyMetaFilesystem::sanityCheck( void ) {
 }
 
 uint64_t ShinyMetaFilesystem::serialize( char ** store ) {
+    //We most definitely need to flush before serializing
+    this->flush();
+    
     //First, we're going to find the total length of this serialized monstrosity
     //We'll start with the version number
     uint64_t len = sizeof(uint16_t);
@@ -214,8 +217,9 @@ void ShinyMetaFilesystem::unserialize(const char *input) {
 
 void ShinyMetaFilesystem::flush( void ) {
     //I _could_ have just iterated over every inode in the fs....... orrrrr, I could do this.  :P
-    //BEsides, this will work better for partial tree loading anyway.  :P
-    this->root->flush();
+    //Besides, this will work better for partial tree loading anyway.  :P
+    if( this->isDirty() )
+        this->root->flush();
 }
 
 
