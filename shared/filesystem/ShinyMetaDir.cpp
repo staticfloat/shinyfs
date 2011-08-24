@@ -39,6 +39,10 @@ const std::list<inode_t> * ShinyMetaDir::getListing( void ) {
     return &nodes;
 }
 
+uint64_t ShinyMetaDir::getNumChildren( void ) {
+    return nodes.size();
+}
+
 bool ShinyMetaDir::check_childrenHaveUsAsParent( void ) {
     bool retVal = true;
     //Iterate through all nodes

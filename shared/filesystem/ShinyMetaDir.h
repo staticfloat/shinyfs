@@ -21,14 +21,13 @@ public:
 
     //Returns a directory listing
     virtual const std::list<inode_t> * getListing();
+    
+    //Returns the number of children that belong to this dir
+    virtual uint64_t getNumChildren();
 
     //Performs random sanity checks
     virtual bool sanityCheck();
     
-    //Checks to make sure that all children have this as a parent
-    //Lots of code overlap with check_parentsHaveUsAsChild, but whatever
-    virtual bool check_childrenHaveUsAsParent( void );
-
     virtual uint64_t serializedLen( void );
     virtual void serialize( char * output );
     virtual ShinyNodeType getNodeType( void );
@@ -36,6 +35,11 @@ public:
     //Override this so we can pass it down onto files
     virtual void flush( void );
 protected:
+    //Checks to make sure that all children have this as a parent
+    //Lots of code overlap with check_parentsHaveUsAsChild, but whatever
+    virtual bool check_childrenHaveUsAsParent( void );
+
+    //Unserializes.  Duh.
     virtual void unserialize( const char * input );
 
     //All of this dir's child nodes
