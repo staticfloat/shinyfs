@@ -51,9 +51,9 @@ ShinyPartitioner::~ShinyPartitioner() {
 }
 
 std::map< std::list<inode_t> *, std::list<ShinyPeer *> > * ShinyPartitioner::partitionRegion( std::list<inode_t> * rootRegion, std::list<ShinyPeer *> * peers, uint64_t initialWeight ) {
-    printf( "Our root region:\n" );
-    for( std::list<inode_t>::iterator itty = rootRegion->begin(); itty != rootRegion->end(); ++itty )
-        printf("[%llu] %s\n", *itty, fs->findNode( (*itty) )->getName() );
+//    printf( "Our root region:\n" );
+//    for( std::list<inode_t>::iterator itty = rootRegion->begin(); itty != rootRegion->end(); ++itty )
+//        printf("[%llu] %s\n", *itty, fs->findNode( (*itty) )->getName() );
     
     //This maps our lists of inodes to the (list of) peers that own them
     std::map< std::list<inode_t> *, uint64_t> regionSizes;
@@ -101,7 +101,7 @@ std::map< std::list<inode_t> *, std::list<ShinyPeer *> > * ShinyPartitioner::par
                 
                 //If we have more than the threshold of weight, then we need to define this list of inodes as its own region
                 if( regionWeight >= weightPerPeer ) {
-                    regionSizes[newRegion] = roundf((float)regionWeight/weightPerPeer);
+                    regionSizes[newRegion] = (uint64_t) round((double)regionWeight/weightPerPeer);
                     newRegion = new std::list<inode_t>();
                     regionWeight = 0;
                 }
@@ -150,7 +150,7 @@ std::map< std::list<inode_t> *, std::list<ShinyPeer *> > * ShinyPartitioner::par
                     peers->pop_front();
                 }
             }
-            printf("%d < %d\n", (*regionPeers)[*region_itty].size(), regionSizes[*region_itty] );
+//            printf("%llu < %llu\n", (*regionPeers)[*region_itty].size(), regionSizes[*region_itty] );
             ++region_itty;
             if( region_itty == sortedRegions.end() ) {
                 //Check to make sure that we made any progress at all this last run through.  If we didn't RAGEQUIT
