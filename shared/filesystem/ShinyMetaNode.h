@@ -81,6 +81,9 @@ public:
     //Serializes into the buffer [output]
     virtual void serialize( char * output );
     
+    //Flushes things out to disk, clears temporary variables, etc... etc... etc...
+    virtual void flush( void );
+    
     //Returns the node type, e.g. if it's a file, directory, etc.
     virtual ShinyNodeType getNodeType( void );
 protected:
@@ -90,7 +93,7 @@ protected:
     //Checks to make sure all of list are actually in fs.  If they aren't, removes them as a parent
     virtual bool check_existsInFs( std::list<inode_t> * list, const char * listName );
     
-    //Checks to make sure all parents have us as children
+    //Checks to make sure our parent has us as a child
     virtual bool check_parentHasUsAsChild( void );
     
     //Checks to make sure we don't have any duplicates in a list of inodes

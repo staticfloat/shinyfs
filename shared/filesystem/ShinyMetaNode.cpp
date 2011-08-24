@@ -1,4 +1,4 @@
-//
+	//
 //  ShinyMetaNode.cpp
 //  ShinyMetafs-tracker
 //
@@ -10,6 +10,7 @@
 #include "ShinyMetaDir.h"
 #include "ShinyMetaFilesystem.h"
 #include <base/Logger.h>
+#include <sys/stat.h>
 
 ShinyMetaNode::ShinyMetaNode(ShinyMetaFilesystem * fs, const char * newName) {
     //Save pointer to fs
@@ -34,8 +35,7 @@ ShinyMetaNode::ShinyMetaNode(ShinyMetaFilesystem * fs, const char * newName) {
     //It's HAMMAH TIME!!!
     this->ctime = this->atime = this->mtime = time(NULL);
     
-    LOG( "Does FUSE initialize default permissions?\n" );
-    this->setPermissions( 0x1f );   //0b111111111, aka rwxrwxrwx
+    this->setPermissions( S_IRWXU | S_IRWXG | S_IRWXO );   //aka rwxrwxrwx
     
     //Set these to nothing right now
     LOG( "need to init uid/gid!\n" );
@@ -54,6 +54,9 @@ ShinyMetaNode::~ShinyMetaNode() {
         delete( this->name );
     if( this->path )
         delete( this->path );
+    
+    //Remove myself from the map
+    this->fs->nodes.erase(this->inode);
 }
 
 inode_t ShinyMetaNode::getInode() {
@@ -102,14 +105,15 @@ const char * ShinyMetaNode::getPath() {
     len += strlen( this->getName() );
     
     ShinyMetaNode * currNode = this;
-    while( currNode != (ShinyMetaNode *) fs->root ) {
+    ShinyMetaNode * root = fs->findNode("/");
+    while( currNode != (ShinyMetaNode *) root) {
         //Move up in the chain of parents
         ShinyMetaNode * nextNode = fs->findNode( currNode->getParent() );
         
         //If our parental chain is broken, just return ?/name
         if( !nextNode )
             return this->getName();
-        else if( nextNode != (ShinyMetaNode *)fs->root ) {
+        else if( nextNode != (ShinyMetaNode *)root ) {
             //Push this parent's path onto the list, and add its length to len
             paths.push_front( nextNode->getName() );
             len += strlen( nextNode->getName() );
@@ -275,6 +279,10 @@ void ShinyMetaNode::unserialize( const char * input ) {
         delete( this->path );
         this->path = NULL;
     }
+}
+
+void ShinyMetaNode::flush( void ) {
+    //Just don't do anything here
 }
 
 ShinyNodeType ShinyMetaNode::getNodeType( void ) {
