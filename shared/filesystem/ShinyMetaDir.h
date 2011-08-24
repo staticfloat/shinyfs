@@ -33,6 +33,8 @@ public:
     virtual void serialize( char * output );
     virtual ShinyNodeType getNodeType( void );
 
+    //Override this so we can pass it down onto files
+    virtual void flush( void );
 protected:
     virtual void unserialize( const char * input );
 

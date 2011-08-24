@@ -110,6 +110,14 @@ void ShinyMetaDir::unserialize(const char *input) {
     }
 }
 
+void ShinyMetaDir::flush( void ) {
+    for( std::list<inode_t>::iterator itty = this->nodes.begin(); itty != this->nodes.end(); ++itty ) {
+        ShinyMetaNode * node = this->fs->nodes[*itty];
+        if( node ) 
+            node->flush();
+    }
+}
+
 ShinyNodeType ShinyMetaDir::getNodeType( void ) {
     return SHINY_NODE_TYPE_DIR;
 }
