@@ -25,8 +25,8 @@ public:
     //Have to override this so that we can invalidate our cached prefix
     virtual void setName( const char * newName );
     
-    //Set a new length for this file (Is this really how it should work?)
-    virtual void truncate( uint64_t newLen );
+    //Set a new length for this file (is implicitly called by write())
+    virtual uint64_t truncate( uint64_t newLen );
     virtual uint64_t getFileLen();
     
     //Performs various checks to make sure this node is all right

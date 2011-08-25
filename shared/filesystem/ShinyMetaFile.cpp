@@ -46,15 +46,16 @@ void ShinyMetaFile::setName( const char * newName ) {
     }
 }
 
-void ShinyMetaFile::truncate( uint64_t newLen ) {
+uint64_t ShinyMetaFile::truncate( uint64_t newLen ) {
     uint64_t filelen = this->getFileLen();
     if( newLen < filelen ) {
         //First, erase all chunks after the end chunk
         this->chunks.erase( this->chunks.begin() + (newLen/ShinyFileChunk::MAX_CHUNK_LEN) + 1, this->chunks.end() );
 
         //Then, resize that ending chunk
-        if( !this->chunks[this->chunks.size()-1]->truncate( (chunklen_t) (newLen - newLen/ShinyFileChunk::MAX_CHUNK_LEN) ) ) {
-            ERROR( "Couldn't truncate chunk %s!", this->chunks[this->chunks.size()-1]->getFileChunkPath() );
+        newLen = (newLen - newLen/ShinyFileChunk::MAX_CHUNK_LEN);
+        if( newLen != this->chunks[this->chunks.size()-1]->truncate( (chunklen_t)newLen ) ) {
+            ERROR( "Couldn't truncate chunk %s to %llu!", this->chunks[this->chunks.size()-1]->getFileChunkPath(), newLen );
         }
         fs->setDirty();
     } else if( newLen > filelen ) {
@@ -75,6 +76,7 @@ void ShinyMetaFile::truncate( uint64_t newLen ) {
         }
         fs->setDirty();
     }
+    return newLen;
 }
 
 uint64_t ShinyMetaFile::getFileLen() {
@@ -104,7 +106,6 @@ bool ShinyMetaFile::sanityCheck( void ) {
         //Force this chunk out to disk, clearing it from memory
         this->chunks[i]->flush( forceFlush );
     }
-
     return retVal;
 }
 
