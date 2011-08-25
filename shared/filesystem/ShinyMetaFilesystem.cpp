@@ -6,15 +6,10 @@
 
 //Used to stat() to tell if the directory exists
 #include <sys/stat.h>
+#include <sys/fcntl.h>
 
 ShinyMetaFilesystem::ShinyMetaFilesystem( const char * serializedData, const char * filecache ) : nextInode(1), root(NULL) {
-    if( serializedData && serializedData[0] ) {
-        unserialize( serializedData );
-    } else {
-        LOG( "serializedData empty, so just starting over...." );
-        root = new ShinyMetaRootDir(this);
-    }
-    
+    //Check if the filecache exists
     struct stat st;
     if( stat( filecache, &st ) != 0 ) {
         WARN( "filecache %s does not exist, creating a new one!", filecache );
@@ -24,7 +19,28 @@ ShinyMetaFilesystem::ShinyMetaFilesystem( const char * serializedData, const cha
     //Finally, copy it in so we know where to find it!
     this->filecache = new char[strlen(filecache)+1];
     strcpy( this->filecache, filecache );
+    this->fscache = new char[strlen(filecache)+1+8+1];
+    sprintf( this->fscache, "%s/fs.cache", this->filecache );
 
+    
+    if( serializedData && serializedData[0] ) {
+        unserialize( serializedData );
+    } else {
+        //Let's look in the filecache
+        
+        if( stat( this->fscache, &st ) != 0 ) {
+            WARN( "fscache %s does not exist, starting over....", this->fscache );
+            root = new ShinyMetaRootDir(this);
+        } else {
+            char * loadedSerializedData = NULL;
+            ERROR( "load in the serialized data here!" );
+            ERROR( "load in the serialized data here!" );
+            ERROR( "load in the serialized data here!" );
+            ERROR( "load in the serialized data here!" );
+            ERROR( "load in the serialized data here!" );
+            ERROR( "load in the serialized data here!" );
+        }
+    }
 }
 
 ShinyMetaFilesystem::~ShinyMetaFilesystem() {
@@ -65,14 +81,14 @@ ShinyMetaNode * ShinyMetaFilesystem::findNode( const char * path ) {
                 //Search currNode's children for a name match
                 ShinyMetaNode * childNode = findMatchingChild( (ShinyMetaDir *)currNode, &path[filenameBegin], i - filenameBegin );
                 if( !childNode ) {
-                    ERROR( "Cannot resolve path %s, as the node %s does not have next node inside of it", path, currNode->getName() );
+//                    ERROR( "Cannot resolve path %s, as the node %s does not have next node inside of it", path, currNode->getName() );
                     return NULL;
                 } else {
                     currNode = childNode;
                     filenameBegin = i+1;
                 }
             } else {
-                ERROR("Cannot resolve path %s, as the node %s is not a directory", path, currNode->getName() );
+//                ERROR("Cannot resolve path %s, as the node %s is not a directory", path, currNode->getName() );
                 return NULL;
             }
             
@@ -83,7 +99,7 @@ ShinyMetaNode * ShinyMetaFilesystem::findNode( const char * path ) {
     if( filenameBegin < strlen(path) ) {
         ShinyMetaNode * childNode = findMatchingChild( (ShinyMetaDir *)currNode, &path[filenameBegin], strlen(path) - filenameBegin );
         if( !childNode ) {
-            ERROR( "Cannot resolve path %s, as the node %s does not have next node inside of it", path, currNode->getName() );
+//            ERROR( "Cannot resolve path %s, as the node %s does not have next node inside of it", path, currNode->getName() );
             return NULL;
         } else
             currNode = childNode;
@@ -96,6 +112,24 @@ ShinyMetaNode * ShinyMetaFilesystem::findNode( uint64_t inode ) {
     if( itty != this->nodes.end() )
         return (*itty).second;
     return NULL;
+}
+
+ShinyMetaDir * ShinyMetaFilesystem::findParentNode( const char *path ) {
+    uint64_t len = strlen( path );
+    uint64_t end = len-1;
+    if( path[len-1] == '/' )
+        end--;
+    
+    while( end > 1 && path[end] != '/' )
+        end--;
+    
+    char * newPath = new char[len - end + 1];
+    memcpy( newPath, path, len - end );
+    newPath[len - end] = 0;
+    
+    ShinyMetaDir * ret = (ShinyMetaDir *)this->findNode( newPath );
+    delete( newPath );
+    return ret;
 }
 
 void ShinyMetaFilesystem::setDirty( void ) {
@@ -123,9 +157,6 @@ bool ShinyMetaFilesystem::sanityCheck( void ) {
 }
 
 uint64_t ShinyMetaFilesystem::serialize( char ** store ) {
-    //We most definitely need to flush before serializing
-    this->flush();
-    
     //First, we're going to find the total length of this serialized monstrosity
     //We'll start with the version number
     uint64_t len = sizeof(uint16_t);
@@ -215,11 +246,26 @@ void ShinyMetaFilesystem::unserialize(const char *input) {
     }
 }
 
-void ShinyMetaFilesystem::flush( void ) {
+void ShinyMetaFilesystem::flush( bool serializeAndSave ) {
     //I _could_ have just iterated over every inode in the fs....... orrrrr, I could do this.  :P
     //Besides, this will work better for partial tree loading anyway.  :P
     if( this->isDirty() )
         this->root->flush();
+    
+    //If we should save it out to disk
+    if( serializeAndSave ) {
+        char * output;
+        uint64_t len = this->serialize( &output );
+
+        //Open it for writing, write it, and close
+        int fd = open( this->fscache, O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU | S_IRWXG | S_IROTH );
+        if( !fd ) {
+            ERROR( "Could not flush serialized output to %s!", this->fscache );
+        } else {
+            write( fd, output, len );
+            close( fd );
+        }
+    }
 }
 
 

@@ -30,7 +30,7 @@ public:
     static const uint16_t VERSION = 1;
     
     //Loads the filesystem from disk, saving to that same filename
-    ShinyMetaFilesystem( const char * serializedData = NULL, const char * filecache = "shinyfscache/" );
+    ShinyMetaFilesystem( const char * serializedData = NULL, const char * filecache = "shinycache/" );
     ~ShinyMetaFilesystem();
     
     /*******************
@@ -43,6 +43,10 @@ public:
     //Finds node associated with an inode
     //returns NULL on file not found
     ShinyMetaNode * findNode( inode_t inode );
+    
+    //Finds the parent node of the file at path
+    //NOTE that path does not necessarily exist!
+    ShinyMetaDir * findParentNode( const char * path );
     
     //Note that there is no adding/removing of nodes; this is because you should do that manually,
     //by finding the ShinyMetaNode and then removing it directly.  Those classes will automagically callback to this filesystem
@@ -57,8 +61,9 @@ public:
     bool isDirty( void );
     
     //Calls flush() on every node and such to get rid of any temporary data,
-    //write stuff out to disk, etc. etc....
-    void flush( void );
+    //write stuff out to disk, etc. etc.... then serializes and stores out to shinycache/fs.cache
+    //This should be called regularly, e.g. once every minute or so to make sure everything is happy
+    void flush( bool serializeAndSave = true );
 
     //Serializes the entire tree into a bytestream, returning the length of said stream
     uint64_t serialize( char ** output );
@@ -79,6 +84,9 @@ protected:
     
     //Returns filecache location
     const char * getFilecache( void );
+    
+    //Returns location of fscachefilename
+    const char * getFsCacheFilename();
 private:
     //Helper function to unserialize
     void unserialize( const char * input );
@@ -97,6 +105,9 @@ private:
     
     //Stores the location of all cached files, etc...
     char * filecache;
+    
+    //filecache + "/fs.cache"
+    char * fscache;
 };
 
 
