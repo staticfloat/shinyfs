@@ -66,7 +66,7 @@ uint64_t ShinyMetaFile::truncate( uint64_t newLen ) {
 
         //Resize the possibly not super long chunk
         if( i )
-            this->chunks[i-1]->truncate( (chunklen_t) min( newLen - filelen, ShinyFileChunk::MAX_CHUNK_LEN ) );
+            this->chunks[i-1]->truncate( (chunklen_t) newLen - (i-1)*ShinyFileChunk::MAX_CHUNK_LEN );
         if( newSize > i ) {
             //Now, create as many more as we need
             for(; i<newLen/ShinyFileChunk::MAX_CHUNK_LEN; ++i )
@@ -149,14 +149,16 @@ void ShinyMetaFile::serialize( char *output ) {
     *((uint64_t *)(output + len)) = this->chunks.size();
     len += sizeof(uint64_t);
     
-    //Next, store out the file hashes
-    for( uint64_t i=0; i<this->chunks.size(); ++i ) {
-        memcpy( output + len, this->chunks[i]->getHash(), sizeof(Chunkhash) );
-        len += sizeof(Chunkhash);
+    if( !this->chunks.empty() ) {
+        //Next, store out the file hashes
+        for( uint64_t i=0; i<this->chunks.size(); ++i ) {
+            memcpy( output + len, this->chunks[i]->getHash(), sizeof(Chunkhash) );
+            len += sizeof(Chunkhash);
+        }
+        
+        //Finally, store the last chunk's size
+        *((chunklen_t *)(output + len)) = this->chunks[this->chunks.size()-1]->getChunkLen();
     }
-    
-    //Finally, store the last chunk's size
-    *((chunklen_t *)(output + len)) = this->chunks[this->chunks.size()-1]->getChunkLen();
 }
 
 void ShinyMetaFile::unserialize( const char * input ) {
@@ -228,13 +230,15 @@ uint64_t ShinyMetaFile::write( uint64_t offset, const char * buffer, uint64_t le
 
     //First off, if we're _starting_ outside of the realm of operation, return zero
     /*if( startChunk >= this->chunks.size() )
-        return 0;
+        return 0;*/
+    
+    //Calculate the first chunk we'll need to deal with
+    uint64_t startChunk = offset/ShinyFileChunk::MAX_CHUNK_LEN;
     
     //If we don't have the starting chunk, return zero
     if( !this->chunks[startChunk]->isAvailable() )
-        return 0;*/
-
-    uint64_t startChunk = offset/ShinyFileChunk::MAX_CHUNK_LEN;
+        return 0;
+    
     //Accumulate the amount of data written into dataWritten
     uint64_t dataWritten = 0;
     
