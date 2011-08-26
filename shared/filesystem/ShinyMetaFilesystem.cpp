@@ -22,25 +22,29 @@ ShinyMetaFilesystem::ShinyMetaFilesystem( const char * serializedData, const cha
     this->fscache = new char[strlen(filecache)+1+8+1];
     sprintf( this->fscache, "%s/fs.cache", this->filecache );
 
-    
-    if( serializedData && serializedData[0] ) {
-        unserialize( serializedData );
-    } else {
+
+    if( !serializedData ) {
         //Let's look in the filecache
-        
         if( stat( this->fscache, &st ) != 0 ) {
             WARN( "fscache %s does not exist, starting over....", this->fscache );
             root = new ShinyMetaRootDir(this);
         } else {
-            char * loadedSerializedData = NULL;
-            ERROR( "load in the serialized data here!" );
-            ERROR( "load in the serialized data here!" );
-            ERROR( "load in the serialized data here!" );
-            ERROR( "load in the serialized data here!" );
-            ERROR( "load in the serialized data here!" );
-            ERROR( "load in the serialized data here!" );
+            int fd = open( this->fscache, O_RDONLY );
+            uint64_t len = lseek(fd, 0, SEEK_END);
+            lseek(fd,0,SEEK_SET);
+            
+            serializedData = new char[len];
+            read(fd, (void *)serializedData, len);
+            
+            close(fd);
+            
+            unserialize( serializedData );
+            delete( serializedData );
         }
-    }
+    } else
+        unserialize( serializedData );
+    
+     LOG( "Need to add prune() call to get rid of orphaned inodes, as well as file caches that have been deleted!" );
 }
 
 ShinyMetaFilesystem::~ShinyMetaFilesystem() {
