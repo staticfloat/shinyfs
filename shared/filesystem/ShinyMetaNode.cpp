@@ -179,6 +179,15 @@ bool ShinyMetaNode::check_parentHasUsAsChild( void ) {
         //If we can't find ourselves, FIX IT!
         WARN( "Parent %s [%llu] did not point to child %s [%llu], when it should have! Fixing...\n", parentNode->getPath(), parentNode->getInode(), this->getPath(), this->inode );
         parentNode->addNode( this );
+        
+        //check to make sure we actually _could_ do that
+        for( std::list<inode_t>::const_iterator cItty = children->begin(); cItty != children->end(); ++cItty ) {
+            if( *cItty == this->inode )
+                return true;
+        }
+        WARN( "Couldn't fix! Setting our parent to NULL so we get garbage-collected..." );
+        this->parent = NULL;
+        return false;
     } else {
         ERROR( "parent [%d] of node %s [%d] could not be found in fs!", this->parent, this->name, this->inode );
         return false;
