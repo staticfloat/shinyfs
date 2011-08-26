@@ -56,10 +56,14 @@ ShinyMetaNode * ShinyMetaFilesystem::findMatchingChild( ShinyMetaDir * parent, c
     for( std::list<inode_t>::const_iterator itty = list->begin(); itty != list->end(); ++itty ) {
         ShinyMetaNode * sNode = findNode( (*itty) );
         
-        //Compare sNode's filename with the section of path inbetween
-        if( strlen(sNode->getName()) == childNameLen && memcmp( sNode->getName(), childName, childNameLen ) == 0 ) {
-            //If it works, then we return sNode
-            return sNode;
+        if( sNode ) {
+            //Compare sNode's filename with the section of path inbetween
+            if( (strlen(sNode->getName()) == childNameLen) && memcmp( sNode->getName(), childName, childNameLen ) == 0 ) {
+                //If it works, then we return sNode
+                return sNode;
+            }
+        } else {
+            WARN( "Couldn't find child [%llu] for node %s [%llu]", *itty, parent->getPath(), parent->getInode() );
         }
     }
     //If we made it all the way through without finding a match for that file, quit out

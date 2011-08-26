@@ -13,6 +13,13 @@ ShinyMetaDir::ShinyMetaDir( const char * serializedInput, ShinyMetaFilesystem * 
     this->unserialize( serializedInput + ShinyMetaNode::serializedLen() );
 }
 
+ShinyMetaDir::~ShinyMetaDir( void ) {
+    while( !nodes.empty() ) {
+        //If there _is_ a child that doesn't exist, that's fine, 'cause deleting NULL doesn't do squat!
+        delete( this->fs->findNode( nodes.front() ) );
+    }
+}
+
 void ShinyMetaDir::addNode( ShinyMetaNode *newNode ) {
     if( newNode->getParent() ) {
         ERROR( "Cannot add a node that already has a parent!" );
@@ -32,7 +39,6 @@ void ShinyMetaDir::addNode( ShinyMetaNode *newNode ) {
 
 void ShinyMetaDir::delNode(ShinyMetaNode *delNode) {
     this->nodes.remove( delNode->getInode() );
-    delNode->setParent( this->inode );
 }
 
 const std::list<inode_t> * ShinyMetaDir::getListing( void ) {

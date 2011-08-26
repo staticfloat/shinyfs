@@ -57,6 +57,11 @@ ShinyMetaNode::~ShinyMetaNode() {
     
     //Remove myself from the map
     this->fs->nodes.erase(this->inode);
+    
+    //Remove myself from my parent
+    ShinyMetaDir * parentDir = (ShinyMetaDir *) this->fs->findNode( this->parent );
+    if( parentDir )
+        parentDir->delNode( this );
 }
 
 inode_t ShinyMetaNode::getInode() {
