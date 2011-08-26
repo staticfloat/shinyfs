@@ -57,7 +57,7 @@ ShinyMetaNode * ShinyMetaFilesystem::findMatchingChild( ShinyMetaDir * parent, c
         ShinyMetaNode * sNode = findNode( (*itty) );
         
         //Compare sNode's filename with the section of path inbetween
-        if( memcmp( sNode->getName(), childName, min( strlen(sNode->getName()), childNameLen ) ) == 0 ) {
+        if( strlen(sNode->getName()) == childNameLen && memcmp( sNode->getName(), childName, childNameLen ) == 0 ) {
             //If it works, then we return sNode
             return sNode;
         }
@@ -123,9 +123,9 @@ ShinyMetaDir * ShinyMetaFilesystem::findParentNode( const char *path ) {
     while( end > 1 && path[end] != '/' )
         end--;
     
-    char * newPath = new char[len - end + 1];
-    memcpy( newPath, path, len - end );
-    newPath[len - end] = 0;
+    char * newPath = new char[end + 1];
+    memcpy( newPath, path, end );
+    newPath[end] = 0;
     
     ShinyMetaDir * ret = (ShinyMetaDir *)this->findNode( newPath );
     delete( newPath );
