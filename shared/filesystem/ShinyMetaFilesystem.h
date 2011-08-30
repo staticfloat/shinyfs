@@ -91,7 +91,7 @@ private:
     //Helper function to unserialize
     void unserialize( const char * input );
 
-    //Helper function for finding nodes
+    //Helper function for searching nodes that belong to a parent
     ShinyMetaNode * findMatchingChild( ShinyMetaDir * parent, const char * childName, uint64_t childNameLen );
     
     //The root dir.  Come on, what do you want from me?!

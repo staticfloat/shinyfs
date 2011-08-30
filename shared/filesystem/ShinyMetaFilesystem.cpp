@@ -88,17 +88,14 @@ ShinyMetaNode * ShinyMetaFilesystem::findNode( const char * path ) {
             if( currNode->getNodeType() == SHINY_NODE_TYPE_DIR || currNode->getNodeType() == SHINY_NODE_TYPE_ROOTDIR ) {
                 //Search currNode's children for a name match
                 ShinyMetaNode * childNode = findMatchingChild( (ShinyMetaDir *)currNode, &path[filenameBegin], i - filenameBegin );
-                if( !childNode ) {
-//                    ERROR( "Cannot resolve path %s, as the node %s does not have next node inside of it", path, currNode->getName() );
+                if( !childNode )
                     return NULL;
-                } else {
+                else {
                     currNode = childNode;
                     filenameBegin = i+1;
                 }
-            } else {
-//                ERROR("Cannot resolve path %s, as the node %s is not a directory", path, currNode->getName() );
+            } else
                 return NULL;
-            }
             
             //Update the beginning of the next filename to be the character after this slash
             filenameBegin = i+1;
@@ -106,11 +103,9 @@ ShinyMetaNode * ShinyMetaFilesystem::findNode( const char * path ) {
     }
     if( filenameBegin < strlen(path) ) {
         ShinyMetaNode * childNode = findMatchingChild( (ShinyMetaDir *)currNode, &path[filenameBegin], strlen(path) - filenameBegin );
-        if( !childNode ) {
-//            ERROR( "Cannot resolve path %s, as the node %s does not have next node inside of it", path, currNode->getName() );
+        if( !childNode )
             return NULL;
-        } else
-            currNode = childNode;
+        currNode = childNode;
     }
     return currNode;
 }
@@ -123,18 +118,24 @@ ShinyMetaNode * ShinyMetaFilesystem::findNode( uint64_t inode ) {
 }
 
 ShinyMetaDir * ShinyMetaFilesystem::findParentNode( const char *path ) {
+    //Start at the end of the string
     uint64_t len = strlen( path );
     uint64_t end = len-1;
+    
+    //Move back another char if the last one is actually a slash
     if( path[len-1] == '/' )
         end--;
     
+    //Move back until we get _another_ slash
     while( end > 1 && path[end] != '/' )
         end--;
     
+    //Copy over until the end to get just the parent path
     char * newPath = new char[end + 1];
     memcpy( newPath, path, end );
     newPath[end] = 0;
     
+    //Find it and return
     ShinyMetaDir * ret = (ShinyMetaDir *)this->findNode( newPath );
     delete( newPath );
     return ret;
@@ -278,6 +279,8 @@ void ShinyMetaFilesystem::flush( bool serializeAndSave ) {
 
 
 inode_t ShinyMetaFilesystem::genNewInode() {
+    ERROR( "Need to re-do this!" );
+    ERROR( "Implement your idea of having each peer be assigned a \"next inode\" number that they use.  When they run out, they ask their parent (in the tree) for another inode starting number, which the parent appropriates from its other children or asks up" );
     inode_t probeNext = this->nextInode + 1;
     //Just linearly probe for the next open inode
     while( this->nodes.find(probeNext) != this->nodes.end() ) {
