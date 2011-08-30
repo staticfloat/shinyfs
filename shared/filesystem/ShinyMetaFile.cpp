@@ -7,24 +7,24 @@
 //
 
 #include "ShinyMetaFile.h"
-#include "ShinyMetaFilesystem.h"
+#include "ShinyFilesystem.h"
 #include "ShinyMetaDir.h"
 #include <base/Logger.h>
 
 #define min( x, y ) ((x) > (y) ? (y) : (x))
 
-ShinyMetaFile::ShinyMetaFile( ShinyMetaFilesystem * fs, const char * newName ) : ShinyMetaNode( fs, newName ) {
+ShinyMetaFile::ShinyMetaFile( ShinyFilesystem * fs, const char * newName ) : ShinyMetaNode( fs, newName ) {
     this->truncate( 0 );
     this->cachePrefix = NULL;
 }
 
-ShinyMetaFile::ShinyMetaFile( ShinyMetaFilesystem * fs, const char * newName, ShinyMetaDir * parent ) : ShinyMetaNode( fs, newName ) {
+ShinyMetaFile::ShinyMetaFile( ShinyFilesystem * fs, const char * newName, ShinyMetaDir * parent ) : ShinyMetaNode( fs, newName ) {
     this->truncate( 0 );
     this->cachePrefix = NULL;
     parent->addNode( (ShinyMetaNode *)this );
 }
 
-ShinyMetaFile::ShinyMetaFile( const char * serializedInput, ShinyMetaFilesystem * fs ) : ShinyMetaNode( serializedInput, fs ) {
+ShinyMetaFile::ShinyMetaFile( const char * serializedInput, ShinyFilesystem * fs ) : ShinyMetaNode( serializedInput, fs ) {
     this->unserialize( serializedInput + ShinyMetaNode::serializedLen() );
     this->cachePrefix = NULL;
 }
@@ -66,7 +66,7 @@ uint64_t ShinyMetaFile::truncate( uint64_t newLen ) {
 
         //Resize the possibly not super long chunk
         if( i )
-            this->chunks[i-1]->truncate( (chunklen_t) newLen - (i-1)*ShinyFileChunk::MAX_CHUNK_LEN );
+            this->chunks[i-1]->truncate( (chunklen_t) (newLen - (i-1)*ShinyFileChunk::MAX_CHUNK_LEN) );
         if( newSize > i ) {
             //Now, create as many more as we need
             for(; i<newLen/ShinyFileChunk::MAX_CHUNK_LEN; ++i )

@@ -1,15 +1,15 @@
 #include "ShinyMetaDir.h"
-#include "ShinyMetaFilesystem.h"
+#include "ShinyFilesystem.h"
 #include "base/Logger.h"
 
-ShinyMetaDir::ShinyMetaDir( ShinyMetaFilesystem * fs, const char * newName ) : ShinyMetaNode( fs, newName ) {
+ShinyMetaDir::ShinyMetaDir( ShinyFilesystem * fs, const char * newName ) : ShinyMetaNode( fs, newName ) {
 }
 
-ShinyMetaDir::ShinyMetaDir( ShinyMetaFilesystem * fs, const char * newName, ShinyMetaDir * parent ) : ShinyMetaNode( fs, newName ) {
+ShinyMetaDir::ShinyMetaDir( ShinyFilesystem * fs, const char * newName, ShinyMetaDir * parent ) : ShinyMetaNode( fs, newName ) {
     parent->addNode( this );
 }
 
-ShinyMetaDir::ShinyMetaDir( const char * serializedInput, ShinyMetaFilesystem * fs ) : ShinyMetaNode( serializedInput, fs ) {
+ShinyMetaDir::ShinyMetaDir( const char * serializedInput, ShinyFilesystem * fs ) : ShinyMetaNode( serializedInput, fs ) {
     this->unserialize( serializedInput + ShinyMetaNode::serializedLen() );
 }
 

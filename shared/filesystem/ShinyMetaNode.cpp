@@ -8,11 +8,11 @@
 
 #include "ShinyMetaNode.h"
 #include "ShinyMetaDir.h"
-#include "ShinyMetaFilesystem.h"
+#include "ShinyFilesystem.h"
 #include <base/Logger.h>
 #include <sys/stat.h>
 
-ShinyMetaNode::ShinyMetaNode(ShinyMetaFilesystem * fs, const char * newName) {
+ShinyMetaNode::ShinyMetaNode(ShinyFilesystem * fs, const char * newName) {
     //Save pointer to fs
     this->fs = fs;
     
@@ -42,7 +42,7 @@ ShinyMetaNode::ShinyMetaNode(ShinyMetaFilesystem * fs, const char * newName) {
     this->uid = this->gid = NULL;
 }
 
-ShinyMetaNode::ShinyMetaNode( const char * serializedInput, ShinyMetaFilesystem * fs ) : fs( fs ), path( NULL ) {
+ShinyMetaNode::ShinyMetaNode( const char * serializedInput, ShinyFilesystem * fs ) : fs( fs ), path( NULL ) {
     this->unserialize(serializedInput);
     
     //Add this Node into the inode map

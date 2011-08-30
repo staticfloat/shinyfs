@@ -11,13 +11,13 @@ class ShinyMetaDir;
 class ShinyMetaFile : public ShinyMetaNode {
 public:
     //Create a new one
-    ShinyMetaFile( ShinyMetaFilesystem * fs, const char * newName );
+    ShinyMetaFile( ShinyFilesystem * fs, const char * newName );
     
     //Same as above, but adds this guy as a child to given parent (this is just for convenience, this just calls "addNode()" for you)
-    ShinyMetaFile( ShinyMetaFilesystem * fs, const char * newName, ShinyMetaDir * parent );
+    ShinyMetaFile( ShinyFilesystem * fs, const char * newName, ShinyMetaDir * parent );
     
     //Load from a serialized stream
-    ShinyMetaFile( const char * serializedInput, ShinyMetaFilesystem * fs );
+    ShinyMetaFile( const char * serializedInput, ShinyFilesystem * fs );
     
     //Cleanup before DESTRUCTION
     ~ShinyMetaFile();

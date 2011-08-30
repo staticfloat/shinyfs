@@ -5,8 +5,8 @@
 
 class ShinyMetaRootDir : public ShinyMetaDir {
 public:
-    ShinyMetaRootDir( ShinyMetaFilesystem * fs );
-    ShinyMetaRootDir( const char * serializedInput, ShinyMetaFilesystem * fs );
+    ShinyMetaRootDir( ShinyFilesystem * fs );
+    ShinyMetaRootDir( const char * serializedInput, ShinyFilesystem * fs );
     
     virtual ShinyNodeType getNodeType( void );
     

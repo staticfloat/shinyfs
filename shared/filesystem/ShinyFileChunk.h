@@ -3,7 +3,6 @@
 #define SHINYFILECHUNK_H
 
 #include <sys/types.h>
-//#include <cryptopp/cryptlib.h>
 #include <cryptopp/sha.h>
 #include <sys/time.h>
 

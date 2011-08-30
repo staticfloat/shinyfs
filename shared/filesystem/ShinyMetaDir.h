@@ -7,13 +7,13 @@
 class ShinyMetaDir : public ShinyMetaNode {
 public:
     //This makes a new one
-    ShinyMetaDir( ShinyMetaFilesystem * fs, const char * newName );
+    ShinyMetaDir( ShinyFilesystem * fs, const char * newName );
     
     //Same as above, but adds this guy as a child to given parent (this is just for convenience, this just calls "addNode()" for you)
-    ShinyMetaDir( ShinyMetaFilesystem * fs, const char * newName, ShinyMetaDir * parent );
+    ShinyMetaDir( ShinyFilesystem * fs, const char * newName, ShinyMetaDir * parent );
     
     //Loads in from serialized input
-    ShinyMetaDir( const char * serializedInput, ShinyMetaFilesystem * fs );
+    ShinyMetaDir( const char * serializedInput, ShinyFilesystem * fs );
     
     //Deletes all children
     ~ShinyMetaDir( void );

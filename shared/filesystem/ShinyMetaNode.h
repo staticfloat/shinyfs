@@ -40,14 +40,14 @@ enum ShinyNodeType {
     NUM_SHINY_NODE_TYPES,
 };
 
-class ShinyMetaFilesystem;
+class ShinyFilesystem;
 class ShinyMetaNode { 
 public:
     //Generate a new node and create new inode (by asking ShinyMetaTree), etc.....
-    ShinyMetaNode( ShinyMetaFilesystem * fs, const char * newName );
+    ShinyMetaNode( ShinyFilesystem * fs, const char * newName );
     
     //Initialize this node, from serialized data.  Get amount of data read in via serializeLen() afterwards
-    ShinyMetaNode( const char * serializedInput, ShinyMetaFilesystem * fs );
+    ShinyMetaNode( const char * serializedInput, ShinyFilesystem * fs );
     
     //Clean up (free name)
     ~ShinyMetaNode();
@@ -100,7 +100,7 @@ protected:
     virtual bool check_noDuplicates( std::list<inode_t> * list, const char * listName );
     
     //Pointer to fs so that we can traverse the tree if we must (and believe me, we must!)
-    ShinyMetaFilesystem * fs;
+    ShinyFilesystem * fs;
     
     //Parent of this inode
     inode_t parent;

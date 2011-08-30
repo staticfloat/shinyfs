@@ -1,13 +1,13 @@
 #include "ShinyMetaRootDir.h"
-#include "ShinyMetaFilesystem.h"
+#include "ShinyFilesystem.h"
 #include <base/Logger.h>
 
-ShinyMetaRootDir::ShinyMetaRootDir( ShinyMetaFilesystem * fs ) : ShinyMetaDir( fs, "" ) {
+ShinyMetaRootDir::ShinyMetaRootDir( ShinyFilesystem * fs ) : ShinyMetaDir( fs, "" ) {
     //We set ourselves as our own parent.  How...... cute.  :P
     this->setParent( this->inode );
 }
 
-ShinyMetaRootDir::ShinyMetaRootDir( const char * serializedInput, ShinyMetaFilesystem * fs ) : ShinyMetaDir( serializedInput, fs ) {
+ShinyMetaRootDir::ShinyMetaRootDir( const char * serializedInput, ShinyFilesystem * fs ) : ShinyMetaDir( serializedInput, fs ) {
 }
 
 ShinyNodeType ShinyMetaRootDir::getNodeType( void ) {
