@@ -32,7 +32,7 @@ ShinyMetaFile::ShinyMetaFile( const char * serializedInput, ShinyFilesystem * fs
 ShinyMetaFile::~ShinyMetaFile() {
     if( this->cachePrefix )
         delete( this->cachePrefix );
-    for( uint64_t i=0; i<this->chunks.size(); ++i ) {
+    for( size_t i=0; i<this->chunks.size(); ++i ) {
         this->chunks[i]->flush( true );
         delete( this->chunks[i] );
     }
@@ -46,8 +46,8 @@ void ShinyMetaFile::setName( const char * newName ) {
     }
 }
 
-uint64_t ShinyMetaFile::truncate( uint64_t newLen ) {
-    uint64_t filelen = this->getFileLen();
+size_t ShinyMetaFile::truncate( size_t newLen ) {
+    size_t filelen = this->getFileLen();
     if( newLen < filelen ) {
         //First, erase all chunks after the end chunk
         this->chunks.erase( this->chunks.begin() + (newLen/ShinyFileChunk::MAX_CHUNK_LEN) + 1, this->chunks.end() );
@@ -60,8 +60,8 @@ uint64_t ShinyMetaFile::truncate( uint64_t newLen ) {
         fs->setDirty();
     } else if( newLen > filelen ) {
         //Make this resize chunks so that they are large enough (max size)
-        uint64_t i = this->chunks.size();
-        uint64_t newSize = ceil(((double)newLen)/ShinyFileChunk::MAX_CHUNK_LEN);
+        size_t i = this->chunks.size();
+        size_t newSize = ceil(((double)newLen)/ShinyFileChunk::MAX_CHUNK_LEN);
         this->chunks.resize( newSize );
 
         //Resize the possibly not super long chunk
@@ -79,7 +79,7 @@ uint64_t ShinyMetaFile::truncate( uint64_t newLen ) {
     return newLen;
 }
 
-uint64_t ShinyMetaFile::getFileLen() {
+size_t ShinyMetaFile::getFileLen() {
     //File length is now implicit in ShinyFileChunk
     if( chunks.size() )
         return (chunks.size()-1)*ShinyFileChunk::MAX_CHUNK_LEN + chunks[chunks.size()-1]->getChunkLen();
@@ -93,7 +93,7 @@ bool ShinyMetaFile::sanityCheck( void ) {
     bool retVal = ShinyMetaNode::sanityCheck();
 
     //Then, we'll do sanity checks for all the chunks....
-    for( uint64_t i=0; i<this->chunks.size(); ++i ) {
+    for( size_t i=0; i<this->chunks.size(); ++i ) {
         //Only force flush if this chunk wasn't previously available
         bool forceFlush = !this->chunks[i]->isAvailable();
         
@@ -123,12 +123,12 @@ const char * ShinyMetaFile::getCachePrefix( void ) {
     return this->cachePrefix;
 }
 
-uint64_t ShinyMetaFile::serializedLen( void ) {
+size_t ShinyMetaFile::serializedLen( void ) {
     //Start off with the basic length
-    uint64_t len = ShinyMetaNode::serializedLen();
+    size_t len = ShinyMetaNode::serializedLen();
     
     //add on sizeof number of chunks
-    len += sizeof(uint64_t);
+    len += sizeof(size_t);
     
     //add on hashes for each chunk
     len += sizeof(Chunkhash)*this->chunks.size();
@@ -143,15 +143,15 @@ void ShinyMetaFile::serialize( char *output ) {
     ShinyMetaNode::serialize(output);
     
     //Now, add the ShinyFileChunks on;
-    uint64_t len = ShinyMetaNode::serializedLen();
+    size_t len = ShinyMetaNode::serializedLen();
     
     //First, store the number of chunks;
-    *((uint64_t *)(output + len)) = this->chunks.size();
-    len += sizeof(uint64_t);
+    *((size_t *)(output + len)) = this->chunks.size();
+    len += sizeof(size_t);
     
     if( !this->chunks.empty() ) {
         //Next, store out the file hashes
-        for( uint64_t i=0; i<this->chunks.size(); ++i ) {
+        for( size_t i=0; i<this->chunks.size(); ++i ) {
             memcpy( output + len, this->chunks[i]->getHash(), sizeof(Chunkhash) );
             len += sizeof(Chunkhash);
         }
@@ -162,17 +162,17 @@ void ShinyMetaFile::serialize( char *output ) {
 }
 
 void ShinyMetaFile::unserialize( const char * input ) {
-    uint64_t len = 0;
+    size_t len = 0;
 
     //Let's get the number of chunks:    
-    uint64_t numChunks = *((uint64_t *)(input + len));
-    len += sizeof(uint64_t);
+    size_t numChunks = *((size_t *)(input + len));
+    len += sizeof(size_t);
 
     if( numChunks ) {
         //reserve that in memory so that we don't over-allocate
         this->chunks.resize( numChunks );
         
-        for( uint64_t i=0; i<numChunks-1; ++i ) {
+        for( size_t i=0; i<numChunks-1; ++i ) {
             this->chunks[i] = new ShinyFileChunk( this, i, ShinyFileChunk::MAX_CHUNK_LEN,  *((Chunkhash *)(input + len)) );
             len += sizeof(Chunkhash);
         }
@@ -186,11 +186,11 @@ void ShinyMetaFile::unserialize( const char * input ) {
 
 void ShinyMetaFile::flush( void ) {
     //Pass it on to all the chunks
-    for( uint64_t i=0; i<this->chunks.size(); ++i )
+    for( size_t i=0; i<this->chunks.size(); ++i )
         this->chunks[i]->flush();
 }
 
-uint64_t ShinyMetaFile::read( uint64_t offset, char * buffer, uint64_t len ) {
+size_t ShinyMetaFile::read( uint64_t offset, char * buffer, size_t len ) {
     //First off, if we're _starting_ outside of the realm of operation, return zero
     uint64_t startChunk = offset/ShinyFileChunk::MAX_CHUNK_LEN;
     if( startChunk >= this->chunks.size() )
@@ -201,7 +201,7 @@ uint64_t ShinyMetaFile::read( uint64_t offset, char * buffer, uint64_t len ) {
         return 0;
     
     //Accumulate data into buffer and dataRead
-    uint64_t dataRead = 0;
+    size_t dataRead = 0;
     
     //Do this to get the offset into the first chunk, then we'll set it to zero afterward
     offset = offset % ShinyFileChunk::MAX_CHUNK_LEN;
@@ -223,7 +223,7 @@ uint64_t ShinyMetaFile::read( uint64_t offset, char * buffer, uint64_t len ) {
 }
 
 
-uint64_t ShinyMetaFile::write( uint64_t offset, const char * buffer, uint64_t len ) {
+size__t ShinyMetaFile::write( uint64_t offset, const char * buffer, size_t len ) {
     //First off, if we're extending the current file size, then let's do it!
     if( offset + len > this->getFileLen() )
         this->truncate( offset + len );
@@ -240,7 +240,7 @@ uint64_t ShinyMetaFile::write( uint64_t offset, const char * buffer, uint64_t le
         return 0;
     
     //Accumulate the amount of data written into dataWritten
-    uint64_t dataWritten = 0;
+    size_t dataWritten = 0;
     
     //Do this to get the offset into the first chunk, then we'll set it to zero afterward
     offset = offset % ShinyFileChunk::MAX_CHUNK_LEN;

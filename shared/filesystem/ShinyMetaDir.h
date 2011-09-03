@@ -32,7 +32,7 @@ public:
     //Performs random sanity checks
     virtual bool sanityCheck();
     
-    virtual uint64_t serializedLen( void );
+    virtual size_t serializedLen( void );
     virtual void serialize( char * output );
     virtual ShinyNodeType getNodeType( void );
 

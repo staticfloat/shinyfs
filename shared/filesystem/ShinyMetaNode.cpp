@@ -228,9 +228,9 @@ bool ShinyMetaNode::sanityCheck() {
     return retVal;
 }
 
-uint64_t ShinyMetaNode::serializedLen() {
+size_t ShinyMetaNode::serializedLen() {
     //First, the size of the inode pointers
-    uint64_t len = sizeof(inode);
+    size_t len = sizeof(inode);
 
     //Time markers
     len += sizeof(ctime) + sizeof(atime) + sizeof(mtime);
@@ -238,8 +238,8 @@ uint64_t ShinyMetaNode::serializedLen() {
     //Then, permissions and user/group ids
     len += sizeof(uid) + sizeof(gid) + sizeof(permissions);
     
-    //Number of parents + parent inodes
-    len += sizeof(uint64_t) + sizeof(inode_t);
+    //parent inode
+    len += sizeof(parent);
     
     //Finally, filename
     len += strlen(name) + 1;
@@ -265,8 +265,8 @@ void ShinyMetaNode::serialize(char * output) {
     write_and_increment( this->ctime, uint64_t );
     write_and_increment( this->atime, uint64_t );
     write_and_increment( this->mtime, uint64_t );
-    write_and_increment( this->uid, uint32_t );
-    write_and_increment( this->gid, uint32_t );
+    write_and_increment( this->uid, user_t );
+    write_and_increment( this->gid, group_t );
     write_and_increment( this->permissions, uint16_t );
     write_and_increment( this->parent, inode_t );
     

@@ -4,6 +4,7 @@
 
 #include <tr1/unordered_map>
 #include "ShinyMetaNode.h"
+#include "ShinyUser.h"
 
 /*
  * Le old shiny filesystem.  A tree of metadata information, with all the logic therein
@@ -66,7 +67,7 @@ public:
     void flush( bool serializeAndSave = true );
 
     //Serializes the entire tree into a bytestream, returning the length of said stream
-    uint64_t serialize( char ** output );
+    size_t serialize( char ** output );
     
     //Debug call to print out filesystem recursively.  Uses printDir(), etc....
     void print( void );
@@ -90,6 +91,8 @@ protected:
 private:
     //Helper function to unserialize
     void unserialize( const char * input );
+    
+    std::list<ShinyUser *> users;
 
     //Helper function for searching nodes that belong to a parent
     ShinyMetaNode * findMatchingChild( ShinyMetaDir * parent, const char * childName, uint64_t childNameLen );

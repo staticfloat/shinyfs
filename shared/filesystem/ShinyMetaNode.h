@@ -76,7 +76,7 @@ public:
     virtual bool sanityCheck( void );
     
     //Returns the length of a serialization on this node
-    virtual uint64_t serializedLen( void );
+    virtual size_t serializedLen( void );
     
     //Serializes into the buffer [output]
     virtual void serialize( char * output );

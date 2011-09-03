@@ -82,9 +82,9 @@ bool ShinyMetaDir::sanityCheck() {
     return retVal;
 }
 
-uint64_t ShinyMetaDir::serializedLen( void ) {
+size_t ShinyMetaDir::serializedLen( void ) {
     //Return base amount + an inode for each child node, plus a counter for the number of nodes we have in this dir.
-    uint64_t len = ShinyMetaNode::serializedLen();
+    size_t len = ShinyMetaNode::serializedLen();
     len += sizeof(inode_t)*(1 + this->nodes.size() );
     return len;
 }
@@ -95,8 +95,8 @@ void ShinyMetaDir::serialize( char * output ) {
     output += ShinyMetaNode::serializedLen();
     
     //Now, save out the list.  First, the number of inodes contained
-    *((uint64_t *)output) = nodes.size();
-    output += sizeof(uint64_t);
+    *((size_t *)output) = nodes.size();
+    output += sizeof(size_t);
     
     //Next, we pound out all the inodes contained in nodes
     inode_t * inode_output = (inode_t *)output;
@@ -108,8 +108,8 @@ void ShinyMetaDir::serialize( char * output ) {
 
 void ShinyMetaDir::unserialize(const char *input) {
     //Next, the number of nodes to read in
-    uint64_t numNodes = *((uint64_t *)input);
-    input += sizeof(uint64_t);
+    size_t numNodes = *((size_t *)input);
+    input += sizeof(size_t);
     
     //Finally, read in all the nodes
     for( uint64_t i = 0; i<numNodes; ++i ) {

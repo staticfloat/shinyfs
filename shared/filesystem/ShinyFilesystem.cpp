@@ -110,7 +110,7 @@ ShinyMetaNode * ShinyFilesystem::findNode( const char * path ) {
     return currNode;
 }
 
-ShinyMetaNode * ShinyFilesystem::findNode( uint64_t inode ) {
+ShinyMetaNode * ShinyFilesystem::findNode( inode_t inode ) {
     std::tr1::unordered_map<inode_t, ShinyMetaNode *>::iterator itty = this->nodes.find( inode );
     if( itty != this->nodes.end() )
         return (*itty).second;
@@ -165,10 +165,10 @@ bool ShinyFilesystem::sanityCheck( void ) {
     return retVal;
 }
 
-uint64_t ShinyFilesystem::serialize( char ** store ) {
+size_t ShinyFilesystem::serialize( char ** store ) {
     //First, we're going to find the total length of this serialized monstrosity
     //We'll start with the version number
-    uint64_t len = sizeof(uint16_t);
+    size_t len = sizeof(uint16_t);
     
     //Next, what ShinyFilesystem takes up itself
     //       nextInode        numNodes
@@ -192,8 +192,8 @@ uint64_t ShinyFilesystem::serialize( char ** store ) {
     *((inode_t *)output) = this->nextInode;
     output += sizeof(inode_t);
     
-    *((uint64_t *)output) = nodes.size();
-    output += sizeof(uint64_t);
+    *((size_t *)output) = nodes.size();
+    output += sizeof(size_t);
 
     //Iterate through all nodes, writing them out
     for( std::tr1::unordered_map<inode_t, ShinyMetaNode *>::iterator itty = nodes.begin(); itty != nodes.end(); ++itty ) {
@@ -226,10 +226,10 @@ void ShinyFilesystem::unserialize(const char *input) {
     this->nextInode = *((inode_t *)input);
     input += sizeof(inode_t);
     
-    uint64_t numInodes = *((uint64_t *)input);
-    input += sizeof(uint64_t);
+    size_t numInodes = *((size_t *)input);
+    input += sizeof(size_t);
     
-    for( uint64_t i=0; i<numInodes; ++i ) {
+    for( size_t i=0; i<numInodes; ++i ) {
         //First, read in the uint8_t of type information;
         uint8_t type = *((uint8_t *)input);
         input += sizeof(uint8_t);
@@ -264,7 +264,7 @@ void ShinyFilesystem::flush( bool serializeAndSave ) {
     //If we should save it out to disk
     if( serializeAndSave ) {
         char * output;
-        uint64_t len = this->serialize( &output );
+        size_t len = this->serialize( &output );
 
         //Open it for writing, write it, and close
         int fd = open( this->fscache, O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU | S_IRWXG | S_IROTH );

@@ -26,8 +26,8 @@ public:
     virtual void setName( const char * newName );
     
     //Set a new length for this file (is implicitly called by write())
-    virtual uint64_t truncate( uint64_t newLen );
-    virtual uint64_t getFileLen();
+    virtual size_t truncate( size_t newLen );
+    virtual size_t getFileLen();
     
     //Performs various checks to make sure this node is all right
     virtual bool sanityCheck();
@@ -38,7 +38,7 @@ public:
     virtual const char * getCachePrefix( void );
     
     //Get the length of the serialized output first
-    virtual uint64_t serializedLen( void );
+    virtual size_t serializedLen( void );
     virtual void serialize( char * output );
     
     //Pass flush() messages on to chunks
@@ -47,8 +47,8 @@ public:
     //Returns how many bytes we were able to read/write.  Note that both operations
     //require us to have the files loaded in the segments where we read from/write to.
     //There is no writing to files that we don't have yet yet.
-    virtual uint64_t read( uint64_t offset, char * buffer, uint64_t len );
-    virtual uint64_t write( uint64_t offset, const char * buffer, uint64_t len );
+    virtual size_t read( uint64_t offset, char * buffer, size_t len );
+    virtual size_t write( uint64_t offset, const char * buffer, size_t len );
     
     //Always returns SHINY_NODE_TYPE_FILE, imagine that!
     virtual ShinyNodeType getNodeType( void );
