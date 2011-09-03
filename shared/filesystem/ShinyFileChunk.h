@@ -9,7 +9,7 @@
 
 using namespace CryptoPP;
 //This is a hash of a small chunk of a file
-typedef SHA256 Chunkhasher;
+typedef SHA224 Chunkhasher;
 typedef unsigned char Chunkhash[Chunkhasher::DIGESTSIZE];
 
 
@@ -94,7 +94,6 @@ private:
     
     //Are we dirty?
     bool dirty;
-    
 public:
     //Chunks are limited to 256KB.
     const static chunklen_t MAX_CHUNK_LEN = 256*1024;
