@@ -38,8 +38,10 @@ ShinyMetaNode::ShinyMetaNode(ShinyFilesystem * fs, const char * newName) {
     this->setPermissions( S_IRWXU | S_IRWXG | S_IRWXO );   //aka rwxrwxrwx
     
     //Set these to nothing right now
-    LOG( "need to init uid/gid!\n" );
+    TODO( "need to init uid/gid!\n" );
     this->uid = this->gid = NULL;
+    
+    TODO( "Possibly change this to not have its own pointer to fs, but call back up till a special node which _does_ have the fs?  (Something like every 40 directories down, make it a special directory?)" );
 }
 
 ShinyMetaNode::ShinyMetaNode( const char * serializedInput, ShinyFilesystem * fs ) : fs( fs ), path( NULL ) {
@@ -88,7 +90,8 @@ void ShinyMetaNode::setName( const char * newName ) {
     this->name = new char[strlen(newName)+1];
     strcpy( this->name, newName );
     
-    fs->setDirty();
+    TODO( "Change this to work on the parent!" );
+    //fs->setDirty();
 }
 
 const char * ShinyMetaNode::getName( void ) {
@@ -144,7 +147,8 @@ const char * ShinyMetaNode::getPath() {
 
 void ShinyMetaNode::setPermissions( uint16_t newPermissions ) {
     this->permissions = newPermissions;
-    fs->setDirty();
+    TODO( "Change this to work on the parent!" );
+    //fs->setDirty();
 }
 
 uint16_t ShinyMetaNode::getPermissions() {

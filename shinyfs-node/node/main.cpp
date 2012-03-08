@@ -4,17 +4,33 @@
 #include "protocol/ShinyPartitioner.h"
 #include "ShinyNode.h"
 
-#include "ShinyMetaNode.h"
-#include "ShinyMetaRootDir.h"
-#include "ShinyMetaFile.h"
-#include "ShinyMetaDir.h"
+#include "filesystem/ShinyMetaNode.h"
+#include "filesystem/ShinyMetaRootDir.h"
+#include "filesystem/ShinyMetaFile.h"
+#include "filesystem/ShinyMetaDir.h"
+#include "protocol/ShinyNetwork.h"
 
-#define NODE_VERSION        "ShinyFS Node v0.2"
+#include "ShinyFuse.h"
+
+//#include "filesystem/
+
+#define NODE_VERSION        "ShinyFS Node v0.2.1"
 
 #define TRACKER_ADDRESS     "127.0.0.1"
 
+int main (int argc, const char * argv[]) {
+//    getGlobalLogger()->setPrintLoc(0);
+    LOG( "%s starting up....", NODE_VERSION );
+    
+    ShinyFilesystem fs;
+    
+    ShinyFuse::init( &fs );
+    return 0;
+}
 
-void printMap( ShinyMetaFilesystem * fs, ShinyMetaDir * root, std::map<inode_t, const std::list<ShinyPeer *> *> * map, uint64_t depth = 0 ) {
+
+/*
+void printMap( ShinyFilesystem * fs, ShinyMetaDir * root, std::map<inode_t, const std::list<ShinyPeer *> *> * map, uint64_t depth = 0 ) {
     const std::list<inode_t> * children = root->getListing();
     for( std::list<inode_t>::const_iterator itty = children->begin(); itty != children->end(); ++itty ) {
         for( uint64_t i=0;i<depth;++i )
@@ -34,7 +50,7 @@ void printMap( ShinyMetaFilesystem * fs, ShinyMetaDir * root, std::map<inode_t, 
 }
 
 
-std::map<inode_t, const std::list<ShinyPeer *> *> * testPartitioning( ShinyMetaFilesystem * fs, std::list<inode_t> * rootRegion, std::list<ShinyPeer *> * peers, ShinyPeer * us ) {
+std::map<inode_t, const std::list<ShinyPeer *> *> * testPartitioning( ShinyFilesystem * fs, std::list<inode_t> * rootRegion, std::list<ShinyPeer *> * peers, ShinyPeer * us ) {
     ShinyPartitioner part( fs, rootRegion, peers, us );
     
     const std::map< std::list<inode_t> *, std::list<ShinyPeer *> > * partitioning = part.getRegionPeers();
@@ -78,35 +94,36 @@ std::map<inode_t, const std::list<ShinyPeer *> *> * testPartitioning( ShinyMetaF
         }
 
     }
-/*    
-    for( std::map< std::list<inode_t> *, std::list<ShinyPeer *> >::const_iterator itty = partitioning->begin(); itty != partitioning->end(); ++itty ) {
-        for( std::list<inode_t>::iterator inode_itty = (*itty).first->begin(); inode_itty != (*itty).first->end(); ++inode_itty )
-            (*inodeToPeer)[*inode_itty] = new std::list<ShinyPeer *>( ((*itty).second) );
-    }*/
+
     return inodeToPeer;
 }
 
 int main (int argc, const char * argv[]) {
     getGlobalLogger()->setPrintLoc(0);
     LOG( "%s starting up....", NODE_VERSION );
-/*
-    //Create our context and sockets
-    zmq::context_t context(1);
     
-    //Create the req socket to talk to the tracker
-    zmq::socket_t tracker( context, ZMQ_REQ );
-    tracker.connect( "tcp://" TRACKER_ADDRESS ":5041" );
+    LOG( "Sometime, search through and replace list with slist where you can" );
+
+    char * serializedData = NULL;
+    FILE * fd = fopen( "serializedData.txt", "r" );
+    if( fd ) {
+        fseeko( fd, 0, SEEK_END );
+        uint64_t size = ftello(fd);
+        serializedData = new char[size];
+        fseeko( fd, 0, SEEK_SET );
+        fread( (void *)serializedData, size, 1, fd );
+        fclose(fd);
+    }
     
-    //Create the SUB socket to listen to the tracker's updates
-    zmq::socket_t sub( context, ZMQ_SUB );
-    sub.connect( "tcp://" TRACKER_ADDRESS ":5040" );
-*/
-    ShinyMetaFilesystem fs;
+    ShinyFilesystem fs( serializedData );
+    if( serializedData ) {
+        delete( serializedData );
+        serializedData = NULL;
+    } else {
+        ShinyMetaRootDir * root = (ShinyMetaRootDir *) fs.findNode("/");
+        ShinyMetaFile * f00 = new ShinyMetaFile( &fs, "f00", root );
     
-    ShinyMetaRootDir * root = (ShinyMetaRootDir *) fs.findNode("/");
-    
-    ShinyMetaFile * f0 = new ShinyMetaFile( &fs, "f00", root );
-    ShinyMetaDir * dir0 = new ShinyMetaDir( &fs, "dir0", root );
+/*  ShinyMetaDir * dir0 = new ShinyMetaDir( &fs, "dir0", root );
     new ShinyMetaFile( &fs, "f01", dir0 );
     new ShinyMetaFile( &fs, "f02", dir0 );
     new ShinyMetaFile( &fs, "f03", dir0 );
@@ -119,11 +136,25 @@ int main (int argc, const char * argv[]) {
         new ShinyMetaFile( &fs, name, dir1 );
     }
     dir1->addNode( f0 );
-
+//
+    
+        f00->write( 0, "This is a test\n", 16 );
+        f00->write( ShinyFileChunk::MAX_CHUNK_LEN - 10, "This is also a test\n", 20 );
+    }
     fs.print();
-    fs.sanityCheck();
+    fs.flush();
+    if( !fs.sanityCheck() )
+        WARN( "Sanity check failed!" );
+
+    ShinyMetaFile * f00 = (ShinyMetaFile *) fs.findNode("/f00");
+    char buffer[1024];
+    uint64_t bytes_read = f00->read( ShinyFileChunk::MAX_CHUNK_LEN - 10, buffer, 20 );
+    buffer[bytes_read] = 0;
+    printf( "%s\n", buffer );
     
     
+    
+/*
     //Make 3 dummy peers
     std::list<ShinyPeer *> peers;
     peers.push_back( new ShinyPeer("a") );
@@ -140,6 +171,14 @@ int main (int argc, const char * argv[]) {
     
     for( std::list<ShinyPeer *>::iterator itty = peers.begin(); itty != peers.end(); ++itty )
         delete( *itty );
+/
+
+    fd = fopen( "serializedData.txt", "w" );
+    uint64_t serializedLen = fs.serialize( &serializedData );
+    fwrite( serializedData, serializedLen, 1, fd );
+    fclose( fd );
+
+    
     return 0;
 }
-
+*/

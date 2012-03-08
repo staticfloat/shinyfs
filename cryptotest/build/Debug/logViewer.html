@@ -1,0 +1,45 @@
+<html>
+<head>
+<title>Log Viewer v0.1</title>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="jquery-ui.js"></script>
+
+<style type="text/css">
+#FOOTER {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+}
+
+.LOGITEM {
+    padding: 1px 4px 1px 4px;
+    border-width:1px;
+    border-style:solid;
+    border-color:#666666;
+    background-color:#eeeeee
+}
+</style>
+
+<script type="text/javascript">
+function jLog( debugOut, sticky ) {
+	if( !$('#FOOTER').length )
+		$('body').append( $('<div id="FOOTER"</div>' ) );
+	
+	logitem = $('<div class="LOGITEM"></div>').append( debugOut );
+	logitem = logitem.prepend( $('<a href="#">[X]</a>').click( function() {
+		$(this).parent().stop( true, true).fadeTo('slow', 0).slideUp( 'slow' );
+	}));
+	
+	$(logitem).hide().fadeIn( 1000, function() {
+		if( !sticky )
+			$(this).delay( 5000 ).fadeTo('slow', 0).slideUp( 'slow' );
+	});
+	
+	$('#FOOTER').prepend( logitem );
+}
+</script>
+</head>
+<body onLoad="jLog('This is a test!');">
+<div id="funcList"></div>
+</body>
+</html>

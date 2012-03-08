@@ -8,28 +8,34 @@
 #include <sys/stat.h>
 #include <sys/fcntl.h>
 
-ShinyFilesystem::ShinyFilesystem( const char * serializedData, const char * filecache ) : nextInode(1), root(NULL) {
+//ShinyFilesystem::ShinyFilesystem( inode_t nextInode, inode_t nextInodeRange, const char * filecache, const char * serializedData ) : nextInode(nextInode), nextInodeRange(nextInodeRange), root(NULL) {
+/*
+ ShinyFilesystem constructor, takes in path to cache location? No, I need to split this out into a separate cache object.....
+ */
+ShinyFilesystem::ShinyFilesystem( const char * filecache ) {
     //Check if the filecache exists
     struct stat st;
     if( stat( filecache, &st ) != 0 ) {
         WARN( "filecache %s does not exist, creating a new one!", filecache );
-        mkdir( filecache, 0x1ff );
+        mkdir( filecache, 0700 );
     }
     
-    //Finally, copy it in so we know where to find it!
+    //copy the filecache location in so we know where to find it!
     this->filecache = new char[strlen(filecache)+1];
     strcpy( this->filecache, filecache );
-    this->fscache = new char[strlen(filecache)+1+8+1];
-    sprintf( this->fscache, "%s/fs.cache", this->filecache );
-
-
+    
+    TODO( "Eventually, add back in the ability to unserialize a ShinyFS" );
+/*
+    //serializedData would be nonzero in this case if we're constructing from net-based data...
     if( !serializedData ) {
-        //Let's look in the filecache
-        if( stat( this->fscache, &st ) != 0 ) {
-            WARN( "fscache %s does not exist, starting over....", this->fscache );
+        //Let's look and see if an fscache exists...
+        char * fscache = new char[strlen(filecache)+1+8+1];
+        sprintf( fscache, "%s/%s", this->filecache, FSCACHE_POSTFIX );
+        if( stat( fscache, &st ) != 0 ) {
+            WARN( "fscache %s does not exist, starting over....", fscache );
             root = new ShinyMetaRootDir(this);
         } else {
-            int fd = open( this->fscache, O_RDONLY );
+            int fd = open( fscache, O_RDONLY );
             uint64_t len = lseek(fd, 0, SEEK_END);
             lseek(fd,0,SEEK_SET);
             
@@ -41,19 +47,29 @@ ShinyFilesystem::ShinyFilesystem( const char * serializedData, const char * file
             unserialize( serializedData );
             delete( serializedData );
         }
+        delete( fscache );
     } else
         unserialize( serializedData );
-    
-     LOG( "Need to add prune() call to get rid of orphaned inodes, as well as file caches that have been deleted!" );
+*/
+    TODO( "Think about better data structures than e.g. list -- For what?" );
+
+    TODO( "Need to add prune() call to get rid of orphaned inodes, as well as file caches that have been deleted!" );
+    TODO( "prune() and pruning file caches should be a part of the cache object" );
 }
 
 ShinyFilesystem::~ShinyFilesystem() {
     //Clear out the nodes (remember that when a node dies, it automagically removes itself from the fs, just like it adds itself)
-    while( !this->nodes.empty() )
-        delete( this->nodes.begin()->second );
+    delete( this->root );
+    
+    if( !this->nodes.empty() ) {
+        ERROR( "%lu nodes weren't killed by killing the root:", this->nodes.size() );
+        while( !this->nodes.empty() ) {
+            ERROR( "  %s [%llu]", this->nodes.begin()->second->getName(), this->nodes.begin()->first );
+            delete( this->nodes.begin()->second );
+        }
+    }
 }
 
-#define min( x, y ) ((x) < (y) ? (x) : (y))
 //Searches a ShinyMetaDir's listing for a name, returning the child
 ShinyMetaNode * ShinyFilesystem::findMatchingChild( ShinyMetaDir * parent, const char * childName, uint64_t childNameLen ) {
     const std::list<inode_t> * list = parent->getListing();
@@ -76,7 +92,7 @@ ShinyMetaNode * ShinyFilesystem::findMatchingChild( ShinyMetaDir * parent, const
 
 ShinyMetaNode * ShinyFilesystem::findNode( const char * path ) {
     if( path[0] != '/' ) {
-        ERROR( "path %s is unacceptable, must be an absolute path!", path );
+        WARN( "path %s is unacceptable, must be an absolute path!", path );
         return NULL;
     }
     
@@ -141,14 +157,6 @@ ShinyMetaDir * ShinyFilesystem::findParentNode( const char *path ) {
     return ret;
 }
 
-void ShinyFilesystem::setDirty( void ) {
-    this->dirty = true;
-}
-
-bool ShinyFilesystem::isDirty( void ) {
-    return this->dirty;
-}
-
 bool ShinyFilesystem::sanityCheck( void ) {
     bool retVal = true;
     //Call sanity check on all of them.
@@ -185,7 +193,7 @@ size_t ShinyFilesystem::serialize( char ** store ) {
     
     //Now, actually write into that buffer space
     //First, version number
-    *((uint16_t *)output) = ShinyFilesystem::VERSION;
+    *((uint16_t *)output) = this->getVersion();
     output += sizeof(uint16_t);
     
     //Next, nextInode, followed by the number of nodes we're writing out
@@ -197,7 +205,7 @@ size_t ShinyFilesystem::serialize( char ** store ) {
 
     //Iterate through all nodes, writing them out
     for( std::tr1::unordered_map<inode_t, ShinyMetaNode *>::iterator itty = nodes.begin(); itty != nodes.end(); ++itty ) {
-        //We're adding this in out here, because it's something the filesystem needs to be aware of,
+        //We're adding this in output here, because it's something the filesystem needs to be aware of,
         //not something the node should handle itself
         *((uint8_t *)output) = (*itty).second->getNodeType();
         output += sizeof(uint8_t);
@@ -207,7 +215,7 @@ size_t ShinyFilesystem::serialize( char ** store ) {
         output += (*itty).second->serializedLen();
     }
     
-    this->dirty = false;
+    //this->dirty = false;
     return len;
 }
 
@@ -217,8 +225,8 @@ void ShinyFilesystem::unserialize(const char *input) {
         throw "Stuff was in nodes!";
     }
     
-    if( *((uint16_t *)input) != ShinyFilesystem::VERSION ) {
-        WARN( "Warning:  Serialized filesystem is of version %d, whereas we are running version %d!", *((uint16_t *)input), ShinyFilesystem::VERSION );
+    if( *((uint16_t *)input) != this->getVersion() ) {
+        WARN( "Warning:  Serialized filesystem is of version %d, whereas we are running version %d!", *((uint16_t *)input), this->getVersion() );
     }
     input += sizeof(uint16_t);
     
@@ -258,8 +266,9 @@ void ShinyFilesystem::unserialize(const char *input) {
 void ShinyFilesystem::flush( bool serializeAndSave ) {
     //I _could_ have just iterated over every inode in the fs....... orrrrr, I could do this.  :P
     //Besides, this will work better for partial tree loading anyway.  :P
-    if( this->isDirty() )
-        this->root->flush();
+//    if( this->isDirty() )
+    TODO( "Flesh out the flushing!  (lol)" );
+    this->root->flush();
     
     //If we should save it out to disk
     if( serializeAndSave ) {
@@ -267,13 +276,17 @@ void ShinyFilesystem::flush( bool serializeAndSave ) {
         size_t len = this->serialize( &output );
 
         //Open it for writing, write it, and close
-        int fd = open( this->fscache, O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU | S_IRWXG | S_IROTH );
+        char * fscache = new char[strlen(filecache)+1+8+1];
+        sprintf( fscache, "%s/%s", this->filecache, FSCACHE_POSTFIX );
+
+        int fd = open( fscache, O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU | S_IRWXG | S_IROTH );
         if( !fd ) {
-            ERROR( "Could not flush serialized output to %s!", this->fscache );
+            ERROR( "Could not flush serialized output to %s!", fscache );
         } else {
             write( fd, output, len );
             close( fd );
         }
+        delete( fscache );
     }
 }
 
@@ -284,9 +297,9 @@ inode_t ShinyFilesystem::genNewInode() {
     inode_t probeNext = this->nextInode + 1;
     //Just linearly probe for the next open inode
     while( this->nodes.find(probeNext) != this->nodes.end() ) {
-        if( ++probeNext == this->nextInode ) {
-            ERROR( "ShinyFilesystem->genNewInode(): inode space exhausted!\n" );
-            throw "inode space exhausted!";
+        if( ++probeNext >= this->nextInode + this->inodeRange ) {
+            ERROR( "We need to ask for more inode space here!" );
+            return NULL;
         }
     }
     inode_t toReturn = this->nextInode;
@@ -321,4 +334,8 @@ void ShinyFilesystem::printDir( ShinyMetaDir * dir, const char * prefix ) {
 
 void ShinyFilesystem::print( void ) {
     printDir( (ShinyMetaDir *)root, "" );
+}
+
+const uint64_t ShinyFilesystem::getVersion() {
+    return SHINYFS_VERSION;
 }

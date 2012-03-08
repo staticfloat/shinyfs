@@ -6,9 +6,9 @@
 #include "ShinyPeer.h"
 #include "../filesystem/ShinyMetaNode.h"
 #include "../filesystem/ShinyMetaDir.h"
-#include "../filesystem/ShinyMetaFilesystem.h"
+#include "../filesystem/ShinyFilesystem.h"
 
-//std::map< std::list<inode_t> *, std::list<ShinyPeer *> *> * partitionRegion( ShinyMetaFilesystem * fs, std::list<inode_t> * rootRegion, std::list<ShinyPeer *> * peers, ShinyPeer * us, std::map<inode_t, uint64_t> * weightMap = NULL );
+//std::map< std::list<inode_t> *, std::list<ShinyPeer *> *> * partitionRegion( ShinyFilesystem * fs, std::list<inode_t> * rootRegion, std::list<ShinyPeer *> * peers, ShinyPeer * us, std::map<inode_t, uint64_t> * weightMap = NULL );
 
 
 class ShinyPartitioner {
@@ -16,7 +16,7 @@ public:
     //Takes in a filesystem, and a list of peers to partition across.
     //Our local "root" is the dir over which we have control, and which we will start partitioning
     //peers should be sorted in order of desireability.  Sort by ping, randomly, whatever
-    ShinyPartitioner( ShinyMetaFilesystem *fs, std::list<inode_t> *rootRegion, std::list<ShinyPeer *> *peers, ShinyPeer * us );
+    ShinyPartitioner( ShinyFilesystem *fs, std::list<inode_t> *rootRegion, std::list<ShinyPeer *> *peers, ShinyPeer * us );
     
     ~ShinyPartitioner();
     
@@ -40,7 +40,7 @@ private:
     
     
     //Convenience handle to the actual fs object
-    ShinyMetaFilesystem * fs;
+    ShinyFilesystem * fs;
     
     //Convenience pointer to "us"
     ShinyPeer * us;

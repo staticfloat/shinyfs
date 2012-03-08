@@ -1,5 +1,8 @@
 #include "ShinyMsg.h"
 #include <base/Logger.h>
+#include <stdio.h>
+#include "ShinyPeer.h"
+
 
 #if defined( _DEBUG )
 
@@ -24,20 +27,13 @@
 #define CHECK_MORE( socket )
 #define CHECK_NOT_MORE( socket )
 #endif //_DEBUG
+/*
 
-#include <stdio.h>
-
-ShinyMsg::ShinyMsg( zmq::socket_t * socket ) {
+ShinyMsg::ShinyMsg( zmq::socket_t * socket, ShinyPeer * peer ) {
     try { 
         zmq::message_t msg;
         
-        //RECEIVE SENDER INFO
-        socket->recv( &msg );
-        //Don't do anything with it right now because we don't have a sender class yet
-
-        
         //RECEIVE MESSAGE TYPE
-        CHECK_MORE( socket );
         msg.rebuild();
         socket->recv( &msg );
         if( msg.size() != sizeof(unsigned char) ) {
@@ -45,17 +41,15 @@ ShinyMsg::ShinyMsg( zmq::socket_t * socket ) {
         } else
             memcpy( &this->msgType, msg.data(), sizeof(msgType) );
         
-        
         //RECEIVE DATA
         CHECK_MORE( socket );
         msg.rebuild();
         socket->recv( &msg );
-        
+
         datalen = msg.size();
         data = new char[datalen];
         void * temp = msg.data();
         memcpy( &data[0], temp, datalen );
-        
         CHECK_NOT_MORE( socket );
     } catch( zmq::error_t e ) {
         ERROR( "ZMQ error: %s", e.what() );
@@ -64,16 +58,20 @@ ShinyMsg::ShinyMsg( zmq::socket_t * socket ) {
     }
 }
 
-ShinyMsg::ShinyMsg( void * senderData, unsigned char msgType, const char * data, uint64_t datalen ) {
-    rebuild( senderData, msgType, data, datalen );
+ShinyMsg::ShinyMsg( unsigned char msgType, const char * data, uint64_t datalen ) {
+    this->msgType = msgType;
+    this->datalen = datalen;
+    this->data = new char[datalen];
+    memcpy( this->data, data, datalen );
+
 }
 
 ShinyMsg::~ShinyMsg() {
     delete( data );
 }
 
-const void * ShinyMsg::getSender() {
-    return senderData;
+const ShinyPeer * ShinyMsg::getPeer() {
+    return peer;
 }
 
 const unsigned char ShinyMsg::getMsgType() {
@@ -88,15 +86,7 @@ const uint64_t ShinyMsg::getDataLen() {
     return datalen;
 }
 
-void ShinyMsg::rebuild(void *senderData, const unsigned char msgType, const char *data, const uint64_t datalen) {
-    this->msgType = msgType;
-    this->senderData = senderData;
-    this->datalen = datalen;
-    this->data = new char[datalen];
-    memcpy( this->data, data, datalen );
-}
-
-void delete_dummy (void *data, void *hint) {
+void delete_dummy( void *data, void *hint ) {
     delete( (char *)data );
 }
 
@@ -122,3 +112,5 @@ void ShinyMsg::send( zmq::socket_t * socket ) {
         ERROR( "HHHWWWHHAAAT?!" );
     }
 }
+
+*/

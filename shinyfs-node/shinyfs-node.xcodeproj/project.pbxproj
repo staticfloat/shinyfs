@@ -19,9 +19,10 @@
 		564984BE13DF19BC00DFBE38 /* ShinyPartitioner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 564984BC13DF19BC00DFBE38 /* ShinyPartitioner.cpp */; };
 		564984D113E07A6200DFBE38 /* ShinyPeer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 564984D013E07A6200DFBE38 /* ShinyPeer.cpp */; };
 		5663423113FDDF0D00CCB743 /* ShinyFileChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5663423013FDDF0D00CCB743 /* ShinyFileChunk.cpp */; };
-		5689859A1404AF26002A506B /* ShinyCommunicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 568985991404AF26002A506B /* ShinyCommunicator.cpp */; };
+		5689859A1404AF26002A506B /* ShinyNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 568985991404AF26002A506B /* ShinyNetwork.cpp */; };
 		56BBF9ED140CCEF900B27799 /* ShinyUser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56BBF9EC140CCEF900B27799 /* ShinyUser.cpp */; };
 		56BBF9F3140D63DB00B27799 /* ShinyGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56BBF9F2140D63DB00B27799 /* ShinyGroup.cpp */; };
+		56DBB6B21416A2CC005F07AF /* ShinySelf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56DBB6B11416A2CC005F07AF /* ShinySelf.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -62,12 +63,15 @@
 		564984D013E07A6200DFBE38 /* ShinyPeer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyPeer.cpp; sourceTree = "<group>"; };
 		5663422E13FDDF0300CCB743 /* ShinyFileChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyFileChunk.h; sourceTree = "<group>"; };
 		5663423013FDDF0D00CCB743 /* ShinyFileChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyFileChunk.cpp; sourceTree = "<group>"; };
-		568985991404AF26002A506B /* ShinyCommunicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyCommunicator.cpp; sourceTree = "<group>"; };
-		5689859B1404AF2F002A506B /* ShinyCommunicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyCommunicator.h; sourceTree = "<group>"; };
+		568985991404AF26002A506B /* ShinyNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyNetwork.cpp; sourceTree = "<group>"; };
+		5689859B1404AF2F002A506B /* ShinyNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyNetwork.h; sourceTree = "<group>"; };
+		568FC9E81427A85D00213DD0 /* Shiny.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Shiny.h; path = ../shared/Shiny.h; sourceTree = "<group>"; };
 		56BBF9EA140CCEF000B27799 /* ShinyUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyUser.h; sourceTree = "<group>"; };
 		56BBF9EC140CCEF900B27799 /* ShinyUser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyUser.cpp; sourceTree = "<group>"; };
 		56BBF9F1140D63C600B27799 /* ShinyGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyGroup.h; sourceTree = "<group>"; };
 		56BBF9F2140D63DB00B27799 /* ShinyGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyGroup.cpp; sourceTree = "<group>"; };
+		56DBB6B11416A2CC005F07AF /* ShinySelf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinySelf.cpp; sourceTree = "<group>"; };
+		56DBB6B41416A2DE005F07AF /* ShinySelf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinySelf.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +88,7 @@
 		56103A0C13A04A7100CAC395 /* shared */ = {
 			isa = PBXGroup;
 			children = (
+				568FC9E81427A85D00213DD0 /* Shiny.h */,
 				56103A1013A04A8D00CAC395 /* filesystem */,
 				56103A1B13A04A8D00CAC395 /* protocol */,
 				56103A2413A04E1C00CAC395 /* base */,
@@ -108,6 +113,8 @@
 				56103A1613A04A8D00CAC395 /* ShinyFilesystem.h */,
 				56BBF9EC140CCEF900B27799 /* ShinyUser.cpp */,
 				56BBF9EA140CCEF000B27799 /* ShinyUser.h */,
+				56DBB6B11416A2CC005F07AF /* ShinySelf.cpp */,
+				56DBB6B41416A2DE005F07AF /* ShinySelf.h */,
 				56BBF9F2140D63DB00B27799 /* ShinyGroup.cpp */,
 				56BBF9F1140D63C600B27799 /* ShinyGroup.h */,
 			);
@@ -124,8 +131,8 @@
 				56103A1D13A04A8D00CAC395 /* ShinyMsg.h */,
 				564984D013E07A6200DFBE38 /* ShinyPeer.cpp */,
 				564984BA13DF169F00DFBE38 /* ShinyPeer.h */,
-				568985991404AF26002A506B /* ShinyCommunicator.cpp */,
-				5689859B1404AF2F002A506B /* ShinyCommunicator.h */,
+				568985991404AF26002A506B /* ShinyNetwork.cpp */,
+				5689859B1404AF2F002A506B /* ShinyNetwork.h */,
 			);
 			name = protocol;
 			path = ../shared/protocol;
@@ -226,10 +233,11 @@
 				564984BE13DF19BC00DFBE38 /* ShinyPartitioner.cpp in Sources */,
 				564984D113E07A6200DFBE38 /* ShinyPeer.cpp in Sources */,
 				5663423113FDDF0D00CCB743 /* ShinyFileChunk.cpp in Sources */,
-				5689859A1404AF26002A506B /* ShinyCommunicator.cpp in Sources */,
+				5689859A1404AF26002A506B /* ShinyNetwork.cpp in Sources */,
 				560D3157140598150074C0EF /* ShinyFuse.cpp in Sources */,
 				56BBF9ED140CCEF900B27799 /* ShinyUser.cpp in Sources */,
 				56BBF9F3140D63DB00B27799 /* ShinyGroup.cpp in Sources */,
+				56DBB6B21416A2CC005F07AF /* ShinySelf.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

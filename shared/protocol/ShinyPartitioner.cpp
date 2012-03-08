@@ -12,7 +12,7 @@ struct WeightSorter {
     std::map<inode_t, uint64_t> weightMap;
 };
 
-ShinyPartitioner::ShinyPartitioner( ShinyMetaFilesystem *fs, std::list<inode_t> *rootRegion, std::list<ShinyPeer *> *peers, ShinyPeer * us ) : fs( fs ), us( us ) {
+ShinyPartitioner::ShinyPartitioner( ShinyFilesystem *fs, std::list<inode_t> *rootRegion, std::list<ShinyPeer *> *peers, ShinyPeer * us ) : fs( fs ), us( us ) {
     //First things first, get the root of the filesystem;
     ShinyMetaDir * root = (ShinyMetaDir *)fs->findNode( "/" );
     if( !root ) {

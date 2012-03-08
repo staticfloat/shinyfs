@@ -1,0 +1,213 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		56BBF9F7140F6E6400B27799 /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56BBF9F5140F6E6400B27799 /* Logger.cpp */; };
+		56C9390513D556F6009428ED /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56C9390413D556F6009428ED /* main.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		56C938FE13D556F5009428ED /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		56BBF9F5140F6E6400B27799 /* Logger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Logger.cpp; path = ../../../../platform/base/Logger.cpp; sourceTree = "<group>"; };
+		56BBF9F6140F6E6400B27799 /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logger.h; path = ../../../../platform/base/Logger.h; sourceTree = "<group>"; };
+		56C9390013D556F6009428ED /* cryptotest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cryptotest; sourceTree = BUILT_PRODUCTS_DIR; };
+		56C9390413D556F6009428ED /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		56C938FD13D556F5009428ED /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		56C938F113D55443009428ED = {
+			isa = PBXGroup;
+			children = (
+				56C9390313D556F6009428ED /* cryptotest */,
+				56C9390113D556F6009428ED /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		56C9390113D556F6009428ED /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				56C9390013D556F6009428ED /* cryptotest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		56C9390313D556F6009428ED /* cryptotest */ = {
+			isa = PBXGroup;
+			children = (
+				56BBF9F5140F6E6400B27799 /* Logger.cpp */,
+				56BBF9F6140F6E6400B27799 /* Logger.h */,
+				56C9390413D556F6009428ED /* main.cpp */,
+			);
+			path = cryptotest;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		56C938FF13D556F5009428ED /* cryptotest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 56C9390713D556F6009428ED /* Build configuration list for PBXNativeTarget "cryptotest" */;
+			buildPhases = (
+				56C938FC13D556F5009428ED /* Sources */,
+				56C938FD13D556F5009428ED /* Frameworks */,
+				56C938FE13D556F5009428ED /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = cryptotest;
+			productName = cryptotest;
+			productReference = 56C9390013D556F6009428ED /* cryptotest */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		56C938F313D55443009428ED /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 56C938F613D55443009428ED /* Build configuration list for PBXProject "cryptotest" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 56C938F113D55443009428ED;
+			productRefGroup = 56C9390113D556F6009428ED /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				56C938FF13D556F5009428ED /* cryptotest */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		56C938FC13D556F5009428ED /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				56C9390513D556F6009428ED /* main.cpp in Sources */,
+				56BBF9F7140F6E6400B27799 /* Logger.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		56C938F813D55443009428ED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					/Users/sabae/Dropbox/coding/platform,
+					/usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				OTHER_LDFLAGS = "-lcryptopp";
+			};
+			name = Debug;
+		};
+		56C938F913D55443009428ED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					/Users/sabae/Dropbox/coding/platform,
+					/usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				OTHER_LDFLAGS = "-lcryptopp";
+			};
+			name = Release;
+		};
+		56C9390813D556F6009428ED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		56C9390913D556F6009428ED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		56C938F613D55443009428ED /* Build configuration list for PBXProject "cryptotest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				56C938F813D55443009428ED /* Debug */,
+				56C938F913D55443009428ED /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		56C9390713D556F6009428ED /* Build configuration list for PBXNativeTarget "cryptotest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				56C9390813D556F6009428ED /* Debug */,
+				56C9390913D556F6009428ED /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 56C938F313D55443009428ED /* Project object */;
+}

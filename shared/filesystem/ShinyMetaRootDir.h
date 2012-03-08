@@ -12,7 +12,6 @@ public:
     
     //Override this just as a performance boost to always return '/'
     virtual const char * getPath( void );
-    
 protected:
     //LOL, Override this guy so that we don't check if our parent (us) has us as a child
     virtual bool check_parentHasUsAsChild( void );

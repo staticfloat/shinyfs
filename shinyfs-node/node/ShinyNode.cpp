@@ -23,7 +23,7 @@ ShinyNode::ShinyNode( const char * new_filename, const char * peerAddr ) {
     close( fd );
     
     //Construct fs off of file data
-    this->fs = new ShinyMetaFilesystem( fileData );
+    this->fs = new ShinyFilesystem( fileData );
 }
 
 ShinyNode::ShinyNode() {
@@ -34,6 +34,7 @@ ShinyNode::ShinyNode() {
 
 
 void ShinyNode::flush() {
+    //only do this if we're actually dirty
     if( fs->isDirty() ) {
         //The fs will allocate for us, once it figures out how much space it's going to take
         char * serializedData;

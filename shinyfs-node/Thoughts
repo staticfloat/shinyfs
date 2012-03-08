@@ -78,6 +78,15 @@ Tree-based overlay network:
             access to the network is currently not authenticated, see future work
 
 
+Authentication and Encryption:
+    All users have their own RSA keys.  Authentication into the network by a node is
+    done with this key, after which symmetric encryption is setup between each set of nodes.
+    
+    These keys are stored into the [ShinyPeer] class, as each peer pair should have its own
+    random key.  All operations between nodes are therefore handled by the encryption, as the
+    symmetric keys they use are proof enough that the other peer is the user they say they are.
+
+
 
 
     Future work:
@@ -87,3 +96,5 @@ Tree-based overlay network:
             join the network unless a network operator adds the key, or another node
             already in the network "vouches" for it by signing the newcomer's key
             with their own key.
+
+

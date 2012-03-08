@@ -1,34 +1,15 @@
 #pragma once
-#ifndef SHINYMETANODE_H
-#define SHINYMETANODE_H
+#ifndef ShinyMetaNode_H
+#define ShinyMetaNode_H
 
 #include <stdint.h>
 #include <list>
+#include "ShinyUser.h"
+#include "ShinyGroup.h"
 
-/*
- A Node is both a directory and a file.  It is......... what ever you wish it to be
- 
- This is where most of the magic of files is hidden.
- (auto-generating new inode numbers, handling permissions, etc)
- 
- */
 
-//Structure to aid in permissions handling
-/*
-typedef union  {
-    typedef struct {
-        bool r,w,x;
-    } perm_struct;
-    uint16_t block;
-    struct {
-        perm_struct user;   //User  read/write/execute permissions
-        perm_struct group;  //Group read/write/execute permissions
-        perm_struct other;  //Other read/write/execute permissions
-    };
-} ShinyMetaPermissions;
-*/
-
-typedef uint64_t inode_t;
+typedef uint64_t    inode_t;
+#define INODE_MAX   UINT64_MAX
 
 
 //I should make these belong to ShinyMetaNode
@@ -105,7 +86,7 @@ protected:
     //Parent of this inode
     inode_t parent;
     
-    //Filename (+ extension, if you so wish)
+    //Filename (+ extension)
     char * name;
     
     //This is the path of the node, destroyed everytime the parent is set, and cached
@@ -118,9 +99,9 @@ protected:
     //file permissions
     uint16_t permissions;
     
-    //User/Group IDs (These will be managed by something higher-level)
-    uint32_t uid;
-    uint32_t gid;
+    //User/Group IDs
+    user_t uid;
+    group_t gid;
     
     //These should all be maintained tracker-side
     uint64_t ctime;                 //Time created          (Set by tracker on initial client write())

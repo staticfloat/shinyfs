@@ -2,9 +2,18 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:cryptotest/cryptotest.xcodeproj">
+      location = "group:extip/extip.xcodeproj">
    </FileRef>
    <FileRef
       location = "container:shinyfs-node/shinyfs-node.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:zmqtest/zmqcrashtest/zmqcrashtest.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:zmqtest/zmqtest/zmqtest.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:cryptotest/cryptotest.xcodeproj">
    </FileRef>
 </Workspace>

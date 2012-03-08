@@ -57,7 +57,8 @@ size_t ShinyMetaFile::truncate( size_t newLen ) {
         if( newLen != this->chunks[this->chunks.size()-1]->truncate( (chunklen_t)newLen ) ) {
             ERROR( "Couldn't truncate chunk %s to %llu!", this->chunks[this->chunks.size()-1]->getFileChunkPath(), newLen );
         }
-        fs->setDirty();
+        TODO( "Change this to work on the parent!" );
+        //fs->setDirty();
     } else if( newLen > filelen ) {
         //Make this resize chunks so that they are large enough (max size)
         size_t i = this->chunks.size();
@@ -74,7 +75,8 @@ size_t ShinyMetaFile::truncate( size_t newLen ) {
             if( newLen % ShinyFileChunk::MAX_CHUNK_LEN )
                 this->chunks[i] = new ShinyFileChunk( this, i, (chunklen_t) (newLen % ShinyFileChunk::MAX_CHUNK_LEN) );
         }
-        fs->setDirty();
+        TODO( "Change this to work on the parent!" );
+        //fs->setDirty();
     }
     return newLen;
 }
@@ -193,8 +195,9 @@ void ShinyMetaFile::flush( void ) {
 size_t ShinyMetaFile::read( uint64_t offset, char * buffer, size_t len ) {
     //First off, if we're _starting_ outside of the realm of operation, return zero
     uint64_t startChunk = offset/ShinyFileChunk::MAX_CHUNK_LEN;
-    if( startChunk >= this->chunks.size() )
+    if( startChunk >= this->chunks.size() ) {
         return 0;
+    }
     
     //If we don't have the starting chunk, return zero
     if( !this->chunks[startChunk]->isAvailable() )
@@ -223,7 +226,7 @@ size_t ShinyMetaFile::read( uint64_t offset, char * buffer, size_t len ) {
 }
 
 
-size__t ShinyMetaFile::write( uint64_t offset, const char * buffer, size_t len ) {
+size_t ShinyMetaFile::write( uint64_t offset, const char * buffer, size_t len ) {
     //First off, if we're extending the current file size, then let's do it!
     if( offset + len > this->getFileLen() )
         this->truncate( offset + len );

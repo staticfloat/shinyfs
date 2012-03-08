@@ -1,7 +1,7 @@
 #ifndef SHINYNODE_H
 #define SHINYNODE_H
 
-#include "ShinyMetaFilesystem.h"
+#include "ShinyFilesystem.h"
 
 class ShinyNode {
 public:
@@ -17,7 +17,7 @@ public:
     void flush();
 private:
     char * filename;
-    ShinyMetaFilesystem * fs;
+    ShinyFilesystem * fs;
 };
 
 

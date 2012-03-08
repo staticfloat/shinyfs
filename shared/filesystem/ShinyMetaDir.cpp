@@ -34,7 +34,9 @@ void ShinyMetaDir::addNode( ShinyMetaNode *newNode ) {
     }
     nodes.insert(itty, newNode->getInode() );
     newNode->setParent( this->inode );
-    this->fs->setDirty();
+    
+    TODO( "Change this to work on parents, not the whole tree!" );
+    //this->fs->setDirty();
 }
 
 void ShinyMetaDir::delNode(ShinyMetaNode *delNode) {
@@ -83,9 +85,16 @@ bool ShinyMetaDir::sanityCheck() {
 }
 
 size_t ShinyMetaDir::serializedLen( void ) {
-    //Return base amount + an inode for each child node, plus a counter for the number of nodes we have in this dir.
+    //base amount
     size_t len = ShinyMetaNode::serializedLen();
-    len += sizeof(inode_t)*(1 + this->nodes.size() );
+    
+    //plus the size of the number of nodes
+    len += sizeof(size_t);
+    
+    //Plus the nodes themselves
+    len += sizeof(inode_t)*this->nodes.size();
+    
+    //retuuuuuuuuuurn
     return len;
 }
 
