@@ -8,23 +8,30 @@
 #include <sys/stat.h>
 #include <sys/fcntl.h>
 
-//ShinyFilesystem::ShinyFilesystem( inode_t nextInode, inode_t nextInodeRange, const char * filecache, const char * serializedData ) : nextInode(nextInode), nextInodeRange(nextInodeRange), root(NULL) {
 /*
- ShinyFilesystem constructor, takes in path to cache location? No, I need to split this out into a separate cache object.....
+ ShinyFilesystem constructor, takes in path to cache location? I need to split this out into a separate cache object.....
  */
-ShinyFilesystem::ShinyFilesystem( const char * filecache ) {
-    //Check if the filecache exists
+ShinyFilesystem::ShinyFilesystem( const char * filecache, zmq::context_t * ctx ) : ctx(ctx) {
+    // Check if the filecache exists
     struct stat st;
     if( stat( filecache, &st ) != 0 ) {
         WARN( "filecache %s does not exist, creating a new one!", filecache );
         mkdir( filecache, 0700 );
     }
     
-    //copy the filecache location in so we know where to find it!
-    this->filecache = new char[strlen(filecache)+1];
-    strcpy( this->filecache, filecache );
+    // create socket for comms with shinycache
+    cacheSock = new zmq::socket_t( *this->ctx, ZMQ_DEALER );
+    cacheSock->bind( this->getZMQEndpointFileCache() );
     
-    TODO( "Eventually, add back in the ability to unserialize a ShinyFS" );
+    // Initialize cache object
+    cache = new ShinyCache( filecache, ctx );
+    
+    
+    
+    TODO( "Replace this with unserializing the previous stuff!" );
+    this->root = new ShinyMetaRootDir( this );
+    this->root->addNode( new ShinyMetaFile( this, "test" ) );    
+    
 /*
     //serializedData would be nonzero in this case if we're constructing from net-based data...
     if( !serializedData ) {
@@ -51,39 +58,25 @@ ShinyFilesystem::ShinyFilesystem( const char * filecache ) {
     } else
         unserialize( serializedData );
 */
-    TODO( "Think about better data structures than e.g. list -- For what?" );
-
-    TODO( "Need to add prune() call to get rid of orphaned inodes, as well as file caches that have been deleted!" );
-    TODO( "prune() and pruning file caches should be a part of the cache object" );
+    TODO( "Eventually, add back in the ability to unserialize a ShinyFS" );
 }
 
 ShinyFilesystem::~ShinyFilesystem() {
-    //Clear out the nodes (remember that when a node dies, it automagically removes itself from the fs, just like it adds itself)
-    delete( this->root );
+    // Remember, kill all sockets, otherwise zmq_term will just block!  D:
+    delete( cacheSock );
     
-    if( !this->nodes.empty() ) {
-        ERROR( "%lu nodes weren't killed by killing the root:", this->nodes.size() );
-        while( !this->nodes.empty() ) {
-            ERROR( "  %s [%llu]", this->nodes.begin()->second->getName(), this->nodes.begin()->first );
-            delete( this->nodes.begin()->second );
-        }
-    }
+    //Clear out the nodes (amazing how they just take care of themselves, so nicely and all!)
+    delete( this->root );
 }
 
 //Searches a ShinyMetaDir's listing for a name, returning the child
 ShinyMetaNode * ShinyFilesystem::findMatchingChild( ShinyMetaDir * parent, const char * childName, uint64_t childNameLen ) {
-    const std::list<inode_t> * list = parent->getListing();
-    for( std::list<inode_t>::const_iterator itty = list->begin(); itty != list->end(); ++itty ) {
-        ShinyMetaNode * sNode = findNode( (*itty) );
-        
-        if( sNode ) {
-            //Compare sNode's filename with the section of path inbetween
-            if( (strlen(sNode->getName()) == childNameLen) && memcmp( sNode->getName(), childName, childNameLen ) == 0 ) {
-                //If it works, then we return sNode
-                return sNode;
-            }
-        } else {
-            WARN( "Couldn't find child [%llu] for node %s [%llu]", *itty, parent->getPath(), parent->getInode() );
+    const std::vector<ShinyMetaNode *> list = *parent->getNodes();
+    for( uint64_t i = 0; i < list.size(); ++i ) {
+        // Compare names
+        if( strlen(list[i]->getName()) == childNameLen && memcmp( list[i]->getName(), childName, childNameLen ) == 0 ) {
+            // If it works, return this index we iterated over
+            return list[i];
         }
     }
     //If we made it all the way through without finding a match for that file, quit out
@@ -96,12 +89,12 @@ ShinyMetaNode * ShinyFilesystem::findNode( const char * path ) {
         return NULL;
     }
     
-    ShinyMetaNode * currNode = root;
+    ShinyMetaNode * currNode = (ShinyMetaNode *)this->root;
     unsigned long filenameBegin = 1;
     for( unsigned int i=1; i<strlen(path); ++i ) {
         if( path[i] == '/' ) {
             //If this one actually _is_ a directory, let's get its listing
-            if( currNode->getNodeType() == SHINY_NODE_TYPE_DIR || currNode->getNodeType() == SHINY_NODE_TYPE_ROOTDIR ) {
+            if( currNode->getNodeType() == ShinyMetaNode::TYPE_DIR || currNode->getNodeType() == ShinyMetaNode::TYPE_ROOTDIR ) {
                 //Search currNode's children for a name match
                 ShinyMetaNode * childNode = findMatchingChild( (ShinyMetaDir *)currNode, &path[filenameBegin], i - filenameBegin );
                 if( !childNode )
@@ -126,12 +119,6 @@ ShinyMetaNode * ShinyFilesystem::findNode( const char * path ) {
     return currNode;
 }
 
-ShinyMetaNode * ShinyFilesystem::findNode( inode_t inode ) {
-    std::tr1::unordered_map<inode_t, ShinyMetaNode *>::iterator itty = this->nodes.find( inode );
-    if( itty != this->nodes.end() )
-        return (*itty).second;
-    return NULL;
-}
 
 ShinyMetaDir * ShinyFilesystem::findParentNode( const char *path ) {
     //Start at the end of the string
@@ -157,10 +144,26 @@ ShinyMetaDir * ShinyFilesystem::findParentNode( const char *path ) {
     return ret;
 }
 
+const char * ShinyFilesystem::getZMQEndpointFileCache( void ) {
+    return "inproc://shinyfs.filecache";
+}
+
+/*
+ShinyMetaNode * ShinyFilesystem::findNode( inode_t inode ) {
+    std::tr1::unordered_map<inode_t, ShinyMetaNode *>::iterator itty = this->nodes.find( inode );
+    if( itty != this->nodes.end() )
+        return (*itty).second;
+    return NULL;
+}*/
+
+
+
 bool ShinyFilesystem::sanityCheck( void ) {
     bool retVal = true;
     //Call sanity check on all of them.
-    //The nodes will return false if there is an error they cannot correct (right now that cannot happen)
+    //The nodes will return false if there is an error
+    
+    /*
     for( std::tr1::unordered_map<inode_t, ShinyMetaNode *>::iterator itty = this->nodes.begin(); itty != this->nodes.end(); ++itty ) {
         if( (*itty).second ) {
             if( !(*itty).second->sanityCheck() )
@@ -170,12 +173,14 @@ bool ShinyFilesystem::sanityCheck( void ) {
             this->nodes.erase( itty++ );
         }
     }
+     */
     return retVal;
 }
 
 size_t ShinyFilesystem::serialize( char ** store ) {
     //First, we're going to find the total length of this serialized monstrosity
     //We'll start with the version number
+    /*
     size_t len = sizeof(uint16_t);
     
     //Next, what ShinyFilesystem takes up itself
@@ -217,9 +222,11 @@ size_t ShinyFilesystem::serialize( char ** store ) {
     
     //this->dirty = false;
     return len;
+     */
 }
 
 void ShinyFilesystem::unserialize(const char *input) {
+    /*
     if( !nodes.empty() ) {
         ERROR( "We're trying to unserialize when we already have %llu nodes!", nodes.size() );
         throw "Stuff was in nodes!";
@@ -261,72 +268,64 @@ void ShinyFilesystem::unserialize(const char *input) {
                 break;
         }
     }
+     */
 }
 
-void ShinyFilesystem::flush( bool serializeAndSave ) {
-    //I _could_ have just iterated over every inode in the fs....... orrrrr, I could do this.  :P
-    //Besides, this will work better for partial tree loading anyway.  :P
-//    if( this->isDirty() )
-    TODO( "Flesh out the flushing!  (lol)" );
-    this->root->flush();
+void ShinyFilesystem::save() {
+    // First, serialize everything out
+    char * output;
+    size_t len = this->serialize( &output );
     
-    //If we should save it out to disk
-    if( serializeAndSave ) {
-        char * output;
-        size_t len = this->serialize( &output );
+    // Send this to the filecache to write out
+    TODO( "Change this to \"serializeAndSave()\" instead of \"flush()\"" );
+    TODO( "send this output out to be written out to the cache object!" );
 
-        //Open it for writing, write it, and close
-        char * fscache = new char[strlen(filecache)+1+8+1];
-        sprintf( fscache, "%s/%s", this->filecache, FSCACHE_POSTFIX );
+    /*
+    //Open it for writing, write it, and close
+    char * fscache = new char[strlen(filecache)+1+8+1];
+    sprintf( fscache, "%s/%s", this->filecache, FSCACHE_POSTFIX );
 
-        int fd = open( fscache, O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU | S_IRWXG | S_IROTH );
-        if( !fd ) {
-            ERROR( "Could not flush serialized output to %s!", fscache );
-        } else {
-            write( fd, output, len );
-            close( fd );
-        }
-        delete( fscache );
+    int fd = open( fscache, O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU | S_IRWXG | S_IROTH );
+    if( !fd ) {
+        ERROR( "Could not flush serialized output to %s!", fscache );
+    } else {
+        write( fd, output, len );
+        close( fd );
     }
+    delete( fscache );
+     */
 }
 
 
+/*
 inode_t ShinyFilesystem::genNewInode() {
-    ERROR( "Need to re-do this!" );
-    ERROR( "Implement your idea of having each peer be assigned a \"next inode\" number that they use.  When they run out, they ask their parent (in the tree) for another inode starting number, which the parent appropriates from its other children or asks up" );
+    TODO( "Get rid of inodes, just use ShinyNode* things, and when (un)serializing generate the indoes and stuff on the fly, and then never use them outside of the disk" );
     inode_t probeNext = this->nextInode + 1;
     //Just linearly probe for the next open inode
     while( this->nodes.find(probeNext) != this->nodes.end() ) {
-        if( ++probeNext >= this->nextInode + this->inodeRange ) {
-            ERROR( "We need to ask for more inode space here!" );
-            return NULL;
-        }
+        ++probeNext;
     }
     inode_t toReturn = this->nextInode;
     this->nextInode = probeNext;
     return toReturn;
-}
+}*/
 
-const char * ShinyFilesystem::getFilecache( void ) {
-    return this->filecache;
-}
 
 void ShinyFilesystem::printDir( ShinyMetaDir * dir, const char * prefix ) {
     //prefix contains the current dir's name
-    LOG( "[%llu] %s/\n", dir->getInode(), prefix );
+    LOG( "%s/\n", prefix );
     
     //Iterate over all children
-    const std::list<inode_t> * listing = dir->getListing();
-    for( std::list<inode_t>::const_iterator itty = listing->begin(); itty != listing->end(); ++itty ) {
-        inode_t childInode = *itty;
-        const char * childName = this->nodes[childInode]->getName();
+    const std::vector<ShinyMetaNode *> nodes = *dir->getNodes();
+    for( uint64_t i=0; i<nodes.size(); ++i ) {
+        const char * childName = nodes[i]->getName();
         char * newPrefix = new char[strlen(prefix) + 2 + strlen(childName) + 1];
         sprintf( newPrefix, "%s/%s", prefix, childName );
-        if( this->nodes[*itty]->getNodeType() == SHINY_NODE_TYPE_DIR ) {
-            this->printDir( (ShinyMetaDir *)this->nodes[*itty], newPrefix );
+        if( nodes[i]->getNodeType() == ShinyMetaNode::TYPE_DIR ) {
+            this->printDir( (ShinyMetaDir *)nodes[i], newPrefix );
         } else {
             //Only print it out here if it's not a directory, because directories print themselves
-            LOG( "[%llu] %s\n", childInode, newPrefix );
+            LOG( "%s\n", newPrefix );
         }
         delete( newPrefix );
     }

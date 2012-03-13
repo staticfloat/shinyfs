@@ -34,7 +34,7 @@ Tree-based overlay network:
             nodes that are assigned to multiple files and dirs by the root node, when they begin their
             recursive process. If a directory has directories that have large amounts of weight, then
             a "sub-root" node must be chosen (by the root node, randomly) to partition the inodes it
-            has under its control.  Therefore, this process is recursive, should weight the tree
+        has under its control.  Therefore, this process is recursive, should weight the tree
             somewhat fairly, so that the average number of files owned by a single node is the total
             weight of the tree divided by the number of nodes in the network.
 

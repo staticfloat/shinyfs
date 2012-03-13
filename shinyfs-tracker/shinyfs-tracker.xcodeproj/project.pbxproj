@@ -1,0 +1,290 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		561039FA13A00F4100CAC395 /* ShinyMetaDir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 561039EF13A00F4100CAC395 /* ShinyMetaDir.cpp */; };
+		561039FB13A00F4100CAC395 /* ShinyMetaFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 561039F113A00F4100CAC395 /* ShinyMetaFile.cpp */; };
+		561039FC13A00F4100CAC395 /* ShinyMetaFilesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 561039F313A00F4100CAC395 /* ShinyMetaFilesystem.cpp */; };
+		561039FD13A00F4100CAC395 /* ShinyMetaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 561039F513A00F4100CAC395 /* ShinyMetaNode.cpp */; };
+		561039FE13A00F4100CAC395 /* ShinyMetaRootDir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 561039F713A00F4100CAC395 /* ShinyMetaRootDir.cpp */; };
+		56103A0313A0160000CAC395 /* ShinyMsg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56103A0113A0160000CAC395 /* ShinyMsg.cpp */; };
+		56249C15138AD70400AA24BB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56249C14138AD70400AA24BB /* main.cpp */; };
+		56249C30138B0F9100AA24BB /* ShinyTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56249C2E138B0F9100AA24BB /* ShinyTracker.cpp */; };
+		56E9A19613905BCC004FB05C /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56E9A19413905BCC004FB05C /* Logger.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		56249C0F138AD70400AA24BB /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		561039EF13A00F4100CAC395 /* ShinyMetaDir.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyMetaDir.cpp; sourceTree = "<group>"; };
+		561039F013A00F4100CAC395 /* ShinyMetaDir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyMetaDir.h; sourceTree = "<group>"; };
+		561039F113A00F4100CAC395 /* ShinyMetaFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyMetaFile.cpp; sourceTree = "<group>"; };
+		561039F213A00F4100CAC395 /* ShinyMetaFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyMetaFile.h; sourceTree = "<group>"; };
+		561039F313A00F4100CAC395 /* ShinyMetaFilesystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyMetaFilesystem.cpp; sourceTree = "<group>"; };
+		561039F413A00F4100CAC395 /* ShinyMetaFilesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyMetaFilesystem.h; sourceTree = "<group>"; };
+		561039F513A00F4100CAC395 /* ShinyMetaNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyMetaNode.cpp; sourceTree = "<group>"; };
+		561039F613A00F4100CAC395 /* ShinyMetaNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyMetaNode.h; sourceTree = "<group>"; };
+		561039F713A00F4100CAC395 /* ShinyMetaRootDir.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyMetaRootDir.cpp; sourceTree = "<group>"; };
+		561039F813A00F4100CAC395 /* ShinyMetaRootDir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyMetaRootDir.h; sourceTree = "<group>"; };
+		56103A0113A0160000CAC395 /* ShinyMsg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShinyMsg.cpp; path = ../shared/protocol/ShinyMsg.cpp; sourceTree = "<group>"; };
+		56103A0213A0160000CAC395 /* ShinyMsg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShinyMsg.h; path = ../shared/protocol/ShinyMsg.h; sourceTree = "<group>"; };
+		56249C11138AD70400AA24BB /* tracker */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tracker; sourceTree = BUILT_PRODUCTS_DIR; };
+		56249C14138AD70400AA24BB /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		56249C2E138B0F9100AA24BB /* ShinyTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyTracker.cpp; sourceTree = "<group>"; };
+		56249C2F138B0F9100AA24BB /* ShinyTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyTracker.h; sourceTree = "<group>"; };
+		56E9A19413905BCC004FB05C /* Logger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Logger.cpp; path = ../../../platform/base/Logger.cpp; sourceTree = "<group>"; };
+		56E9A19513905BCC004FB05C /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logger.h; path = ../../../platform/base/Logger.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		56249C0E138AD70400AA24BB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		561039EE13A00F4100CAC395 /* filesystem */ = {
+			isa = PBXGroup;
+			children = (
+				561039EF13A00F4100CAC395 /* ShinyMetaDir.cpp */,
+				561039F013A00F4100CAC395 /* ShinyMetaDir.h */,
+				561039F713A00F4100CAC395 /* ShinyMetaRootDir.cpp */,
+				561039F813A00F4100CAC395 /* ShinyMetaRootDir.h */,
+				561039F113A00F4100CAC395 /* ShinyMetaFile.cpp */,
+				561039F213A00F4100CAC395 /* ShinyMetaFile.h */,
+				561039F313A00F4100CAC395 /* ShinyMetaFilesystem.cpp */,
+				561039F413A00F4100CAC395 /* ShinyMetaFilesystem.h */,
+				561039F513A00F4100CAC395 /* ShinyMetaNode.cpp */,
+				561039F613A00F4100CAC395 /* ShinyMetaNode.h */,
+			);
+			name = filesystem;
+			path = ../shared/filesystem;
+			sourceTree = "<group>";
+		};
+		561039FF13A015DA00CAC395 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				56E9A19413905BCC004FB05C /* Logger.cpp */,
+				56E9A19513905BCC004FB05C /* Logger.h */,
+			);
+			name = utils;
+			sourceTree = "<group>";
+		};
+		56103A0013A015E600CAC395 /* protocol */ = {
+			isa = PBXGroup;
+			children = (
+				56103A0113A0160000CAC395 /* ShinyMsg.cpp */,
+				56103A0213A0160000CAC395 /* ShinyMsg.h */,
+			);
+			name = protocol;
+			sourceTree = "<group>";
+		};
+		56249BD7138AD62F00AA24BB = {
+			isa = PBXGroup;
+			children = (
+				566EA59B138E0E27006BD5B4 /* shared */,
+				56249C13138AD70400AA24BB /* tracker */,
+				56249BED138AD6D200AA24BB /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		56249BED138AD6D200AA24BB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				56249C11138AD70400AA24BB /* tracker */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		56249C13138AD70400AA24BB /* tracker */ = {
+			isa = PBXGroup;
+			children = (
+				56249C14138AD70400AA24BB /* main.cpp */,
+				56249C2E138B0F9100AA24BB /* ShinyTracker.cpp */,
+				56249C2F138B0F9100AA24BB /* ShinyTracker.h */,
+			);
+			path = tracker;
+			sourceTree = "<group>";
+		};
+		566EA59B138E0E27006BD5B4 /* shared */ = {
+			isa = PBXGroup;
+			children = (
+				561039EE13A00F4100CAC395 /* filesystem */,
+				56103A0013A015E600CAC395 /* protocol */,
+				561039FF13A015DA00CAC395 /* utils */,
+			);
+			name = shared;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		56249C10138AD70400AA24BB /* tracker */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 56249C17138AD70400AA24BB /* Build configuration list for PBXNativeTarget "tracker" */;
+			buildPhases = (
+				56249C0D138AD70400AA24BB /* Sources */,
+				56249C0E138AD70400AA24BB /* Frameworks */,
+				56249C0F138AD70400AA24BB /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = tracker;
+			productName = tracker;
+			productReference = 56249C11138AD70400AA24BB /* tracker */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		56249BD9138AD62F00AA24BB /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 56249BDC138AD63000AA24BB /* Build configuration list for PBXProject "shinyfs-tracker" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 56249BD7138AD62F00AA24BB;
+			productRefGroup = 56249BED138AD6D200AA24BB /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				56249C10138AD70400AA24BB /* tracker */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		56249C0D138AD70400AA24BB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				56249C15138AD70400AA24BB /* main.cpp in Sources */,
+				56249C30138B0F9100AA24BB /* ShinyTracker.cpp in Sources */,
+				56E9A19613905BCC004FB05C /* Logger.cpp in Sources */,
+				561039FA13A00F4100CAC395 /* ShinyMetaDir.cpp in Sources */,
+				561039FB13A00F4100CAC395 /* ShinyMetaFile.cpp in Sources */,
+				561039FC13A00F4100CAC395 /* ShinyMetaFilesystem.cpp in Sources */,
+				561039FD13A00F4100CAC395 /* ShinyMetaNode.cpp in Sources */,
+				561039FE13A00F4100CAC395 /* ShinyMetaRootDir.cpp in Sources */,
+				56103A0313A0160000CAC395 /* ShinyMsg.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		56249BDE138AD63000AA24BB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/STUFF/coding/platform,
+					/STUFF/coding/projects/shinyfs/shared,
+				);
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				OTHER_LDFLAGS = "-lzmq";
+			};
+			name = Debug;
+		};
+		56249BDF138AD63000AA24BB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/STUFF/coding/platform,
+					/STUFF/coding/projects/shinyfs/shared,
+				);
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				OTHER_LDFLAGS = "-lzmq";
+			};
+			name = Release;
+		};
+		56249C18138AD70400AA24BB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = _DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		56249C19138AD70400AA24BB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		56249BDC138AD63000AA24BB /* Build configuration list for PBXProject "shinyfs-tracker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				56249BDE138AD63000AA24BB /* Debug */,
+				56249BDF138AD63000AA24BB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		56249C17138AD70400AA24BB /* Build configuration list for PBXNativeTarget "tracker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				56249C18138AD70400AA24BB /* Debug */,
+				56249C19138AD70400AA24BB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 56249BD9138AD62F00AA24BB /* Project object */;
+}

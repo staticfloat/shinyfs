@@ -16,7 +16,7 @@ ShinyMetaDir::ShinyMetaDir( const char * serializedInput, ShinyFilesystem * fs )
 ShinyMetaDir::~ShinyMetaDir( void ) {
     while( !nodes.empty() ) {
         //If there _is_ a child that doesn't exist, that's fine, 'cause deleting NULL doesn't do squat!
-        delete( this->fs->findNode( nodes.front() ) );
+        delete( nodes.front() );
     }
 }
 
@@ -26,44 +26,53 @@ void ShinyMetaDir::addNode( ShinyMetaNode *newNode ) {
         return;
     }
     //Insert so that list is always sorted in ascending inode order
-    std::list<inode_t>::iterator itty = nodes.begin();
-    while( newNode->getInode() >= (*itty) ) {
-        if( itty == nodes.end() )
+    int64_t i;
+    for( i=0; i<this->nodes.size(); ++i ) {
+        int ret = strcmp( this->nodes[i]->getName(), newNode->getName() );
+        // This means we are in a position to insert our new node into the list
+        if( ret == -1 ) {
+            // Do a quick check against the next node (if there is one) to make sure they're no duplicates
+            if( i < this->nodes.size() - 1 && strcmp( this->nodes[i+1]->getName(), newNode->getName() ) == 0 ) {
+                WARN( "Cannot add node %s to %s again!  duplicates are not allowed!", newNode->getName(), this->getName() );
+                return;
+            }
             break;
-        ++itty;
+        }
     }
-    nodes.insert(itty, newNode->getInode() );
-    newNode->setParent( this->inode );
+    nodes.insert(nodes.begin() + i, newNode );
+    newNode->setParent( this );
     
     TODO( "Change this to work on parents, not the whole tree!" );
     //this->fs->setDirty();
 }
 
 void ShinyMetaDir::delNode(ShinyMetaNode *delNode) {
-    this->nodes.remove( delNode->getInode() );
+    for( uint64_t i=0; i<this->nodes.size(); ++i ) {
+        if( this->nodes[i] == delNode ) {
+            this->nodes.erase( this->nodes.begin() + i );
+            return;
+        }
+    }
 }
 
-const std::list<inode_t> * ShinyMetaDir::getListing( void ) {
+const std::vector<ShinyMetaNode *> * ShinyMetaDir::getNodes() {
     return &nodes;
 }
 
-uint64_t ShinyMetaDir::getNumChildren( void ) {
+uint64_t ShinyMetaDir::getNumNodes( void ) {
     return nodes.size();
 }
 
 bool ShinyMetaDir::check_childrenHaveUsAsParent( void ) {
     bool retVal = true;
     //Iterate through all nodes
-    std::list<inode_t>::iterator itty = this->nodes.begin();
-    while( itty != this->nodes.end() ) {
-        //Find the child node
-        ShinyMetaNode * node = this->fs->findNode( *itty );
-        if( !node->getParent() ) {
-            WARN( "Child %s/%s [%llu] pointed to NULL instead of to parent %s [%llu]!  Fixing...\n", this->getPath(), node->getName(), node->getInode(), this->getPath(), this->inode );
-            node->setParent( this->inode );
+    for( uint64_t i = 0; i<this->nodes.size(); ++i ) {
+        if( this->nodes[i]->getParent() != this ) {
+            // Temp variable to make it a little easier to read this code
+            const char * parentStr = this->nodes[i]->getParent() ? this->nodes[i]->getParent()->getName() : "<null>";
+            WARN( "Child %s/%s had %s as its parent!", this->getName(), this->nodes[i]->getName(), parentStr );
             retVal = false;
         }
-        ++itty;
     }
     return retVal;
 }
@@ -71,9 +80,6 @@ bool ShinyMetaDir::check_childrenHaveUsAsParent( void ) {
 bool ShinyMetaDir::sanityCheck() {
     //First, do the basic stuff
     bool retVal = ShinyMetaNode::sanityCheck();
-    
-    //Next, check all children exist
-    retVal &= check_existsInFs( &this->nodes, "nodes" );
     
     //Check no dups in children
     retVal &= check_noDuplicates( &this->nodes, "nodes" );
@@ -85,6 +91,7 @@ bool ShinyMetaDir::sanityCheck() {
 }
 
 size_t ShinyMetaDir::serializedLen( void ) {
+    /*
     //base amount
     size_t len = ShinyMetaNode::serializedLen();
     
@@ -96,9 +103,18 @@ size_t ShinyMetaDir::serializedLen( void ) {
     
     //retuuuuuuuuuurn
     return len;
+     */
+    return 0;
 }
 
 void ShinyMetaDir::serialize( char * output ) {
+    // First, resize the vector to exactly the size it should be to compact memory as much as possible
+    // If already at optimal capacity, this function does nothing. Note that this is not necessary when
+    // serializing, but since we do this every so often anyway (to write out to disk and such) it saves memory
+    this->nodes.reserve( this->nodes.size() );
+    
+    
+    /*
     //First, the normal stuffage
     ShinyMetaNode::serialize(output);
     output += ShinyMetaNode::serializedLen();
@@ -113,9 +129,11 @@ void ShinyMetaDir::serialize( char * output ) {
         *inode_output = *itty;
         inode_output++;
     }
+     */
 }
 
 void ShinyMetaDir::unserialize(const char *input) {
+    /*
     //Next, the number of nodes to read in
     size_t numNodes = *((size_t *)input);
     input += sizeof(size_t);
@@ -127,16 +145,9 @@ void ShinyMetaDir::unserialize(const char *input) {
         
         nodes.push_back( newNode );
     }
+     */
 }
 
-void ShinyMetaDir::flush( void ) {
-    for( std::list<inode_t>::iterator itty = this->nodes.begin(); itty != this->nodes.end(); ++itty ) {
-        ShinyMetaNode * node = this->fs->nodes[*itty];
-        if( node ) 
-            node->flush();
-    }
-}
-
-ShinyNodeType ShinyMetaDir::getNodeType( void ) {
-    return SHINY_NODE_TYPE_DIR;
+ShinyMetaNode::NodeType ShinyMetaDir::getNodeType( void ) {
+    return ShinyMetaNode::TYPE_DIR;
 }

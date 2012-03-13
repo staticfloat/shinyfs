@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesStackState
+   version = "1.0">
+   <StackStates>
+      <StackState
+         stackFrameDescription = "ShinyMetaFilesystem::unserialize(char const*):ShinyMetaFilesystem.cpp">
+         <expressions>
+            <expression
+               value = "newNode-&gt;inode">
+            </expression>
+            <expression
+               value = "*((uint16_t *)input)">
+            </expression>
+         </expressions>
+      </StackState>
+      <StackState
+         stackFrameDescription = "ShinyMetaFilesystem::printDir(ShinyMetaDir*, char const*):ShinyMetaFilesystem.cpp">
+         <expressions>
+            <expression
+               value = "(*itty)">
+            </expression>
+         </expressions>
+      </StackState>
+      <StackState
+         stackFrameDescription = "ShinyMetaFilesystem::serialize(char**):ShinyMetaFilesystem.cpp">
+         <expressions>
+            <expression
+               value = "*((inode_t *)*output + sizeof(uint16_t))">
+            </expression>
+            <expression
+               value = "*((inode_t *)*output)">
+            </expression>
+         </expressions>
+      </StackState>
+      <StackState
+         stackFrameDescription = "main:main.cpp">
+         <expressions>
+         </expressions>
+      </StackState>
+   </StackStates>
+</VariablesStackState>

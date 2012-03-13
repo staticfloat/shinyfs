@@ -27,59 +27,59 @@ typedef int32_t chunklen_t;
 class ShinyMetaFile;
 class ShinyFileChunk {
 public:
-    //This constructor is used to initialize a chunk that we just received
+    // This constructor is used to initialize a chunk that we just received
     ShinyFileChunk( ShinyMetaFile * parent, uint64_t chunkNum, chunklen_t dataLen, Chunkhash hash );
     
-    //This constructor is used to initialize a chunk that we are creating with data/is empty
+    // This constructor is used to initialize a chunk that we are creating with data/is empty
     ShinyFileChunk( ShinyMetaFile * parent, uint64_t chunkNum, chunklen_t dataLen = ShinyFileChunk::MAX_CHUNK_LEN, char * data = NULL );
     ~ShinyFileChunk();
     
-    //Returns the length of this chunk in bytes
+    // Returns the length of this chunk in bytes
     chunklen_t getChunkLen( void );
     
-    //Returns if the chunk is available on disk/in memory
+    // Returns if the chunk is available on disk/in memory
     bool isAvailable( void );
     
-    //if can't read all of it, returns how much it _could_ read, -1 on error
+    // if can't read all of it, returns how much it _could_ read, -1 on error
     chunklen_t read( chunklen_t offset, char * buffer, chunklen_t len );
     
-    //if can't write all of it, returns how much it _could_ write, -1 on error
-    //Automatically updateHash()'s
+    // if can't write all of it, returns how much it _could_ write, -1 on error
+    // Automatically updateHash()'s
     chunklen_t write( chunklen_t offset, const char * buffer, chunklen_t len );
     
-    //Truncates (or extends) the current chunk to this size
+    // Truncates (or extends) the current chunk to this size
     int truncate( chunklen_t len );
     
-    //Writes data out to disk.  (checks to see if the last time this chunk
-    //was touched was long enough ago that we can evict it from memory. Also
-    //evicts if forceEvict == true)
+    // Writes data out to disk.  (checks to see if the last time this chunk
+    // was touched was long enough ago that we can evict it from memory. Also
+    // evicts if forceEvict == true)
     void flush( bool forceEvict = false );
     
-    //Performs an integrity check against the hash we have stored, returning true it if passes
+    // Performs an integrity check against the hash we have stored, returning true it if passes
     bool sanityCheck( void );
     
-    //Gets the path of this file chunk
+    // Gets the path of this file chunk
     const char * getFileChunkPath( void );
     
-    //Returns the hash (and recalculates if need be)
+    // Returns the hash (and recalculates if need be)
     const Chunkhash & getHash( void );
     
-    //our hash
+    // our hash
     Chunkhash hash;
 private:
-    //after a write(), we have to update this hash
+    // after a write(), we have to update this hash
     void updateHash();
     
-    //Before read()'s and write()'s, make sure the file is open and read into memory
+    // Before read()'s and write()'s, make sure the file is open and read into memory
     bool open( void );
     
-    //our parent
+    // our parent
     ShinyMetaFile * parent;
     
-    //File descriptor; if this is NULL, then we need to open() before read()/write() can continue
+    // File descriptor; if this is NULL, then we need to open() before read()/write() can continue
     int fd;
 
-    //data loaded in
+    // data loaded in
     char * data;
     chunklen_t dataLen;
     
@@ -92,7 +92,7 @@ private:
     //Last time we were touched
     clock_t lastTouch;
     
-    //Are we dirty?
+    //Are we dirty? (yes we are)
     bool dirty;
 public:
     //Chunks are limited to 256KB.

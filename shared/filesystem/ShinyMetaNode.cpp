@@ -13,21 +13,9 @@
 #include <sys/stat.h>
 
 ShinyMetaNode::ShinyMetaNode(ShinyFilesystem * fs, const char * newName) {
-    //Save pointer to fs
-    this->fs = fs;
-    
-    //Generate a new inode for this node
-    this->inode = fs->genNewInode();
-    
-    //Add this Node into the inode map
-    this->fs->nodes[this->inode] = this;
-    
-    //Set name
+    // Set name (no constructor lists here, no siree!)
     this->name = NULL;
     this->setName( newName );
-    
-    //Force ourselves to recalculate path next time someone asks for it
-    this->path = NULL;
     
     //Set parent to NULL for now
     this->parent = NULL;
@@ -35,51 +23,113 @@ ShinyMetaNode::ShinyMetaNode(ShinyFilesystem * fs, const char * newName) {
     //It's HAMMAH TIME!!!
     this->ctime = this->atime = this->mtime = time(NULL);
     
-    this->setPermissions( S_IRWXU | S_IRWXG | S_IRWXO );   //aka rwxrwxrwx
+    // Set permissions to rwxr--r--
+    this->setPermissions( S_IRWXU | S_IRGRP | S_IROTH );
     
     //Set these to nothing right now
     TODO( "need to init uid/gid!\n" );
     this->uid = this->gid = NULL;
-    
-    TODO( "Possibly change this to not have its own pointer to fs, but call back up till a special node which _does_ have the fs?  (Something like every 40 directories down, make it a special directory?)" );
 }
 
-ShinyMetaNode::ShinyMetaNode( const char * serializedInput, ShinyFilesystem * fs ) : fs( fs ), path( NULL ) {
+ShinyMetaNode::ShinyMetaNode( const char * serializedInput, ShinyFilesystem * fs ) {
     this->unserialize(serializedInput);
-    
-    //Add this Node into the inode map
-    this->fs->nodes[this->inode] = this;
 }
 
 ShinyMetaNode::~ShinyMetaNode() {
     if( this->name )
         delete( this->name );
-    if( this->path )
-        delete( this->path );
-    
-    //Remove myself from the map
-    this->fs->nodes.erase(this->inode);
     
     //Remove myself from my parent
-    ShinyMetaDir * parentDir = (ShinyMetaDir *) this->fs->findNode( this->parent );
-    if( parentDir )
-        parentDir->delNode( this );
+    if( this->getParent() )
+        this->getParent()->delNode( this );
 }
 
-inode_t ShinyMetaNode::getInode() {
-    return this->inode;
+
+size_t ShinyMetaNode::serializedLen() {
+    //First, the size of the inode pointers
+    size_t len = 0;
+    /*
+    //Time markers
+    len += sizeof(ctime) + sizeof(atime) + sizeof(mtime);
+    
+    //Then, permissions and user/group ids
+    len += sizeof(uid) + sizeof(gid) + sizeof(permissions);
+    
+    //parent inode
+    len += sizeof(parent);
+    
+    //Finally, filename
+    len += strlen(name) + 1;
+     */
+    return len;
 }
 
-const inode_t ShinyMetaNode::getParent( void ) {
-    return this->parent;
+/* Serialization order is as follows:
+ NOTE THIS IS HORRIBLY OUT OF DATE EVERY SINCE I DESTROYED THE INODE CRAPPAGE
+ 
+ [inode]         - uint64_t
+ [ctime]         - uint64_t
+ [atime]         - uint64_t
+ [mtime]         - uint64_t
+ [uid]           - uint32_t
+ [gid]           - uint32_t
+ [permissions]   - uint16_t
+ [parents]       - uint64_t + uint64_t * num_parents
+ [name]          - char * (\0 terminated)
+ */
+
+#define write_and_increment( value, type )    *((type *)output) = value; output += sizeof(type)
+
+void ShinyMetaNode::serialize(char * output) {
+    /*
+    write_and_increment( this->ctime, uint64_t );
+    write_and_increment( this->atime, uint64_t );
+    write_and_increment( this->mtime, uint64_t );
+    write_and_increment( this->uid, uint64_t );
+    write_and_increment( this->gid, uint64_t );
+    write_and_increment( this->permissions, uint16_t );
+    write_and_increment( this->parent, inode_t );
+    
+    //Finally, write out a \0-terminated string of the filename
+    strcpy( output, this->name );
+    */
 }
 
-void ShinyMetaNode::setParent( inode_t newParent ) {
-    this->parent = newParent;
+#define read_and_increment( value, type )   value = *((type *)input); input += sizeof(type)
+
+void ShinyMetaNode::unserialize( const char * input ) {
+    /*
+    read_and_increment( this->inode, inode_t );
+    read_and_increment( this->ctime, uint64_t );
+    read_and_increment( this->atime, uint64_t );
+    read_and_increment( this->mtime, uint64_t );
+    read_and_increment( this->uid, uint32_t );
+    read_and_increment( this->gid, uint32_t );
+    read_and_increment( this->permissions, uint16_t );
+    read_and_increment( this->parent, inode_t );
+    
+    this->name = new char[strlen(input) + 1];
+    strcpy( this->name, input );
+    
     if( this->path ) {
         delete( this->path );
         this->path = NULL;
     }
+    */
+}
+
+
+
+ShinyMetaDir * ShinyMetaNode::getParent( void ) {
+    return this->parent;
+}
+
+void ShinyMetaNode::setParent( ShinyMetaDir * newParent ) {
+    // Purge any cached node paths that we might have previously had
+    if( this->getParent() )
+        delete( this->getFS()->nodePaths[this] );
+
+    this->parent = newParent;    
 }
 
 
@@ -98,30 +148,50 @@ const char * ShinyMetaNode::getName( void ) {
     return (const char *)this->name;
 }
 
-const char * ShinyMetaNode::getPath() {
-    //If we've cached the result from a previous call, then just return that!
-    if( this->path )
-        return this->path;
-    //Otherwise, let's calculate it!
-    
-    //First, get the length:
-    uint64_t len = 0;
+void ShinyMetaNode::setPermissions( uint16_t newPermissions ) {
+    this->permissions = newPermissions;
+    TODO( "Change this to work on the parent!" );
+    //fs->setDirty();
+}
 
-    //We'll store all the paths in here so we don't have to traverse the tree multiple times
+uint16_t ShinyMetaNode::getPermissions( void ) {
+    return this->permissions;
+}
+
+
+// Gets the path of a ShinyMetaNode, "e.g. '/dir1/dir2/file'", returns "?/file" if parental chain is broken (how would that happen?)
+const char * ShinyMetaNode::getPath( void ) {
+    // First, grab ahold of that fs!
+    ShinyFilesystem * fs = this->getFS();
+
+    // If we've cached the result from a previous call, then just return that!
+    std::tr1::unordered_map<ShinyMetaNode *, const char *>::iterator itty = fs->nodePaths.find( this );
+    if( itty != fs->nodePaths.end() ) {
+        return (*itty).second;
+    }
+    
+    // First, get the length:
+    uint64_t len = 0;
+    
+    // We'll store all the paths in here so we don't have to traverse the tree multiple times
     std::list<const char *> paths;
     paths.push_front( this->getName() );
     len += strlen( this->getName() );
     
+    // Now iterate up the tree, gathering the names of parents and shoving them into the list of paths
     ShinyMetaNode * currNode = this;
-    ShinyMetaNode * root = fs->findNode("/");
-    while( currNode != (ShinyMetaNode *) root) {
-        //Move up in the chain of parents
-        ShinyMetaNode * nextNode = fs->findNode( currNode->getParent() );
+    while( currNode != (ShinyMetaNode *) fs->root ) {
+        // Move up in the chain of parents
+        ShinyMetaDir * nextNode = currNode->getParent();
         
-        //If our parental chain is broken, just return ?/name
-        if( !nextNode )
-            return this->getName();
-        else if( nextNode != (ShinyMetaNode *)root ) {
+        // If our parental chain is broken, just return ?/name
+        if( !nextNode ) {
+            ERROR( "Parental chain for %s is broken at %s!", paths.back(), currNode->getName() );
+            paths.push_front( "?" );
+            break;
+        }
+        
+        else if( nextNode != (ShinyMetaNode *)fs->root ) {
             //Push this parent's path onto the list, and add its length to len
             paths.push_front( nextNode->getName() );
             len += strlen( nextNode->getName() );
@@ -133,85 +203,43 @@ const char * ShinyMetaNode::getPath() {
     len += paths.size();
     
     //Add another 1 for the NULL character
-    this->path = new char[len+1];
+    char * path = new char[len+1];
     path[len] = NULL;
-
+    
+    // Write out each element of [paths] preceeded by forward slashes
     len = 0;
     for( std::list<const char *>::iterator itty = paths.begin(); itty != paths.end(); ++itty ) {
         path[len++] = '/';
         strcpy( path + len, *itty );
         len += strlen( *itty );
     }
-    return path;
+    
+    // Save this result into our cached nodePaths map and return it;
+    return fs->nodePaths[this] = path;
 }
 
-void ShinyMetaNode::setPermissions( uint16_t newPermissions ) {
-    this->permissions = newPermissions;
-    TODO( "Change this to work on the parent!" );
-    //fs->setDirty();
-}
-
-uint16_t ShinyMetaNode::getPermissions() {
-    return this->permissions;
-}
-
-bool ShinyMetaNode::check_existsInFs( std::list<inode_t> * list, const char * listName ) {
-    bool retVal = true;
-    std::list<inode_t>::iterator itty = list->begin();
-    while( itty != list->end() ) {
-        if( !this->fs->findNode( *itty ) ) {
-            WARN( "Orphaned member of %s pointing to [%llu], belonging to %s [%llu]", listName, *itty, this->getPath(), this->inode );
-            std::list<inode_t>::iterator delItty = itty++;
-            list->erase( delItty );
-            retVal = false;
-        } else
-            ++itty;
-    }
-    return retVal;
-}
 
 bool ShinyMetaNode::check_parentHasUsAsChild( void ) {
-    //First, check to make sure the parent node exists.....
-    ShinyMetaDir * parentNode = (ShinyMetaDir *)fs->findNode( this->parent );
-    if( parent ) {
-        //Iterate through all children, looking for us
-        const std::list<inode_t> * children = parentNode->getListing();
-        for( std::list<inode_t>::const_iterator cItty = children->begin(); cItty != children->end(); ++cItty ) {
-            if( *cItty == this->inode )
-                return true;
-        }
-        //If we can't find ourselves, FIX IT!
-        WARN( "Parent %s [%llu] did not point to child %s [%llu], when it should have! Fixing...\n", parentNode->getPath(), parentNode->getInode(), this->getPath(), this->inode );
-        parentNode->addNode( this );
-        
-        //check to make sure we actually _could_ do that
-        for( std::list<inode_t>::const_iterator cItty = children->begin(); cItty != children->end(); ++cItty ) {
-            if( *cItty == this->inode )
-                return true;
-        }
-        WARN( "Couldn't fix! Setting our parent to NULL so we get garbage-collected..." );
-        this->parent = NULL;
-        return false;
-    } else {
-        ERROR( "parent [%d] of node %s [%d] could not be found in fs!", this->parent, this->name, this->inode );
-        return false;
+    //Iterate through all children of our parent, looking for us
+    const std::vector<ShinyMetaNode *> children = *this->getParent()->getNodes();
+    for( uint64_t i = 0; i<children.size(); ++i ) {
+        if( children[i] == this )
+            return true;
     }
-    return true;
+    //If we can't find ourselves, COMPLAIN!
+    WARN( "Parent %s did not point to child %s, when it should have!\n", this->getParent()->getPath(), this->getPath() );
+    return false;
 }
 
-bool ShinyMetaNode::check_noDuplicates( std::list<inode_t> * list, const char * listName ) {
+bool ShinyMetaNode::check_noDuplicates( std::vector<ShinyMetaNode *> * list, const char * listName ) {
     bool retVal = true;
-    std::list<inode_t>::iterator itty = list->begin();
-    std::list<inode_t>::iterator last_iterator = itty++;
+    
+    //Because the vectors are sorted, we only need check ourselves against the people right after us
+    std::vector<ShinyMetaNode *>::iterator itty = list->begin();
+    std::vector<ShinyMetaNode *>::iterator last_iterator = itty++;
     while( itty != list->end() ) {
         if( *itty == *last_iterator ) {
-            ShinyMetaNode * listNode = this->fs->findNode( *itty );
-            if( listNode ) {
-                WARN( "Warning, %s for node %s [%llu] has duplicate entries for %s [%llu] in it!", listName, this->getPath(), this->inode, listNode->getPath(), *itty );
-            } else {
-                WARN( "Warning, %s for node %s [%llu] has duplicate entries for a child that could not be found [%llu]! Erasing...", listName, this->getPath(), this->inode, *itty );
-            }
-            
+            WARN( "Warning, %s for node %s has duplicate entries for %s in it!", listName, this->getPath(), (*itty)->getPath() );
             list->erase( last_iterator );
             last_iterator = itty++;
             retVal = false;
@@ -232,77 +260,13 @@ bool ShinyMetaNode::sanityCheck() {
     return retVal;
 }
 
-size_t ShinyMetaNode::serializedLen() {
-    //First, the size of the inode pointers
-    size_t len = sizeof(inode);
-
-    //Time markers
-    len += sizeof(ctime) + sizeof(atime) + sizeof(mtime);
-    
-    //Then, permissions and user/group ids
-    len += sizeof(uid) + sizeof(gid) + sizeof(permissions);
-    
-    //parent inode
-    len += sizeof(parent);
-    
-    //Finally, filename
-    len += strlen(name) + 1;
-    return len;
+ShinyFilesystem * ShinyMetaNode::getFS() {
+    // So irresponsible, ah. Just ask your parent to do it for you!
+    if( this->getParent() )
+        return this->getParent()->getFS();
+    return NULL;
 }
 
-/* Serialization order is as follows:
- [inode]         - uint64_t
- [ctime]         - uint64_t
- [atime]         - uint64_t
- [mtime]         - uint64_t
- [uid]           - uint32_t
- [gid]           - uint32_t
- [permissions]   - uint16_t
- [parents]       - uint64_t + uint64_t * num_parents
- [name]          - char * (\0 terminated)
-*/
-
-#define write_and_increment( value, type )    *((type *)output) = value; output += sizeof(type)
-
-void ShinyMetaNode::serialize(char * output) {
-    write_and_increment( this->inode, inode_t );
-    write_and_increment( this->ctime, uint64_t );
-    write_and_increment( this->atime, uint64_t );
-    write_and_increment( this->mtime, uint64_t );
-    write_and_increment( this->uid, user_t );
-    write_and_increment( this->gid, group_t );
-    write_and_increment( this->permissions, uint16_t );
-    write_and_increment( this->parent, inode_t );
-    
-    //Finally, write out a \0-terminated string of the filename
-    strcpy( output, this->name );
-}
-
-#define read_and_increment( value, type )   value = *((type *)input); input += sizeof(type)
-
-void ShinyMetaNode::unserialize( const char * input ) {
-    read_and_increment( this->inode, inode_t );
-    read_and_increment( this->ctime, uint64_t );
-    read_and_increment( this->atime, uint64_t );
-    read_and_increment( this->mtime, uint64_t );
-    read_and_increment( this->uid, uint32_t );
-    read_and_increment( this->gid, uint32_t );
-    read_and_increment( this->permissions, uint16_t );
-    read_and_increment( this->parent, inode_t );
-    
-    this->name = new char[strlen(input) + 1];
-    strcpy( this->name, input );
-    
-    if( this->path ) {
-        delete( this->path );
-        this->path = NULL;
-    }
-}
-
-void ShinyMetaNode::flush( void ) {
-    //Just don't do anything here
-}
-
-ShinyNodeType ShinyMetaNode::getNodeType( void ) {
-    return SHINY_NODE_TYPE_NODE;
+ShinyMetaNode::NodeType ShinyMetaNode::getNodeType( void ) {
+    return ShinyMetaNode::TYPE_NODE;
 }

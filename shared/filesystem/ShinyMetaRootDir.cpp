@@ -2,16 +2,26 @@
 #include "ShinyFilesystem.h"
 #include <base/Logger.h>
 
-ShinyMetaRootDir::ShinyMetaRootDir( ShinyFilesystem * fs ) : ShinyMetaDir( fs, "" ) {
+ShinyMetaRootDir::ShinyMetaRootDir( ShinyFilesystem * fs ) : ShinyMetaDir( fs, "" ), fs(fs) {
     //We set ourselves as our own parent.  How...... cute.  :P
-    this->setParent( this->inode );
+    this->setParent( this );
 }
 
 ShinyMetaRootDir::ShinyMetaRootDir( const char * serializedInput, ShinyFilesystem * fs ) : ShinyMetaDir( serializedInput, fs ) {
 }
 
-ShinyNodeType ShinyMetaRootDir::getNodeType( void ) {
-    return SHINY_NODE_TYPE_ROOTDIR;
+ShinyMetaRootDir::~ShinyMetaRootDir() {
+    this->setParent( NULL );
+}
+
+// Serves as the base case for the recursive "getFS()" calls done by all other nodes
+ShinyFilesystem * ShinyMetaRootDir::getFS( void ) {
+    return this->fs;
+}
+
+// Please don't tell me I have to explain to you what this does.  Go read ShinyMetaNode.  Go.  Right now.
+ShinyMetaNode::NodeType ShinyMetaRootDir::getNodeType( void ) {
+    return ShinyMetaNode::TYPE_ROOTDIR;
 }
 
 //Always return true as our parent is ourself, therefore there's nothing special to be done here
@@ -20,9 +30,6 @@ bool ShinyMetaRootDir::check_parentHasUsAsChild( void ) {
 }
 
 const char * ShinyMetaRootDir::getPath( void ) {
-    this->path = new char[2];
-    path[0] = '/';
-    path[1] = 0;
-    return path;
+    return "/";
 }
 

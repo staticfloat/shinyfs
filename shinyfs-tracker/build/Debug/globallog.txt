@@ -1,0 +1,23 @@
+[10:14:20.451 - LOG] int main(int, const char**)(): ShinyFS Tracker v0.1 starting up....
+[10:14:20.452 - LOG] ShinyTracker::ShinyTracker(const char*)(): O_NONBLOCK on open() for flushing tracker data?
+[10:14:20.452 - LOG] ShinyMetaFilesystem::ShinyMetaFilesystem(const char*)(): Consider getting rid of ShinyMetaFilesystem::root
+[10:14:20.452 - LOG] ShinyMetaFilesystem::ShinyMetaFilesystem(const char*)(): serializedData empty, so just starting over....
+[10:14:20.452 - LOG] ShinyMetaNode::ShinyMetaNode(ShinyMetaFilesystem*, const char*)(): Does FUSE initialize default permissions?
+[10:14:20.452 - LOG] ShinyMetaNode::ShinyMetaNode(ShinyMetaFilesystem*, const char*)(): need to init uid/gid!
+[10:14:20.453 - LOG] int main(int, const char**)(): Is there a reason this shouldn't be ROUTER?
+[10:14:20.453 - LOG] int main(int, const char**)(): Beginning test!
+[10:14:20.453 - LOG] ShinyMetaFilesystem::ShinyMetaFilesystem(const char*)(): Consider getting rid of ShinyMetaFilesystem::root
+[10:14:20.453 - LOG] ShinyMetaFilesystem::ShinyMetaFilesystem(const char*)(): serializedData empty, so just starting over....
+[10:14:20.453 - LOG] ShinyMetaNode::ShinyMetaNode(ShinyMetaFilesystem*, const char*)(): Does FUSE initialize default permissions?
+[10:14:20.453 - LOG] ShinyMetaNode::ShinyMetaNode(ShinyMetaFilesystem*, const char*)(): need to init uid/gid!
+[10:14:20.453 - LOG] ShinyMetaNode::ShinyMetaNode(ShinyMetaFilesystem*, const char*)(): Does FUSE initialize default permissions?
+[10:14:20.453 - LOG] ShinyMetaNode::ShinyMetaNode(ShinyMetaFilesystem*, const char*)(): need to init uid/gid!
+[10:14:20.453 - LOG] virtual void ShinyMetaDir::addNode(ShinyMetaNode*)(): Check for cycles here!
+[10:14:20.453 - LOG] ShinyMetaNode::ShinyMetaNode(ShinyMetaFilesystem*, const char*)(): Does FUSE initialize default permissions?
+[10:14:20.453 - LOG] ShinyMetaNode::ShinyMetaNode(ShinyMetaFilesystem*, const char*)(): need to init uid/gid!
+[10:14:20.453 - LOG] virtual void ShinyMetaDir::addNode(ShinyMetaNode*)(): Check for cycles here!
+[10:14:20.453 - LOG] ShinyMetaNode::ShinyMetaNode(ShinyMetaFilesystem*, const char*)(): Does FUSE initialize default permissions?
+[10:14:20.453 - LOG] ShinyMetaNode::ShinyMetaNode(ShinyMetaFilesystem*, const char*)(): need to init uid/gid!
+[10:14:20.453 - LOG] virtual void ShinyMetaDir::addNode(ShinyMetaNode*)(): Check for cycles here!
+[10:14:20.454 - LOG] int main(int, const char**)(): Now do serialization test
+[10:14:22.926 - LOG] ShinyMetaFilesystem::ShinyMetaFilesystem(const char*)(): Consider getting rid of ShinyMetaFilesystem::root

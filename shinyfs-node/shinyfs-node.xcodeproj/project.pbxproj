@@ -7,22 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		560D3157140598150074C0EF /* ShinyFuse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 560D3155140598150074C0EF /* ShinyFuse.cpp */; };
 		56103A1E13A04A8D00CAC395 /* ShinyMetaDir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56103A1113A04A8D00CAC395 /* ShinyMetaDir.cpp */; };
 		56103A1F13A04A8D00CAC395 /* ShinyMetaFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56103A1313A04A8D00CAC395 /* ShinyMetaFile.cpp */; };
 		56103A2013A04A8D00CAC395 /* ShinyFilesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56103A1513A04A8D00CAC395 /* ShinyFilesystem.cpp */; };
 		56103A2113A04A8D00CAC395 /* ShinyMetaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56103A1713A04A8D00CAC395 /* ShinyMetaNode.cpp */; };
 		56103A2213A04A8D00CAC395 /* ShinyMetaRootDir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56103A1913A04A8D00CAC395 /* ShinyMetaRootDir.cpp */; };
-		56103A2313A04A8D00CAC395 /* ShinyMsg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56103A1C13A04A8D00CAC395 /* ShinyMsg.cpp */; };
 		56103A2713A04E3900CAC395 /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56103A2513A04E3900CAC395 /* Logger.cpp */; };
 		56249C08138AD6FA00AA24BB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56249C07138AD6FA00AA24BB /* main.cpp */; };
-		564984BE13DF19BC00DFBE38 /* ShinyPartitioner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 564984BC13DF19BC00DFBE38 /* ShinyPartitioner.cpp */; };
-		564984D113E07A6200DFBE38 /* ShinyPeer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 564984D013E07A6200DFBE38 /* ShinyPeer.cpp */; };
-		5663423113FDDF0D00CCB743 /* ShinyFileChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5663423013FDDF0D00CCB743 /* ShinyFileChunk.cpp */; };
-		5689859A1404AF26002A506B /* ShinyNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 568985991404AF26002A506B /* ShinyNetwork.cpp */; };
-		56BBF9ED140CCEF900B27799 /* ShinyUser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56BBF9EC140CCEF900B27799 /* ShinyUser.cpp */; };
-		56BBF9F3140D63DB00B27799 /* ShinyGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56BBF9F2140D63DB00B27799 /* ShinyGroup.cpp */; };
-		56DBB6B21416A2CC005F07AF /* ShinySelf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56DBB6B11416A2CC005F07AF /* ShinySelf.cpp */; };
+		567FFA94150BF1E5005A3042 /* ShinyCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 567FFA93150BF1E5005A3042 /* ShinyCache.cpp */; };
+		56803FA6150D6C820074238D /* ShinyFuse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56803FA4150D6C820074238D /* ShinyFuse.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -38,8 +31,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		560D3155140598150074C0EF /* ShinyFuse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ShinyFuse.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		560D3156140598150074C0EF /* ShinyFuse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ShinyFuse.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		56103A1113A04A8D00CAC395 /* ShinyMetaDir.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ShinyMetaDir.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		56103A1213A04A8D00CAC395 /* ShinyMetaDir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ShinyMetaDir.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		56103A1313A04A8D00CAC395 /* ShinyMetaFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ShinyMetaFile.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -50,28 +41,15 @@
 		56103A1813A04A8D00CAC395 /* ShinyMetaNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyMetaNode.h; sourceTree = "<group>"; };
 		56103A1913A04A8D00CAC395 /* ShinyMetaRootDir.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyMetaRootDir.cpp; sourceTree = "<group>"; };
 		56103A1A13A04A8D00CAC395 /* ShinyMetaRootDir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyMetaRootDir.h; sourceTree = "<group>"; };
-		56103A1C13A04A8D00CAC395 /* ShinyMsg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyMsg.cpp; sourceTree = "<group>"; };
-		56103A1D13A04A8D00CAC395 /* ShinyMsg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyMsg.h; sourceTree = "<group>"; };
 		56103A2513A04E3900CAC395 /* Logger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Logger.cpp; path = ../../../platform/base/Logger.cpp; sourceTree = "<group>"; };
 		56103A2613A04E3900CAC395 /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logger.h; path = ../../../platform/base/Logger.h; sourceTree = "<group>"; };
 		5613190613D3A6BE0014BEC0 /* Thoughts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Thoughts; sourceTree = SOURCE_ROOT; };
 		56249C03138AD6FA00AA24BB /* node */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = node; sourceTree = BUILT_PRODUCTS_DIR; };
 		56249C07138AD6FA00AA24BB /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = main.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		564984BA13DF169F00DFBE38 /* ShinyPeer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyPeer.h; sourceTree = "<group>"; };
-		564984BC13DF19BC00DFBE38 /* ShinyPartitioner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyPartitioner.cpp; sourceTree = "<group>"; };
-		564984BD13DF19BC00DFBE38 /* ShinyPartitioner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyPartitioner.h; sourceTree = "<group>"; };
-		564984D013E07A6200DFBE38 /* ShinyPeer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyPeer.cpp; sourceTree = "<group>"; };
-		5663422E13FDDF0300CCB743 /* ShinyFileChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyFileChunk.h; sourceTree = "<group>"; };
-		5663423013FDDF0D00CCB743 /* ShinyFileChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyFileChunk.cpp; sourceTree = "<group>"; };
-		568985991404AF26002A506B /* ShinyNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyNetwork.cpp; sourceTree = "<group>"; };
-		5689859B1404AF2F002A506B /* ShinyNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyNetwork.h; sourceTree = "<group>"; };
-		568FC9E81427A85D00213DD0 /* Shiny.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Shiny.h; path = ../shared/Shiny.h; sourceTree = "<group>"; };
-		56BBF9EA140CCEF000B27799 /* ShinyUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyUser.h; sourceTree = "<group>"; };
-		56BBF9EC140CCEF900B27799 /* ShinyUser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyUser.cpp; sourceTree = "<group>"; };
-		56BBF9F1140D63C600B27799 /* ShinyGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyGroup.h; sourceTree = "<group>"; };
-		56BBF9F2140D63DB00B27799 /* ShinyGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyGroup.cpp; sourceTree = "<group>"; };
-		56DBB6B11416A2CC005F07AF /* ShinySelf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinySelf.cpp; sourceTree = "<group>"; };
-		56DBB6B41416A2DE005F07AF /* ShinySelf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinySelf.h; sourceTree = "<group>"; };
+		567FFA921509F988005A3042 /* ShinyCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShinyCache.h; path = ../shared/cache/ShinyCache.h; sourceTree = "<group>"; };
+		567FFA93150BF1E5005A3042 /* ShinyCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShinyCache.cpp; path = ../shared/cache/ShinyCache.cpp; sourceTree = "<group>"; };
+		56803FA4150D6C820074238D /* ShinyFuse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShinyFuse.cpp; path = ../shared/fuse/ShinyFuse.cpp; sourceTree = "<group>"; };
+		56803FA5150D6C820074238D /* ShinyFuse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShinyFuse.h; path = ../shared/fuse/ShinyFuse.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,10 +66,9 @@
 		56103A0C13A04A7100CAC395 /* shared */ = {
 			isa = PBXGroup;
 			children = (
-				568FC9E81427A85D00213DD0 /* Shiny.h */,
+				56803FA3150D6C480074238D /* fuse */,
+				567FFA901509F955005A3042 /* cache */,
 				56103A1013A04A8D00CAC395 /* filesystem */,
-				56103A1B13A04A8D00CAC395 /* protocol */,
-				56103A2413A04E1C00CAC395 /* base */,
 			);
 			name = shared;
 			sourceTree = "<group>";
@@ -107,35 +84,11 @@
 				56103A1213A04A8D00CAC395 /* ShinyMetaDir.h */,
 				56103A1313A04A8D00CAC395 /* ShinyMetaFile.cpp */,
 				56103A1413A04A8D00CAC395 /* ShinyMetaFile.h */,
-				5663423013FDDF0D00CCB743 /* ShinyFileChunk.cpp */,
-				5663422E13FDDF0300CCB743 /* ShinyFileChunk.h */,
 				56103A1513A04A8D00CAC395 /* ShinyFilesystem.cpp */,
 				56103A1613A04A8D00CAC395 /* ShinyFilesystem.h */,
-				56BBF9EC140CCEF900B27799 /* ShinyUser.cpp */,
-				56BBF9EA140CCEF000B27799 /* ShinyUser.h */,
-				56DBB6B11416A2CC005F07AF /* ShinySelf.cpp */,
-				56DBB6B41416A2DE005F07AF /* ShinySelf.h */,
-				56BBF9F2140D63DB00B27799 /* ShinyGroup.cpp */,
-				56BBF9F1140D63C600B27799 /* ShinyGroup.h */,
 			);
 			name = filesystem;
 			path = ../shared/filesystem;
-			sourceTree = "<group>";
-		};
-		56103A1B13A04A8D00CAC395 /* protocol */ = {
-			isa = PBXGroup;
-			children = (
-				564984BC13DF19BC00DFBE38 /* ShinyPartitioner.cpp */,
-				564984BD13DF19BC00DFBE38 /* ShinyPartitioner.h */,
-				56103A1C13A04A8D00CAC395 /* ShinyMsg.cpp */,
-				56103A1D13A04A8D00CAC395 /* ShinyMsg.h */,
-				564984D013E07A6200DFBE38 /* ShinyPeer.cpp */,
-				564984BA13DF169F00DFBE38 /* ShinyPeer.h */,
-				568985991404AF26002A506B /* ShinyNetwork.cpp */,
-				5689859B1404AF2F002A506B /* ShinyNetwork.h */,
-			);
-			name = protocol;
-			path = ../shared/protocol;
 			sourceTree = "<group>";
 		};
 		56103A2413A04E1C00CAC395 /* base */ = {
@@ -150,6 +103,7 @@
 		56249BF6138AD6EB00AA24BB = {
 			isa = PBXGroup;
 			children = (
+				56103A2413A04E1C00CAC395 /* base */,
 				5613190613D3A6BE0014BEC0 /* Thoughts */,
 				56103A0C13A04A7100CAC395 /* shared */,
 				56249C06138AD6FA00AA24BB /* node */,
@@ -169,10 +123,26 @@
 			isa = PBXGroup;
 			children = (
 				56249C07138AD6FA00AA24BB /* main.cpp */,
-				560D3155140598150074C0EF /* ShinyFuse.cpp */,
-				560D3156140598150074C0EF /* ShinyFuse.h */,
 			);
 			path = node;
+			sourceTree = "<group>";
+		};
+		567FFA901509F955005A3042 /* cache */ = {
+			isa = PBXGroup;
+			children = (
+				567FFA921509F988005A3042 /* ShinyCache.h */,
+				567FFA93150BF1E5005A3042 /* ShinyCache.cpp */,
+			);
+			name = cache;
+			sourceTree = "<group>";
+		};
+		56803FA3150D6C480074238D /* fuse */ = {
+			isa = PBXGroup;
+			children = (
+				56803FA4150D6C820074238D /* ShinyFuse.cpp */,
+				56803FA5150D6C820074238D /* ShinyFuse.h */,
+			);
+			name = fuse;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -200,6 +170,9 @@
 /* Begin PBXProject section */
 		56249BF8138AD6EB00AA24BB /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0430;
+			};
 			buildConfigurationList = 56249BFB138AD6EB00AA24BB /* Build configuration list for PBXProject "shinyfs-node" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
@@ -228,16 +201,9 @@
 				56103A2013A04A8D00CAC395 /* ShinyFilesystem.cpp in Sources */,
 				56103A2113A04A8D00CAC395 /* ShinyMetaNode.cpp in Sources */,
 				56103A2213A04A8D00CAC395 /* ShinyMetaRootDir.cpp in Sources */,
-				56103A2313A04A8D00CAC395 /* ShinyMsg.cpp in Sources */,
 				56103A2713A04E3900CAC395 /* Logger.cpp in Sources */,
-				564984BE13DF19BC00DFBE38 /* ShinyPartitioner.cpp in Sources */,
-				564984D113E07A6200DFBE38 /* ShinyPeer.cpp in Sources */,
-				5663423113FDDF0D00CCB743 /* ShinyFileChunk.cpp in Sources */,
-				5689859A1404AF26002A506B /* ShinyNetwork.cpp in Sources */,
-				560D3157140598150074C0EF /* ShinyFuse.cpp in Sources */,
-				56BBF9ED140CCEF900B27799 /* ShinyUser.cpp in Sources */,
-				56BBF9F3140D63DB00B27799 /* ShinyGroup.cpp in Sources */,
-				56DBB6B21416A2CC005F07AF /* ShinySelf.cpp in Sources */,
+				567FFA94150BF1E5005A3042 /* ShinyCache.cpp in Sources */,
+				56803FA6150D6C820074238D /* ShinyFuse.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

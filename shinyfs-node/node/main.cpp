@@ -1,16 +1,16 @@
 #include <zmq.hpp>
 #include <base/Logger.h>
-#include "protocol/ShinyMsg.h"
-#include "protocol/ShinyPartitioner.h"
-#include "ShinyNode.h"
+//#include "protocol/ShinyMsg.h"
+//#include "protocol/ShinyPartitioner.h"
+//#include "ShinyNode.h"
 
 #include "filesystem/ShinyMetaNode.h"
 #include "filesystem/ShinyMetaRootDir.h"
 #include "filesystem/ShinyMetaFile.h"
 #include "filesystem/ShinyMetaDir.h"
-#include "protocol/ShinyNetwork.h"
+//#include "protocol/ShinyNetwork.h"
 
-#include "ShinyFuse.h"
+#include "fuse/ShinyFuse.h"
 
 //#include "filesystem/
 
@@ -22,9 +22,11 @@ int main (int argc, const char * argv[]) {
 //    getGlobalLogger()->setPrintLoc(0);
     LOG( "%s starting up....", NODE_VERSION );
     
-    ShinyFilesystem fs;
+    zmq::context_t ctx(1);
     
-    ShinyFuse::init( &fs );
+    ShinyFilesystem * fs = new ShinyFilesystem( "filecache", &ctx );
+    ShinyFuse::init( fs, &ctx );
+    
     return 0;
 }
 

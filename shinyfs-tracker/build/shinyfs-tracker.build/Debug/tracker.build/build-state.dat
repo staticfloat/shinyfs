@@ -1,0 +1,428 @@
+Ttracker
+v3
+r1
+cCheck dependencies
+cCompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/main.o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/tracker/main.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42
+cCompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyTracker.o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/tracker/ShinyTracker.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42
+cCompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/Logger.o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../../../platform/base/Logger.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42
+cCompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaDir.o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaDir.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42
+cCompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaFile.o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaFile.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42
+cCompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaFilesystem.o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaFilesystem.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42
+cCompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaNode.o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaNode.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42
+cCompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaRootDir.o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaRootDir.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42
+cCompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMsg.o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/protocol/ShinyMsg.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42
+cLd /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug/tracker normal x86_64
+
+N/Developer/SDKs/MacOSX10.6.sdk
+c000000004D66164C00000000000000EE
+t1298536012
+s238
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/fcntl.h
+c000000004BBD2CE900000000000003EA
+t1270689001
+s1002
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/math.h
+c000000004AC599B500000000000004F1
+t1254463925
+s1265
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/stdio.h
+c000000004BBD2CE90000000000004174
+t1270689001
+s16756
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/string.h
+c000000004BBD2CE90000000000001731
+t1270689001
+s5937
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/sys/time.h
+c000000004CC3DE680000000000001E17
+t1287904872
+s7703
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/sys/types.h
+c000000004CC3DE680000000000002905
+t1287904872
+s10501
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/time.h
+c000000004BBD2CE9000000000000178E
+t1270689001
+s6030
+
+N/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin10/4.2.1/include/stdarg.h
+c000000004D55C82600000000000010DD
+t1297467430
+s4317
+
+N/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin10/4.2.1/include/stdint.h
+c000000004D55CD3B000000000000190C
+t1297468731
+s6412
+
+N/STUFF/coding/platform/base/Logger.h
+c000000004DF6600F0000000000000977
+t1307992079
+s2423
+i<stdio.h>
+
+N/STUFF/coding/projects/shinyfs/shared/protocol/ShinyMsg.h
+c000000004DFB35970000000000000777
+t1308308887
+s1911
+i<stdint.h>
+i<zmq.hpp>
+
+N/Users/sabae/Dropbox/coding/platform/base/Logger.h
+c000000004DF6600F0000000000000977
+t1307992079
+s2423
+i<stdio.h>
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shared/filesystem/ShinyMetaDir.h
+c000000004E00D49E00000000000003CB
+t1308677278
+s971
+i<list>
+i"ShinyMetaNode.h"
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shared/filesystem/ShinyMetaFile.h
+c000000004E00D4520000000000000320
+t1308677202
+s800
+i<sys/types.h>
+i"ShinyMetaNode.h"
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shared/filesystem/ShinyMetaFilesystem.h
+c000000004E1491700000000000000C82
+t1309970800
+s3202
+i<tr1/unordered_map>
+i"ShinyMetaNode.h"
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shared/filesystem/ShinyMetaNode.h
+c000000004E14919D0000000000000CBC
+t1309970845
+s3260
+i<stdint.h>
+i<list>
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shared/filesystem/ShinyMetaRootDir.h
+c000000004E021FD400000000000001A0
+t1308762068
+s416
+i"ShinyMetaDir.h"
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shared/protocol/ShinyMsg.h
+c000000004DFB35970000000000000777
+t1308308887
+s1911
+i<stdint.h>
+i<zmq.hpp>
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../../../platform/base/Logger.cpp
+c000000004DF6823C0000000000000B9B
+t1308000828
+s2971
+i"Logger.h"
+i<stdio.h>
+i<stdarg.h>
+i<math.h>
+i<sys/time.h>
+i<string.h>
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaDir.cpp
+c000000004E1495420000000000000CD9
+t1309971778
+s3289
+i"ShinyMetaDir.h"
+i"ShinyMetaFilesystem.h"
+i"base/Logger.h"
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaFile.cpp
+c000000004E14952F0000000000000605
+t1309971759
+s1541
+i"ShinyMetaFile.h"
+i"ShinyMetaFilesystem.h"
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaFilesystem.cpp
+c000000004E1497EA0000000000001C50
+t1309972458
+s7248
+i"ShinyMetaFilesystem.h"
+i"ShinyMetaFile.h"
+i"ShinyMetaDir.h"
+i"ShinyMetaRootDir.h"
+i<base/Logger.h>
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaFilesystem.h
+c000000004E1491700000000000000C82
+t1309970800
+s3202
+i<tr1/unordered_map>
+i"ShinyMetaNode.h"
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaNode.cpp
+c000000004E1496210000000000001774
+t1309972001
+s6004
+i"ShinyMetaNode.h"
+i"ShinyMetaFilesystem.h"
+i<base/Logger.h>
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaRootDir.cpp
+c000000004E02219900000000000001EE
+t1308762521
+s494
+i"ShinyMetaRootDir.h"
+i"ShinyMetaFilesystem.h"
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/protocol/ShinyMsg.cpp
+c000000004DF685D90000000000000C90
+t1308001753
+s3216
+i"ShinyMsg.h"
+i<base/Logger.h>
+i<stdio.h>
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug/tracker
+t1309972437
+s190788
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/Logger.o
+t1308000832
+s13288
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaDir.o
+t1309971779
+s169760
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaFile.o
+t1309971779
+s72952
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaFilesystem.o
+t1309972437
+s268780
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaNode.o
+t1309972011
+s147640
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaRootDir.o
+t1309970885
+s79912
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMsg.o
+t1308308953
+s36028
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyTracker.o
+t1309971717
+s69344
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/main.o
+t1309970882
+s83264
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/tracker.LinkFileList
+c000000004DF593BF000000000000051D
+t1307939775
+s1309
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/tracker/ShinyTracker.cpp
+c000000004E1494CF0000000000000469
+t1309971663
+s1129
+i"ShinyTracker.h"
+i"base/Logger.h"
+i<fcntl.h>
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/tracker/ShinyTracker.h
+c000000004DFB358B00000000000002E6
+t1308308875
+s742
+i"ShinyMetaFilesystem.h"
+
+N/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/tracker/main.cpp
+c000000004E148BE3000000000000111D
+t1309969379
+s4381
+i<zmq.hpp>
+i"protocol/ShinyMsg.h"
+i"base/Logger.h"
+i"ShinyTracker.h"
+i"../shared/filesystem/ShinyMetaDir.h"
+i"../shared/filesystem/ShinyMetaFile.h"
+i"../shared/filesystem/ShinyMetaNode.h"
+i"../shared/filesystem/ShinyMetaRootDir.h"
+
+N/usr/local/include/zmq.hpp
+c000000004DCCFE8D0000000000001CA5
+t1305280141
+s7333
+
+CBuild AST from /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../../../platform/base/Logger.cpp
+r0
+
+CBuild AST from /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaDir.cpp
+r0
+
+CBuild AST from /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaFile.cpp
+r0
+
+CBuild AST from /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaFilesystem.cpp
+r0
+
+CBuild AST from /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaNode.cpp
+r0
+
+CBuild AST from /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaRootDir.cpp
+r0
+
+CBuild AST from /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/protocol/ShinyMsg.cpp
+r0
+
+CBuild AST from /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/tracker/ShinyTracker.cpp
+r0
+
+CBuild AST from /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/tracker/main.cpp
+r0
+
+CCheck dependencies
+r0
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection18"Check dependencies24d06c6bcfc4b341^2eac876bcfc4b341^---0#1#0#--18"Check dependencies
+
+CCompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/Logger.o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../../../platform/base/Logger.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42
+s329693631.906925
+e329693632.493650
+r1
+xCompileC
+xbuild/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/Logger.o
+x/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../../../platform/base/Logger.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvmgcc42
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection102"Compile /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../../../platform/base/Logger.cpp8941e8bfb9a6b341^e0657ec0b9a6b341^---0#0#0#-19%DVTDocumentLocation2@110"file://localhost/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../../../platform/base/Logger.cpp0000000000000000^1886"CompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/Logger.o ../../../platform/base/Logger.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42    cd /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker    setenv LANG en_US.US-ASCII    /Developer/usr/bin/llvm-gcc-4.2 -x c++ -arch x86_64 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -Wshorten-64-to-32 -D_DEBUG -isysroot /Developer/SDKs/MacOSX10.6.sdk -fasm-blocks -mmacosx-version-min=10.6 -gdwarf-2 -fvisibility-inlines-hidden -iquote /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-generated-files.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-own-target-headers.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-all-target-headers.hmap -iquote /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-project-headers.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug/include -I/usr/local/include -I/STUFF/coding/platform -I/STUFF/coding/projects/shinyfs/shared -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/DerivedSources/x86_64 -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/DerivedSources -F/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug -c /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../../../platform/base/Logger.cpp -o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/Logger.o
+
+CCompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaDir.o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaDir.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42
+s331664579.061910
+e331664579.818766
+r1
+xCompileC
+xbuild/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaDir.o
+x/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaDir.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvmgcc42
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection106"Compile /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaDir.cppc4ee0fc3ccc4b341^2fa2d1c3ccc4b341^---0#0#0#-19%DVTDocumentLocation2@114"file://localhost/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaDir.cpp0000000000000000^1906"CompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaDir.o ../shared/filesystem/ShinyMetaDir.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42    cd /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker    setenv LANG en_US.US-ASCII    /Developer/usr/bin/llvm-gcc-4.2 -x c++ -arch x86_64 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -Wshorten-64-to-32 -D_DEBUG -isysroot /Developer/SDKs/MacOSX10.6.sdk -fasm-blocks -mmacosx-version-min=10.6 -gdwarf-2 -fvisibility-inlines-hidden -iquote /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-generated-files.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-own-target-headers.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-all-target-headers.hmap -iquote /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-project-headers.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug/include -I/usr/local/include -I/STUFF/coding/platform -I/STUFF/coding/projects/shinyfs/shared -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/DerivedSources/x86_64 -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/DerivedSources -F/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug -c /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaDir.cpp -o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaDir.o
+
+CCompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaFile.o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaFile.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42
+s331664579.062655
+e331664579.721115
+r1
+xCompileC
+xbuild/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaFile.o
+x/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaFile.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvmgcc42
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection107"Compile /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaFile.cpp111b10c3ccc4b341^60afb8c3ccc4b341^---0#0#0#-19%DVTDocumentLocation2@115"file://localhost/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaFile.cpp0000000000000000^1910"CompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaFile.o ../shared/filesystem/ShinyMetaFile.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42    cd /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker    setenv LANG en_US.US-ASCII    /Developer/usr/bin/llvm-gcc-4.2 -x c++ -arch x86_64 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -Wshorten-64-to-32 -D_DEBUG -isysroot /Developer/SDKs/MacOSX10.6.sdk -fasm-blocks -mmacosx-version-min=10.6 -gdwarf-2 -fvisibility-inlines-hidden -iquote /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-generated-files.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-own-target-headers.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-all-target-headers.hmap -iquote /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-project-headers.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug/include -I/usr/local/include -I/STUFF/coding/platform -I/STUFF/coding/projects/shinyfs/shared -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/DerivedSources/x86_64 -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/DerivedSources -F/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug -c /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaFile.cpp -o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaFile.o
+
+CCompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaFilesystem.o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaFilesystem.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42
+s331665259.456181
+e331665260.121048
+r1
+xCompileC
+xbuild/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaFilesystem.o
+x/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaFilesystem.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvmgcc42
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection113"Compile /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaFilesystem.cpp1de9746bcfc4b341^8bfc1e6ccfc4b341^---0#0#0#-19%DVTDocumentLocation2@121"file://localhost/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaFilesystem.cpp0000000000000000^1934"CompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaFilesystem.o ../shared/filesystem/ShinyMetaFilesystem.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42    cd /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker    setenv LANG en_US.US-ASCII    /Developer/usr/bin/llvm-gcc-4.2 -x c++ -arch x86_64 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -Wshorten-64-to-32 -D_DEBUG -isysroot /Developer/SDKs/MacOSX10.6.sdk -fasm-blocks -mmacosx-version-min=10.6 -gdwarf-2 -fvisibility-inlines-hidden -iquote /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-generated-files.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-own-target-headers.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-all-target-headers.hmap -iquote /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-project-headers.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug/include -I/usr/local/include -I/STUFF/coding/platform -I/STUFF/coding/projects/shinyfs/shared -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/DerivedSources/x86_64 -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/DerivedSources -F/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug -c /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaFilesystem.cpp -o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaFilesystem.o
+
+CCompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaNode.o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaNode.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42
+s331664811.244762
+e331664811.913619
+r1
+xCompileC
+xbuild/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaNode.o
+x/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaNode.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvmgcc42
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection107"Compile /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaNode.cpp48c23eabcdc4b341^3eece9abcdc4b341^---0#0#0#-19%DVTDocumentLocation2@115"file://localhost/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaNode.cpp0000000000000000^1910"CompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaNode.o ../shared/filesystem/ShinyMetaNode.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42    cd /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker    setenv LANG en_US.US-ASCII    /Developer/usr/bin/llvm-gcc-4.2 -x c++ -arch x86_64 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -Wshorten-64-to-32 -D_DEBUG -isysroot /Developer/SDKs/MacOSX10.6.sdk -fasm-blocks -mmacosx-version-min=10.6 -gdwarf-2 -fvisibility-inlines-hidden -iquote /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-generated-files.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-own-target-headers.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-all-target-headers.hmap -iquote /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-project-headers.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug/include -I/usr/local/include -I/STUFF/coding/platform -I/STUFF/coding/projects/shinyfs/shared -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/DerivedSources/x86_64 -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/DerivedSources -F/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug -c /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaNode.cpp -o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaNode.o
+
+CCompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaRootDir.o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaRootDir.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42
+s331663684.679874
+e331663685.396350
+r1
+xCompileC
+xbuild/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaRootDir.o
+x/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaRootDir.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvmgcc42
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection110"Compile /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaRootDir.cpp4566ae44c9c4b341^e5806545c9c4b341^---0#0#0#-19%DVTDocumentLocation2@118"file://localhost/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaRootDir.cpp0000000000000000^1922"CompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaRootDir.o ../shared/filesystem/ShinyMetaRootDir.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42    cd /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker    setenv LANG en_US.US-ASCII    /Developer/usr/bin/llvm-gcc-4.2 -x c++ -arch x86_64 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -Wshorten-64-to-32 -D_DEBUG -isysroot /Developer/SDKs/MacOSX10.6.sdk -fasm-blocks -mmacosx-version-min=10.6 -gdwarf-2 -fvisibility-inlines-hidden -iquote /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-generated-files.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-own-target-headers.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-all-target-headers.hmap -iquote /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-project-headers.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug/include -I/usr/local/include -I/STUFF/coding/platform -I/STUFF/coding/projects/shinyfs/shared -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/DerivedSources/x86_64 -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/DerivedSources -F/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug -c /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/filesystem/ShinyMetaRootDir.cpp -o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMetaRootDir.o
+
+CCompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMsg.o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/protocol/ShinyMsg.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42
+s330001753.683427
+e330001753.805631
+r1
+xCompileC
+xbuild/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMsg.o
+x/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/protocol/ShinyMsg.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvmgcc42
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection100"Compile /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/protocol/ShinyMsg.cpp910eaf596dabb341^ed47ce596dabb341^---0#0#0#-19%DVTDocumentLocation2@108"file://localhost/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/protocol/ShinyMsg.cpp0000000000000000^1886"CompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMsg.o ../shared/protocol/ShinyMsg.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42    cd /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker    setenv LANG en_US.US-ASCII    /Developer/usr/bin/llvm-gcc-4.2 -x c++ -arch x86_64 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -Wshorten-64-to-32 -D_DEBUG -isysroot /Developer/SDKs/MacOSX10.6.sdk -fasm-blocks -mmacosx-version-min=10.6 -gdwarf-2 -fvisibility-inlines-hidden -iquote /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-generated-files.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-own-target-headers.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-all-target-headers.hmap -iquote /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-project-headers.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug/include -I/usr/local/include -I/STUFF/coding/platform -I/STUFF/coding/projects/shinyfs/shared -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/DerivedSources/x86_64 -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/DerivedSources -F/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug -c /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/../shared/protocol/ShinyMsg.cpp -o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyMsg.o
+
+CCompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyTracker.o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/tracker/ShinyTracker.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42
+s331664516.431230
+e331664517.109461
+r1
+xCompileC
+xbuild/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyTracker.o
+x/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/tracker/ShinyTracker.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvmgcc42
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection93"Compile /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/tracker/ShinyTracker.cpp957e6e84ccc4b341^1d051c85ccc4b341^---0#0#0#-19%DVTDocumentLocation2@101"file://localhost/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/tracker/ShinyTracker.cpp0000000000000000^1880"CompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyTracker.o tracker/ShinyTracker.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42    cd /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker    setenv LANG en_US.US-ASCII    /Developer/usr/bin/llvm-gcc-4.2 -x c++ -arch x86_64 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -Wshorten-64-to-32 -D_DEBUG -isysroot /Developer/SDKs/MacOSX10.6.sdk -fasm-blocks -mmacosx-version-min=10.6 -gdwarf-2 -fvisibility-inlines-hidden -iquote /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-generated-files.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-own-target-headers.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-all-target-headers.hmap -iquote /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-project-headers.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug/include -I/usr/local/include -I/STUFF/coding/platform -I/STUFF/coding/projects/shinyfs/shared -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/DerivedSources/x86_64 -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/DerivedSources -F/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug -c /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/tracker/ShinyTracker.cpp -o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/ShinyTracker.o
+
+CCompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/main.o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/tracker/main.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42
+s331663681.531245
+e331663682.668038
+r1
+xCompileC
+xbuild/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/main.o
+x/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/tracker/main.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvmgcc42
+o/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/tracker/main.cpp: In function 'int main(int, const char**)':
+o/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/tracker/main.cpp:89: warning: unused variable 'serializedLen'
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection85"Compile /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/tracker/main.cppd2198841c9c4b341^f5bcab42c9c4b341^-245"/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/tracker/main.cpp: In function 'int main(int, const char**)':/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/tracker/main.cpp:89: warning: unused variable 'serializedLen'1(21%IDEActivityLogMessage2@31"Unused variable 'serializedLen'-331663682#122#123#-1#-23%DVTTextDocumentLocation3@93"file://localhost/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/tracker/main.cpp0000000000000000^88#18446744073709551615#88#18446744073709551615#18446744073709551615#0#19"Unused variable '*'--0#0#0#-19%DVTDocumentLocation4@93"file://localhost/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/tracker/main.cpp0000000000000000^1848"CompileC build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/main.o tracker/main.cpp normal x86_64 c++ com.apple.compilers.llvmgcc42    cd /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker    setenv LANG en_US.US-ASCII    /Developer/usr/bin/llvm-gcc-4.2 -x c++ -arch x86_64 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -Wshorten-64-to-32 -D_DEBUG -isysroot /Developer/SDKs/MacOSX10.6.sdk -fasm-blocks -mmacosx-version-min=10.6 -gdwarf-2 -fvisibility-inlines-hidden -iquote /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-generated-files.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-own-target-headers.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-all-target-headers.hmap -iquote /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/tracker-project-headers.hmap -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug/include -I/usr/local/include -I/STUFF/coding/platform -I/STUFF/coding/projects/shinyfs/shared -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/DerivedSources/x86_64 -I/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/DerivedSources -F/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug -c /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/tracker/main.cpp -o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/main.o
+
+CLd /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug/tracker normal x86_64
+s331665260.121823
+e331665260.158869
+r1
+xLd
+x/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug/tracker
+xnormal
+xx86_64
+lSLF03#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection85"Link /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug/tracker2d401f6ccfc4b341^96b2286ccfc4b341^---0#0#0#--711"Ld build/Debug/tracker normal x86_64    cd /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker    setenv MACOSX_DEPLOYMENT_TARGET 10.6    /Developer/usr/bin/llvm-g++-4.2 -arch x86_64 -isysroot /Developer/SDKs/MacOSX10.6.sdk -L/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug -L/Developer/SDKs/MacOSX10.6.sdk/usr/local/lib -F/Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug -filelist /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/shinyfs-tracker.build/Debug/tracker.build/Objects-normal/x86_64/tracker.LinkFileList -mmacosx-version-min=10.6 -lzmq -o /Users/sabae/Dropbox/coding/projects/shinyfs/shinyfs-tracker/build/Debug/tracker
+
