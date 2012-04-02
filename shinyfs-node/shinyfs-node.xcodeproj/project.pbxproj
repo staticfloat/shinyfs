@@ -14,7 +14,9 @@
 		56103A2213A04A8D00CAC395 /* ShinyMetaRootDir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56103A1913A04A8D00CAC395 /* ShinyMetaRootDir.cpp */; };
 		56103A2713A04E3900CAC395 /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56103A2513A04E3900CAC395 /* Logger.cpp */; };
 		56249C08138AD6FA00AA24BB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56249C07138AD6FA00AA24BB /* main.cpp */; };
-		567FFA94150BF1E5005A3042 /* ShinyCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 567FFA93150BF1E5005A3042 /* ShinyCache.cpp */; };
+		564CC0B615204B5500D7CC3C /* ShinyMetaFileHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 564CC0B515204B5500D7CC3C /* ShinyMetaFileHandle.cpp */; };
+		564CC0BA15214D5300D7CC3C /* zmqutils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 564CC0B915214D5300D7CC3C /* zmqutils.cpp */; };
+		564CC0D215219D1A00D7CC3C /* ShinyFilesystemMediator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 564CC0D115219D1A00D7CC3C /* ShinyFilesystemMediator.cpp */; };
 		56803FA6150D6C820074238D /* ShinyFuse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56803FA4150D6C820074238D /* ShinyFuse.cpp */; };
 /* End PBXBuildFile section */
 
@@ -46,8 +48,12 @@
 		5613190613D3A6BE0014BEC0 /* Thoughts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Thoughts; sourceTree = SOURCE_ROOT; };
 		56249C03138AD6FA00AA24BB /* node */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = node; sourceTree = BUILT_PRODUCTS_DIR; };
 		56249C07138AD6FA00AA24BB /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = main.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		567FFA921509F988005A3042 /* ShinyCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShinyCache.h; path = ../shared/cache/ShinyCache.h; sourceTree = "<group>"; };
-		567FFA93150BF1E5005A3042 /* ShinyCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShinyCache.cpp; path = ../shared/cache/ShinyCache.cpp; sourceTree = "<group>"; };
+		564CC0B315204A7200D7CC3C /* ShinyMetaFileHandle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShinyMetaFileHandle.h; sourceTree = "<group>"; };
+		564CC0B515204B5500D7CC3C /* ShinyMetaFileHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyMetaFileHandle.cpp; sourceTree = "<group>"; };
+		564CC0B815214CF000D7CC3C /* zmqutils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = zmqutils.h; path = ../shared/util/zmqutils.h; sourceTree = "<group>"; };
+		564CC0B915214D5300D7CC3C /* zmqutils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = zmqutils.cpp; path = ../shared/util/zmqutils.cpp; sourceTree = "<group>"; };
+		564CC0BB1521876800D7CC3C /* ShinyFilesystemMediator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ShinyFilesystemMediator.h; path = ../shared/fuse/ShinyFilesystemMediator.h; sourceTree = "<group>"; };
+		564CC0D115219D1A00D7CC3C /* ShinyFilesystemMediator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShinyFilesystemMediator.cpp; path = ../shared/fuse/ShinyFilesystemMediator.cpp; sourceTree = "<group>"; };
 		56803FA4150D6C820074238D /* ShinyFuse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShinyFuse.cpp; path = ../shared/fuse/ShinyFuse.cpp; sourceTree = "<group>"; };
 		56803FA5150D6C820074238D /* ShinyFuse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShinyFuse.h; path = ../shared/fuse/ShinyFuse.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -66,8 +72,8 @@
 		56103A0C13A04A7100CAC395 /* shared */ = {
 			isa = PBXGroup;
 			children = (
+				564CC0B715214CD400D7CC3C /* util */,
 				56803FA3150D6C480074238D /* fuse */,
-				567FFA901509F955005A3042 /* cache */,
 				56103A1013A04A8D00CAC395 /* filesystem */,
 			);
 			name = shared;
@@ -84,6 +90,8 @@
 				56103A1213A04A8D00CAC395 /* ShinyMetaDir.h */,
 				56103A1313A04A8D00CAC395 /* ShinyMetaFile.cpp */,
 				56103A1413A04A8D00CAC395 /* ShinyMetaFile.h */,
+				564CC0B515204B5500D7CC3C /* ShinyMetaFileHandle.cpp */,
+				564CC0B315204A7200D7CC3C /* ShinyMetaFileHandle.h */,
 				56103A1513A04A8D00CAC395 /* ShinyFilesystem.cpp */,
 				56103A1613A04A8D00CAC395 /* ShinyFilesystem.h */,
 			);
@@ -127,13 +135,13 @@
 			path = node;
 			sourceTree = "<group>";
 		};
-		567FFA901509F955005A3042 /* cache */ = {
+		564CC0B715214CD400D7CC3C /* util */ = {
 			isa = PBXGroup;
 			children = (
-				567FFA921509F988005A3042 /* ShinyCache.h */,
-				567FFA93150BF1E5005A3042 /* ShinyCache.cpp */,
+				564CC0B815214CF000D7CC3C /* zmqutils.h */,
+				564CC0B915214D5300D7CC3C /* zmqutils.cpp */,
 			);
-			name = cache;
+			name = util;
 			sourceTree = "<group>";
 		};
 		56803FA3150D6C480074238D /* fuse */ = {
@@ -141,6 +149,8 @@
 			children = (
 				56803FA4150D6C820074238D /* ShinyFuse.cpp */,
 				56803FA5150D6C820074238D /* ShinyFuse.h */,
+				564CC0D115219D1A00D7CC3C /* ShinyFilesystemMediator.cpp */,
+				564CC0BB1521876800D7CC3C /* ShinyFilesystemMediator.h */,
 			);
 			name = fuse;
 			sourceTree = "<group>";
@@ -202,8 +212,10 @@
 				56103A2113A04A8D00CAC395 /* ShinyMetaNode.cpp in Sources */,
 				56103A2213A04A8D00CAC395 /* ShinyMetaRootDir.cpp in Sources */,
 				56103A2713A04E3900CAC395 /* Logger.cpp in Sources */,
-				567FFA94150BF1E5005A3042 /* ShinyCache.cpp in Sources */,
 				56803FA6150D6C820074238D /* ShinyFuse.cpp in Sources */,
+				564CC0B615204B5500D7CC3C /* ShinyMetaFileHandle.cpp in Sources */,
+				564CC0BA15214D5300D7CC3C /* zmqutils.cpp in Sources */,
+				564CC0D215219D1A00D7CC3C /* ShinyFilesystemMediator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -214,11 +226,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
-					/usr/local/include,
+					/Users/sabae/.homebrew/include,
 					"~/Dropbox/coding/platform",
 					"~/Dropbox/coding/projects/shinyfs/shared",
 				);
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = /Users/sabae/.homebrew/lib;
 			};
 			name = Debug;
 		};
@@ -226,11 +238,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
-					/usr/local/include,
+					/Users/sabae/.homebrew/include,
 					"~/Dropbox/coding/platform",
 					"~/Dropbox/coding/projects/shinyfs/shared",
 				);
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = /Users/sabae/.homebrew/lib;
 			};
 			name = Release;
 		};
@@ -243,7 +255,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_PREPROCESSOR_DEFINITIONS = _DEBUG;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -254,6 +266,7 @@
 					"-lfuse4x",
 					"-lcryptopp",
 					"-lzmq",
+					"-lkyotocabinet",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -276,6 +289,7 @@
 					"-lfuse4x",
 					"-lcryptopp",
 					"-lzmq",
+					"-lkyotocabinet",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

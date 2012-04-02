@@ -8,22 +8,22 @@ class ShinyMetaDir : public ShinyMetaNode {
 /////// CREATION ///////
 public:
     // This makes a new one
-    ShinyMetaDir( ShinyFilesystem * fs, const char * newName );
+    ShinyMetaDir( const char * newName );
     
     // Same as above, but adds this guy as a child to given parent (this is just for convenience, this just calls "addNode()" for you)
-    ShinyMetaDir( ShinyFilesystem * fs, const char * newName, ShinyMetaDir * parent );
+    ShinyMetaDir( const char * newName, ShinyMetaDir * parent );
     
     //Loads in from serialized input
-    ShinyMetaDir( const char * serializedInput, ShinyFilesystem * fs );
-    
+    ShinyMetaDir( const char ** serializedInput );
+
     //Deletes all children
     ~ShinyMetaDir( void );
 
-    virtual size_t serializedLen( void );
-    virtual void serialize( char * output );
-protected:
+    virtual uint64_t serializedLen( void );
+    virtual char * serialize( char * output );
+
     //Unserializes. Duh.
-    virtual void unserialize( const char * input );
+    virtual void unserialize( const char **input );
 
 
 /////// NODE MANAGEMENT ///////
@@ -56,7 +56,9 @@ protected:
     //Checks to make sure that all children have this as a parent
     //Lots of code overlap with check_parentsHaveUsAsChild, but whatever
     virtual bool check_childrenHaveUsAsParent( void );
-
+    
+    // Override the default permissions for directories, as we need to have execute set so that people can read!
+    virtual uint16_t getDefaultPermissions( void );
 };
 
 

@@ -11,26 +11,37 @@
 /*
  ShinyFilesystem constructor, takes in path to cache location? I need to split this out into a separate cache object.....
  */
-ShinyFilesystem::ShinyFilesystem( const char * filecache, zmq::context_t * ctx ) : ctx(ctx) {
+ShinyFilesystem::ShinyFilesystem( const char * filecache ) {
     // Check if the filecache exists
-    struct stat st;
+/*    struct stat st;
     if( stat( filecache, &st ) != 0 ) {
         WARN( "filecache %s does not exist, creating a new one!", filecache );
         mkdir( filecache, 0700 );
-    }
+    }*/
     
+    /*
     // create socket for comms with shinycache
     cacheSock = new zmq::socket_t( *this->ctx, ZMQ_DEALER );
     cacheSock->bind( this->getZMQEndpointFileCache() );
     
     // Initialize cache object
     cache = new ShinyCache( filecache, ctx );
+     */
     
+    if( !this->db.open( filecache, kyotocabinet::PolyDB::OWRITER | kyotocabinet::PolyDB::OCREATE ) ) {
+        ERROR( "Unable to open filecache in %s", filecache );
+        throw "Unable to open filcache";
+    }
+
     
-    
-    TODO( "Replace this with unserializing the previous stuff!" );
+    TODO( "Replace this with unserializing from the db, if we can!" );
     this->root = new ShinyMetaRootDir( this );
-    this->root->addNode( new ShinyMetaFile( this, "test" ) );    
+    ShinyMetaFile * testf = new ShinyMetaFile( "test" );
+    this->root->addNode( testf );
+    
+    const char * testdata = "this is a test\nawwwwww yeahhhhh\n";
+    testf->write(0, testdata, strlen(testdata) );
+
     
 /*
     //serializedData would be nonzero in this case if we're constructing from net-based data...
@@ -62,8 +73,8 @@ ShinyFilesystem::ShinyFilesystem( const char * filecache, zmq::context_t * ctx )
 }
 
 ShinyFilesystem::~ShinyFilesystem() {
-    // Remember, kill all sockets, otherwise zmq_term will just block!  D:
-    delete( cacheSock );
+    // Close the DB object
+    this->db.close();
     
     //Clear out the nodes (amazing how they just take care of themselves, so nicely and all!)
     delete( this->root );
@@ -144,9 +155,69 @@ ShinyMetaDir * ShinyFilesystem::findParentNode( const char *path ) {
     return ret;
 }
 
+const char * ShinyFilesystem::getNodePath( ShinyMetaNode *node ) {
+    // If we've cached the result from a previous call, then just return that!
+    std::tr1::unordered_map<ShinyMetaNode *, const char *>::iterator itty = this->nodePaths.find( node );
+    if( itty != this->nodePaths.end() ) {
+        return (*itty).second;
+    }
+    
+    // First, get the length:
+    uint64_t len = 0;
+    
+    // We'll store all the paths in here so we don't have to traverse the tree multiple times
+    std::list<const char *> paths;
+    paths.push_front( node->getName() );
+    len += strlen( node->getName() );
+    
+    // Now iterate up the tree, gathering the names of parents and shoving them into the list of paths
+    ShinyMetaNode * currNode = node;
+    while( currNode != (ShinyMetaNode *) this->root ) {
+        // Move up in the chain of parents
+        ShinyMetaDir * nextNode = currNode->getParent();
+
+        // If our parental chain is broken, just return ?/name
+        if( !nextNode ) {
+            ERROR( "Parental chain for %s is broken at %s!", paths.back(), currNode->getName() );
+            paths.push_front( "?" );
+            break;
+        }
+        
+        else if( nextNode != (ShinyMetaNode *)this->root ) {
+            // Push node parent's path onto the list, and add its length to len
+            paths.push_front( nextNode->getName() );
+            len += strlen( nextNode->getName() );
+        }
+        currNode = nextNode;
+    }
+    
+    // Add 1 for each slash in front of each path
+    len += paths.size();
+    
+    // Add another 1 for the NULL character
+    char * path = new char[len+1];
+    path[len] = NULL;
+    
+    // Write out each element of [paths] preceeded by forward slashes
+    len = 0;
+    for( std::list<const char *>::iterator itty = paths.begin(); itty != paths.end(); ++itty ) {
+        path[len++] = '/';
+        strcpy( path + len, *itty );
+        len += strlen( *itty );
+    }
+    
+    // Save node result into our cached nodePaths map and return it;
+    return this->nodePaths[node] = path;
+}
+
+/*
 const char * ShinyFilesystem::getZMQEndpointFileCache( void ) {
     return "inproc://shinyfs.filecache";
 }
+
+zmq::context_t * ShinyFilesystem::getZMQContext( void ) {
+    return this->ctx;
+}*/
 
 /*
 ShinyMetaNode * ShinyFilesystem::findNode( inode_t inode ) {
@@ -156,7 +227,13 @@ ShinyMetaNode * ShinyFilesystem::findNode( inode_t inode ) {
     return NULL;
 }*/
 
+kyotocabinet::PolyDB * ShinyFilesystem::getDB() {
+    return &this->db;
+}
 
+const char * ShinyFilesystem::getShinyFilesystemDBKey() {
+    return "shinyfs.state";
+}
 
 bool ShinyFilesystem::sanityCheck( void ) {
     bool retVal = true;
@@ -177,138 +254,153 @@ bool ShinyFilesystem::sanityCheck( void ) {
     return retVal;
 }
 
-size_t ShinyFilesystem::serialize( char ** store ) {
-    //First, we're going to find the total length of this serialized monstrosity
-    //We'll start with the version number
-    /*
-    size_t len = sizeof(uint16_t);
+
+uint64_t getTotalSerializedLen( ShinyMetaNode * start, bool recursive ) {
+    // NodeType + length of actual node
+    uint64_t len = sizeof(uint8_t) + start->serializedLen();
     
-    //Next, what ShinyFilesystem takes up itself
-    //       nextInode        numNodes
-    len += sizeof(inode_t) + sizeof(uint64_t);
-    
-    for( std::tr1::unordered_map<inode_t, ShinyMetaNode *>::iterator itty = nodes.begin(); itty != nodes.end(); ++itty ) {
-        //Add an extra uint8_t for the node type
-        len += (*itty).second->serializedLen() + sizeof(uint8_t);
+    if( start->getNodeType() == ShinyMetaNode::TYPE_DIR || start->getNodeType() == ShinyMetaNode::TYPE_ROOTDIR ) {
+        // number of children following this brother
+        len += sizeof(uint64_t);
+        
+        const std::vector<ShinyMetaNode *> * startNodes = ((ShinyMetaDir *)start)->getNodes();
+        for( uint64_t i=0; i<startNodes->size(); ++i ) {
+            //Don't have to check for TYPE_ROOTDIR here, because that's an impossibility!  yay!
+            if( recursive && (*startNodes)[i]->getNodeType() == ShinyMetaNode::TYPE_DIR )
+                len += getTotalSerializedLen( (*startNodes)[i], recursive );
+            else {
+                // NodeType + length of actual node, just like we did for start
+                len += sizeof(uint8_t) + (*startNodes)[i]->serializedLen();
+            }
+        }
     }
+    return len;
+}
+
+
+// Very similar in form to the above. Thus the liberal copypasta.
+// returns output, shifted by total serialized length, so just use [output - totalLen]
+char * serializeTree( ShinyMetaNode * start, bool recursive, char * output ) {
+    // write out start first
+    *((uint8_t *)output) = start->getNodeType();
+    output += sizeof(uint8_t);
+
+    start->serialize(output);
+    output += start->serializedLen();
     
-    //Now, reserve buffer space
+    // Next, check if we're a dir, and if so, do the serialization dance!
+    if( start->getNodeType() == ShinyMetaNode::TYPE_DIR || start->getNodeType() == ShinyMetaNode::TYPE_ROOTDIR ) {
+        // Write out the number of children
+        *((uint64_t *)output) = ((ShinyMetaDir *)start)->getNumNodes();
+        output += sizeof(uint64_t);
+        
+        //Write out all children
+        const std::vector<ShinyMetaNode *> * startNodes = ((ShinyMetaDir *)start)->getNodes();
+        for( uint64_t i=0; i<startNodes->size(); ++i ) {
+            //Don't have to check for TYPE_ROOTDIR here, because that's an impossibility!  yay!
+            if( recursive && (*startNodes)[i]->getNodeType() == ShinyMetaNode::TYPE_DIR ) {
+                output = serializeTree( (*startNodes)[i], recursive, output );
+            } else {
+                output = (*startNodes)[i]->serialize(output);
+            }
+        }
+    }
+    return output;
+}
+
+uint64_t ShinyFilesystem::serialize( char ** store, ShinyMetaNode * start, bool recursive ) {
+    // First, we're going to find the total length of this serialized monstrosity
+    // We'll start with the itty bitty overhead of the version number
+    uint64_t len = sizeof(uint16_t);
+
+    // default to root (darn you C++, not allowing me to set a default value of this->root!)
+    if( !start )
+        start = this->root;
+    
+    // To find total length, walk the walk and talk the talk
+    len = getTotalSerializedLen( start, recursive );
+    
+    // Now, reserve buffer space.  This is such an anti-climactic line, it makes me kind of sad.
     char * output = new char[len];
+    
+    // make sure that when we shove stuff into output, the user gets it in their variable
+    // I create the "output" variable just so that I'm not doing 1253266246x pointer dereferences,
+    // also so that the output is unaffected by the crazy shifting that goes on during the serialization
     *store = output;
     
-    //Now, actually write into that buffer space
-    //First, version number
+    // First, write out the version number
     *((uint16_t *)output) = this->getVersion();
     output += sizeof(uint16_t);
     
-    //Next, nextInode, followed by the number of nodes we're writing out
-    *((inode_t *)output) = this->nextInode;
-    output += sizeof(inode_t);
+    // Next, we'll iterate through all the nodes we're going to serialize, doing them one at a time;
+    output = serializeTree( start, recursive, output );
     
-    *((size_t *)output) = nodes.size();
-    output += sizeof(size_t);
-
-    //Iterate through all nodes, writing them out
-    for( std::tr1::unordered_map<inode_t, ShinyMetaNode *>::iterator itty = nodes.begin(); itty != nodes.end(); ++itty ) {
-        //We're adding this in output here, because it's something the filesystem needs to be aware of,
-        //not something the node should handle itself
-        *((uint8_t *)output) = (*itty).second->getNodeType();
-        output += sizeof(uint8_t);
-        
-        //Now actually serialize the node
-        (*itty).second->serialize( output );
-        output += (*itty).second->serializedLen();
-    }
-    
-    //this->dirty = false;
+    // and finally, return the length!
     return len;
-     */
 }
 
-void ShinyFilesystem::unserialize(const char *input) {
-    /*
-    if( !nodes.empty() ) {
-        ERROR( "We're trying to unserialize when we already have %llu nodes!", nodes.size() );
-        throw "Stuff was in nodes!";
-    }
+
+ShinyMetaNode * ShinyFilesystem::unserializeTree( const char *input ) {
+    uint8_t type = *((uint8_t *)input);
+    input += sizeof(uint8_t);
     
-    if( *((uint16_t *)input) != this->getVersion() ) {
-        WARN( "Warning:  Serialized filesystem is of version %d, whereas we are running version %d!", *((uint16_t *)input), this->getVersion() );
+    switch( type ) {
+        case ShinyMetaNode::TYPE_ROOTDIR:
+        case ShinyMetaNode::TYPE_DIR:
+        {
+            // First, get the (root)dir itself. In other news, WHY THE HECK DO I WRITE THINGS LIKE THIS?!
+            ShinyMetaDir * newDir = (type == ShinyMetaNode::TYPE_ROOTDIR) ? new ShinyMetaRootDir( &input ) : new ShinyMetaDir( &input );
+            
+            // next, get the number of children that have been serialized
+            uint64_t numNodes = *((uint64_t *)input);
+            input += sizeof(uint64_t);
+            
+            // Now, iterating over all children of this dir, LOAD 'EM IN!
+            for( uint64_t i=0; i<numNodes; ++i ) {
+                // The cycle continues...... we pass our troubles onto our own children
+                ShinyMetaNode * childNode = unserializeTree( input );
+                
+                // Add that newly-formed subtree (could be just a file!) to this guy's collection of children
+                newDir->addNode( childNode );
+            }
+            return newDir;
+        }
+        case ShinyMetaNode::TYPE_FILE:
+        {
+            ShinyMetaFile * newFile = new ShinyMetaFile( &input );
+            return newFile;
+        }
+        default:
+            WARN( "Unknown node type (%d)!", type );
+            break;
     }
+    // When in doubt, return NULL!
+    return NULL;
+}
+
+ShinyMetaNode * ShinyFilesystem::unserialize( const char *input ) {
+    // First, a version check
+    if( *((uint16_t *)input) != this->getVersion() ) {
+        ERROR( "Serialized filesystem objects are of version %d, whereas we are compatible with version(s) %d!", *((uint16_t *)input), this->getVersion() );
+        return NULL;
+    }
+    // now gracefully scoot past that short
     input += sizeof(uint16_t);
     
-    LOG( "I should be able to infer this at load time" );
-    this->nextInode = *((inode_t *)input);
-    input += sizeof(inode_t);
-    
-    size_t numInodes = *((size_t *)input);
-    input += sizeof(size_t);
-    
-    for( size_t i=0; i<numInodes; ++i ) {
-        //First, read in the uint8_t of type information;
-        uint8_t type = *((uint8_t *)input);
-        input += sizeof(uint8_t);
-        
-        switch( type ) {
-            case SHINY_NODE_TYPE_DIR: {
-                ShinyMetaDir * newNode = new ShinyMetaDir( input, this );
-                input += newNode->serializedLen();
-                break; }
-            case SHINY_NODE_TYPE_FILE: {
-                ShinyMetaFile * newNode = new ShinyMetaFile( input, this );
-                input += newNode->serializedLen();
-                break; }
-            case SHINY_NODE_TYPE_ROOTDIR: {
-                ShinyMetaRootDir * newNode = new ShinyMetaRootDir( input, this );
-                input += newNode->serializedLen();
-                this->root = newNode;
-                break; }
-            default:
-                WARN( "Stream sync error!  unknown node type %d!", type );
-                break;
-        }
-    }
-     */
+    // If a problem is too hard for you, push it off to another function!
+    return unserializeTree( input );
 }
 
 void ShinyFilesystem::save() {
     // First, serialize everything out
     char * output;
-    size_t len = this->serialize( &output );
+    uint64_t len = this->serialize( &output );
     
     // Send this to the filecache to write out
-    TODO( "Change this to \"serializeAndSave()\" instead of \"flush()\"" );
-    TODO( "send this output out to be written out to the cache object!" );
-
-    /*
-    //Open it for writing, write it, and close
-    char * fscache = new char[strlen(filecache)+1+8+1];
-    sprintf( fscache, "%s/%s", this->filecache, FSCACHE_POSTFIX );
-
-    int fd = open( fscache, O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU | S_IRWXG | S_IROTH );
-    if( !fd ) {
-        ERROR( "Could not flush serialized output to %s!", fscache );
-    } else {
-        write( fd, output, len );
-        close( fd );
-    }
-    delete( fscache );
-     */
+    this->db.set( this->getShinyFilesystemDBKey(), strlen(this->getShinyFilesystemDBKey()), output, len );
+    
+    delete( output );
 }
-
-
-/*
-inode_t ShinyFilesystem::genNewInode() {
-    TODO( "Get rid of inodes, just use ShinyNode* things, and when (un)serializing generate the indoes and stuff on the fly, and then never use them outside of the disk" );
-    inode_t probeNext = this->nextInode + 1;
-    //Just linearly probe for the next open inode
-    while( this->nodes.find(probeNext) != this->nodes.end() ) {
-        ++probeNext;
-    }
-    inode_t toReturn = this->nextInode;
-    this->nextInode = probeNext;
-    return toReturn;
-}*/
 
 
 void ShinyFilesystem::printDir( ShinyMetaDir * dir, const char * prefix ) {

@@ -11,42 +11,14 @@
 #define FUSE_USE_VERSION  26
 #include <fuse/fuse.h>
 
+#include "ShinyFilesystemMediator.h"
 #include "../filesystem/ShinyFilesystem.h"
 
 class ShinyFuse {
-/////// ENUMS ///////
-public:
-    enum MsgType {
-        // [ACK] broker -> fuse (says things are alright. response data varies by originating type)
-        ACK,
-        
-        // [NACK] broker -> fuse (says things are HORRIBLY BROKEN!)
-        NACK,
-        
-        // [DESTROY] fuse -> broker
-        // [ACK] broker -> fuse
-        DESTROY,
-        
-        // [GETATTR] fuse -> broker
-        //   - path
-        // [ACK] broker -> fuse
-        //   - stbuff
-        // [NACK] broker -> fuse
-        GETATTR,
-        
-        // [READDIR] fuse -> broker
-        //   - path
-        // [ACK] broker -> fuse
-        //   - numNodes
-        //   - msg per node name
-        // [NACK] broker -> fuse
-        READDIR,
-    };
-    
 /////// CREATION ///////
 public:
     //Initializes the FUSE interface, sets up the callbacks, etc....
-    static bool init( ShinyFilesystem * fs, zmq::context_t * ctx, const char * mountPoint = "/tmp/shiny/" );
+    static bool init( const char * mountPoint );
 private:
     
     
@@ -65,6 +37,7 @@ private:
     static int fuse_open( const char * path, struct fuse_file_info * fi );
     static int fuse_read( const char * path, char * buffer, size_t len, off_t offset, struct fuse_file_info * fi );
     static int fuse_write( const char * path, const char * buffer, size_t len, off_t offset, struct fuse_file_info * fi );
+    static int fuse_release( const char * path, struct fuse_file_info * fi );
     
     static int fuse_truncate( const char * path, off_t len );
     
@@ -82,30 +55,9 @@ private:
     static int fuse_chmod( const char * path, mode_t mode );
     static int fuse_chown( const char * path, uid_t uid, gid_t gid );
     
+    static ShinyFilesystemMediator * sfm;
     static ShinyFilesystem * fs;
-    
-    
-/////// ZMQ BROKER ///////
-private:
-    // This is the thread that all the fuse stuff will talk to, and it will hold the fs tree
-    static void * broker( void * data );
-    
-    // This is where the healing begins.  Or the real work happens.  whichever, really
-    static bool handleMessage( zmq::socket_t * sock, std::vector<zmq::message_t *> & msgList );
-    
-    // Returns the ZMQ endpoint for the broker to talk to FUSE peeps
-    static const char * getZMQEndpointFuse();
-
-    // The thread object used for pthread_join() in fuse_destroy()
-    static pthread_t brokerThread;
-    
-    // The context object used to create all sockets
     static zmq::context_t * ctx;
-    
-    
-/////// ZMQ FUSE ///////
-private:
-    static zmq::socket_t * getBroker();
 };
 
 #endif

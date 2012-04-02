@@ -50,12 +50,23 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "shinyfs-node/../shared/filesystem/ShinyMetaNode.cpp"
-         timestampString = "353280023.537982"
+         timestampString = "355041761.26294"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "266"
-         endingLineNumber = "266"
-         landmarkName = "ShinyMetaNode::getFS()"
+         startingLineNumber = "260"
+         endingLineNumber = "260">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "Yes"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "shared/fuse/ShinyFilesystemMediator.cpp"
+         timestampString = "355043526.758697"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "406"
+         endingLineNumber = "406"
+         landmarkName = "ShinyFilesystemMediator::handleMessage( zmq::socket_t * sock, std::vector&lt;zmq::message_t *&gt; &amp; msgList )"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

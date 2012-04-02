@@ -11,22 +11,20 @@
 //#include "protocol/ShinyNetwork.h"
 
 #include "fuse/ShinyFuse.h"
+#include "fuse/ShinyFilesystemMediator.h"
 
 //#include "filesystem/
 
-#define NODE_VERSION        "ShinyFS Node v0.2.1"
+#define NODE_VERSION        "ShinyFS Node v0.3"
 
 #define TRACKER_ADDRESS     "127.0.0.1"
 
 int main (int argc, const char * argv[]) {
-//    getGlobalLogger()->setPrintLoc(0);
+    //getGlobalLogger()->setPrintLoc(0);
+    getGlobalLogger()->setPrintId(0);
+    getGlobalLogger()->setPrintThread(0);
     LOG( "%s starting up....", NODE_VERSION );
-    
-    zmq::context_t ctx(1);
-    
-    ShinyFilesystem * fs = new ShinyFilesystem( "filecache", &ctx );
-    ShinyFuse::init( fs, &ctx );
-    
+    ShinyFuse::init( "/tmp/shiny" );
     return 0;
 }
 

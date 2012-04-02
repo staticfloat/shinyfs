@@ -3,17 +3,16 @@
 #define ShinyFilesystem_H
 
 #include <tr1/unordered_map>
+// (kyoto cabinet this clobbers my ERROR/WARN macros, so I have to include it before Logger.h)
+#include <kcpolydb.h>
 #include "ShinyMetaNode.h"
-#include "../cache/ShinyCache.h"
-#include <zmq.hpp>
 
 /*
  This guy is responsible ONLY for management of the filesystem tree. Metadata, etc. are all directly
- under his purview. He subs out to ShineCache to get the "actual" filesystem data.
+ under his purview. He subs out to kyoto cabinet to get the "actual" filesystem data.
  */
 
 #define SHINYFS_VERSION     4
-
 
 class ShinyMetaDir;
 class ShinyMetaFile;
@@ -21,26 +20,31 @@ class ShinyMetaRootDir;
 class ShinyFilesystem {
     friend class ShinyMetaNode;
     friend class ShinyMetaFile;
+    friend class ShinyMetaFileHandle;
     friend class ShinyMetaDir;
     friend class ShinyMetaRootDir;
     
 /////// INITIALIZATION/SAVING LOADING ///////
 public:
     //Creates the ShinyCache to do serving of cached content, and sets up a few zmq helper stuffs
-    ShinyFilesystem( const char * filecache, zmq::context_t * ctx );
+    ShinyFilesystem( const char * filecache );
     
     //Obligatory cleanup chump
     ~ShinyFilesystem();
     
-    //Serializes the entire tree into a bytestream, returning the length of said stream
-    size_t serialize( char ** output );
+    // Serializes a subtree starting at start into a bytestream, returning the length of said stream
+    // start defaults (when NULL) to the root node of the entire tree
+    // recursive defaults to true, and denotes whether dirs should include subdirs
+    uint64_t serialize( char ** output, ShinyMetaNode * start = NULL, bool recursive = true );
     
-    // Basically calls serialize, then sends it over to ShinyCache for saving
+    // Basically calls serialize on the root, then sends it over to ShinyCache for saving
     void save();
-private:
-    //Helper function to unserialize self
-    void unserialize( const char * input );
 
+    //Helper function to unserialize a tree (or subtree)
+    ShinyMetaNode * unserialize( const char * input );
+protected:
+    // recursive helper function for unserialize
+    ShinyMetaNode * unserializeTree( const char *input );
 
 
 /////// NODE ROUTINES ///////
@@ -64,18 +68,18 @@ private:
     ShinyMetaNode * findMatchingChild( ShinyMetaDir * parent, const char * childName, uint64_t childNameLen );
     
     
-/////// ZMQ ///////
-public:
-    // Similarly, returns the ZMQ endpoint for communicating with the file cache object
-    const char * getZMQEndpointFileCache();
+/////// FILECACHE ///////
+protected:
+    // Returns the DB object, (used for FileHandle and File to write and read, etc....)
+    kyotocabinet::PolyDB * getDB();
 private:
-    // Context object (important!) lol
-    zmq::context_t * ctx;
+    // The key used to store the ShinyFS tree when we serialize it
+    const char * getShinyFilesystemDBKey();
     
-    // socket for talking to shinycache object
-    zmq::socket_t * cacheSock;
+    // The actual DB object
+    kyotocabinet::PolyDB db;
     
-    
+
 /////// MISC ///////
 public:
     //Performs various checks on the tree, making sure everything is in order
@@ -90,9 +94,6 @@ public:
     
     //Returns the version of this ShinyFS
     const uint64_t getVersion();
-protected:
-private:
-    ShinyCache * cache;
 };
 
 #endif //SHINYFILESYSTEM_H
