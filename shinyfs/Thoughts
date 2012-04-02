@@ -1,0 +1,106 @@
+OLD thoughts:
+
+
+
+
+
+Tree-based overlay network:
+    A self-organizing hierarchical overlay network.  Network structure mirrors filesystem structure,
+    with nodes assuming responsibility for files that are within directories they are responsible for
+
+    The root node is the master of all, however (almost) all work he is responsible for is recursive
+
+    This overlay network is responsible for the following:
+        1) Adding a node into the network (This includes partitioning the filesystem for each node)
+        2) Recovering when a node ragequits
+        3) Performing a node lookup for an associated inode
+        4) Adding/removing inodes from the tree
+        5) Choosing/recognizing a root node
+        6) Propogating messages from an arbitrary node throughout the network
+        7) Authenticating and verifying identity on all messages
+
+    This overlay network is constructed under the following assumptions:
+        1) The network is too large for every node to be connected to, or even aware of, every other
+        2) All nodes participating in the network are reachable by all others
+
+    
+    Protocol specification:
+        PARTITIONING:
+            Each inode has a weight.  In the case of a file, (right now) it is identically 1.
+            Dirs are the sum of all files underneath them, adding nothing themselves. Note that
+            files are only counted once; under their primary directory.
+  
+            The root node performs a tree traversal, calculating weights for all dirs, and then
+            begins partitioning; The root node sorts the top-level directory by increasing weight,
+            and starts assigning files/dirs to nodes beginning with itself, summing up until the
+            amount of weight summed together divided by the ideal weight per node is greater than 1.
+            If the root is assigned to another dir during this process, it repeats this process
+            for each subdirectory it is assigned to. It MUST account for the weight it is already
+            responsible for when performing the recursive assignment, however.  The same goes for
+            nodes that are assigned to multiple files and dirs by the root node, when they begin their
+            recursive process. If a directory has directories that have large amounts of weight, then
+            a "sub-root" node must be chosen (by the root node, randomly) to partition the inodes it
+        has under its control.  Therefore, this process is recursive, should weight the tree
+            somewhat fairly, so that the average number of files owned by a single node is the total
+            weight of the tree divided by the number of nodes in the network.
+
+            Note that at this instant the root node must be aware of all nodes in the network, whereas
+            the sub-roots must be aware only of their parent, and the 
+        NODE ADDITION:
+            [A] somehow finds the overlay network, and asks the root node [/] for a position in the
+            network.  The root node takes pity, and after verifying that [A] is reachable through
+            NAT/firewalls, assigns [A] to the subroot with the highest [weight]/[#sub nodes] ratio.
+            The subroot then inspects the current state of its subtree, and if the weight/node
+            ratio of any subtree is greater than the current directory, it is passed off to that
+            directory, otherwise the current directory is repartitioned.
+
+            Once any subtree increases beyond 2 times the ideal threshold of [weight]/[#all nodes]
+            or falls below 1/2 times, the root node triggers a complete repartitioning of the tree.
+        NODE REMOVAL:
+            If any subroot finds that one of their nodes is gone, they merely trigger a localized
+            repartitioning of their subtree.  Note that in order to do this, all roots must be
+            aware of TWO levels below them.  That is, all of their children, and their grandchildren,
+            as if one of their children ragequits, they must be able to communicate with the orphans
+
+            If the root node ragequits, the network chooses another root node per the instructions
+            in [CHOOSING A ROOT NODE] and repartitions.
+        NODE LOOKUP:
+            If node [A] is looking for inode 10356, it knows that the parent directory for that
+            inode is [/media/music], therefore if [A] is in [/media/video/BSG], it will ask
+            [/media/video] for [/media], and it will then ask [/media/music] for access to 10356.
+            
+            If [A] is NAT'ed or Firewalled or just explicitly not participating in the overlay
+            network, it will merely contact the root node.
+        CHOOSING A ROOT NODE:
+            A root node is either set by the network operator, or chosen randomly from the set
+            of greedy nodes, or chosen randomly from the set of all other nodes.
+        MESSAGE PROPAGATION
+            If node [A] has just closed a write lock the opened on [/media/music], the latter
+            must report the change to all other nodes.  [/media/music] will notify all children
+            as well as its parent, and all children will notify their children (and not their
+            parents) and all parent will notify their parents and all other children.
+        AUTHENTICATION
+            All nodes must trust all other nodes completely once they are in the network. Gaining
+            access to the network is currently not authenticated, see future work
+
+
+Authentication and Encryption:
+    All users have their own RSA keys.  Authentication into the network by a node is
+    done with this key, after which symmetric encryption is setup between each set of nodes.
+    
+    These keys are stored into the [ShinyPeer] class, as each peer pair should have its own
+    random key.  All operations between nodes are therefore handled by the encryption, as the
+    symmetric keys they use are proof enough that the other peer is the user they say they are.
+
+
+
+
+    Future work:
+        - directory weights calculated when partitioning should include usage statistics
+        - choose root nodes based on some kind of metric, such as latency
+        - use assymetric encryption to authenticate new nodes, and do not let them
+            join the network unless a network operator adds the key, or another node
+            already in the network "vouches" for it by signing the newcomer's key
+            with their own key.
+
+

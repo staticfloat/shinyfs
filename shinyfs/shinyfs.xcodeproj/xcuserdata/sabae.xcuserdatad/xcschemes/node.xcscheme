@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "56C938FF13D556F5009428ED"
-               BuildableName = "cryptotest"
-               BlueprintName = "cryptotest"
-               ReferencedContainer = "container:cryptotest.xcodeproj">
+               BlueprintIdentifier = "56249C02138AD6FA00AA24BB"
+               BuildableName = "shinyfs"
+               BlueprintName = "shinyfs"
+               ReferencedContainer = "container:shinyfs.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -44,10 +44,10 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "56C938FF13D556F5009428ED"
-            BuildableName = "cryptotest"
-            BlueprintName = "cryptotest"
-            ReferencedContainer = "container:cryptotest.xcodeproj">
+            BlueprintIdentifier = "56249C02138AD6FA00AA24BB"
+            BuildableName = "shinyfs"
+            BlueprintName = "shinyfs"
+            ReferencedContainer = "container:shinyfs.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -59,15 +59,15 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       debugDocumentVersioning = "YES">
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "56C938FF13D556F5009428ED"
-            BuildableName = "cryptotest"
-            BlueprintName = "cryptotest"
-            ReferencedContainer = "container:cryptotest.xcodeproj">
+            BlueprintIdentifier = "56249C02138AD6FA00AA24BB"
+            BuildableName = "shinyfs"
+            BlueprintName = "shinyfs"
+            ReferencedContainer = "container:shinyfs.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

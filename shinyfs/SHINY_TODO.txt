@@ -1,0 +1,35 @@
+Shinyfs todo
+    - Split ShinyFilesystem into file cache and metadata tree components
+		- NOTE, I really, really, really want to keep ShinyFilesystem as simple as possible, and keep it in such a way that usage with a single thread, and usage directly (without ShinyFuse, ShinyFSMediator, or other ideas) is possible, and is simple! The ShinyMetaNode interface and stuff is all great, but I have to make sure that this is still sufficient for ALL tasks, not only metadata, but reading/writing data as well!
+
+        - zmq socket between cache and tree; different threads even. Makes cache object do one thing and do it well; save files out to cache, load them back up out of cache.
+		- Have to do away with inodes completely.
+
+	- Instead of dirty/clean semantics, just use the "last time modified" stuff you already have!  (duh!)
+	- Make serializeation even better by not including unnecessary stuffage:
+		- parents (implicit in the )        
+
+    - Define good interface between fuse and filesystem tree
+        - Cache is talked to through ShinyMetaFile objects, and can be done through separate 
+
+	- File hashing to ensure integrity (only the entire file at once, not chunk-by-chunk)
+
+	- Allow for selective tree loading, so as to allow for only a small part of the tree to be in memory at once
+		- Also allows for permissions where we are not _allowed_ to see inside a directory
+
+    - Before going multi-computer, solidify everything you can
+        - Get a GOOD idea of what FUSE does and doesn't do, so I know how to structure the FS tree checks and balances
+			- Should have my tree do ALL checking regardless?  Esp. if libshiny will ever be realized
+        - Get a solid system of multiple threads accessing the tree working
+		- Test, test, test!  Make impossible trees, build test cases for them!
+			- Keep these tests around!  Make a tests/ folder, and run them on newer versions!
+			- Make programs to run INSIDE of the filesystem to test it!
+				- Moving, copy, linking, writing, all that good stuff!
+			- BIG files writing very quickly!  Get an idea of performance here and now!
+			
+    
+    
+    - Don't do encryption yet, but keep it in mind
+    - Don't focus on performance yet, save it for bottleneck trials later
+    - Don't do multi-computer interactions yet, we'll do that later
+    	- Once we DO start to tackle it, don't even touch encryption and user authentication and whatnot until we have multiple computers all talking harmoniously, able to share files and whatnot.  That will inform your design of the actual, authenticated and encrypted versions!

@@ -5,7 +5,7 @@
       location = "group:extip/extip.xcodeproj">
    </FileRef>
    <FileRef
-      location = "container:shinyfs-node/shinyfs-node.xcodeproj">
+      location = "group:shinyfs/shinyfs.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:zmqtest/zmqcrashtest/zmqcrashtest.xcodeproj">
