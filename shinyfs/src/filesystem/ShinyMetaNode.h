@@ -134,6 +134,15 @@ protected:
     
     // returns the "default" permissions for a new file
     virtual uint16_t getDefaultPermissions();
+    
+    
+/////// UTIL ///////
+public:
+    // returns permissions of a file in rwxrwxrwx style, in a shared [char *] buffer (shared across threads)
+    static const char * printPermissions( uint16_t permissions );
+    
+    // returns the filename of a full path (e.g. everything past the last "/")
+    static const char * basename( const char * path );
 };
 
 #endif

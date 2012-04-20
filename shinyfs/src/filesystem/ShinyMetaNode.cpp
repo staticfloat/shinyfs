@@ -264,3 +264,82 @@ ShinyMetaNode::NodeType ShinyMetaNode::getNodeType( void ) {
 uint16_t ShinyMetaNode::getDefaultPermissions() {
     return S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH;
 }
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////                      UTIL STUFF                      ///////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
+
+// This follows the `ls -l` output guidelines
+const char * printPermissions( uint16_t permissions ) {
+    // The static buffer we return every time
+    static char str[10] = {0,0,0,0,0,0,0,0,0,0};
+
+    // First, the "user" (or "owner") triplet
+    str[1] = permissions & S_IRUSR ? 'r' : '-';
+    str[2] = permissions & S_IWUSR ? 'w' : '-';
+    if( permissions & S_IXUSR ) {
+        if( permissions & S_ISUID )
+            str[3] = 's';
+        else
+            str[3] = 'x';
+    } else {
+        if( permissions & S_ISUID )
+            str[3] = 'S';
+        else
+            str[3] = '-';
+    }
+    
+    // Next, the "group" triplet:
+    str[3] = permissions & S_IRGRP ? 'r' : '-';
+    str[4] = permissions & S_IWGRP ? 'w' : '-';
+    if( permissions & S_IXGRP ) {
+        if( permissions & S_ISGID )
+            str[3] = 's';
+        else
+            str[3] = 'x';
+    } else {
+        if( permissions & S_ISGID )
+            str[3] = 'S';
+        else
+            str[3] = '-';
+    }
+   
+    // Finally, the "other" triplet:
+    str[6] = permissions & S_IROTH ? 'r' : '-';
+    str[7] = permissions & S_IWOTH ? 'w' : '-';
+    if( permissions & S_IXOTH ) {
+        if( permissions & S_ISVTX )
+            str[8] = 't';
+        else
+            str[8] = 'x';
+    } else {
+        if( permissions & S_ISVTX )
+            str[8] = 'T';
+        else
+            str[8] = '-';
+    }
+    
+    return str;
+}
+
+
+const char * ShinyMetaNode::basename( const char * path ) {
+    uint64_t slashIdx = 0;
+    uint64_t i = 0;
+    bool slashFound = false;
+    while( path[i] != 0 ) {
+        if( path[i] == '/' ) {
+            slashIdx = i;
+            slashFound = true;
+        }
+        i++;
+    }
+    
+    if( !slashFound )
+        return path;
+    return path + slashIdx + 1;
+}
+

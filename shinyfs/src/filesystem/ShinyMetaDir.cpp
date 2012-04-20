@@ -88,6 +88,14 @@ void ShinyMetaDir::delNode(ShinyMetaNode *delNode) {
     }
 }
 
+ShinyMetaNode * ShinyMetaDir::findNode( const char *name ) {
+    for( uint64_t i=0; i<this->nodes.size(); ++i ) {
+        if( strcmp(this->nodes[i]->getName(), name) == 0 )
+            return this->nodes[i];
+    }
+    return NULL;
+}
+
 const std::vector<ShinyMetaNode *> * ShinyMetaDir::getNodes() {
     return &nodes;
 }

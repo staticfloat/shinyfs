@@ -1,3 +1,4 @@
+
 #include "ShinyFilesystem.h"
 #include "ShinyMetaFile.h"
 #include "ShinyMetaDir.h"
@@ -209,23 +210,6 @@ const char * ShinyFilesystem::getNodePath( ShinyMetaNode *node ) {
     // Save node result into our cached nodePaths map and return it;
     return this->nodePaths[node] = path;
 }
-
-/*
-const char * ShinyFilesystem::getZMQEndpointFileCache( void ) {
-    return "inproc://shinyfs.filecache";
-}
-
-zmq::context_t * ShinyFilesystem::getZMQContext( void ) {
-    return this->ctx;
-}*/
-
-/*
-ShinyMetaNode * ShinyFilesystem::findNode( inode_t inode ) {
-    std::tr1::unordered_map<inode_t, ShinyMetaNode *>::iterator itty = this->nodes.find( inode );
-    if( itty != this->nodes.end() )
-        return (*itty).second;
-    return NULL;
-}*/
 
 kyotocabinet::PolyDB * ShinyFilesystem::getDB() {
     return &this->db;

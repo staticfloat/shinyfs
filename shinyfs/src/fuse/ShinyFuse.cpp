@@ -23,9 +23,6 @@ bool ShinyFuse::init( const char * mountPoint ) {
     shiny_operations.getattr = ShinyFuse::fuse_getattr;
     shiny_operations.readdir = ShinyFuse::fuse_readdir;
     
-    //shiny_operations.access = ShinyFuse::fuse_access;
-    
-
     shiny_operations.open = ShinyFuse::fuse_open;
     shiny_operations.release = ShinyFuse::fuse_release;
     shiny_operations.read = ShinyFuse::fuse_read;
@@ -33,20 +30,18 @@ bool ShinyFuse::init( const char * mountPoint ) {
     shiny_operations.write = ShinyFuse::fuse_write;
     shiny_operations.truncate = ShinyFuse::fuse_truncate;
 
-
     shiny_operations.mknod = ShinyFuse::fuse_mknod;
     shiny_operations.mkdir = ShinyFuse::fuse_mkdir;
     shiny_operations.unlink = ShinyFuse::fuse_unlink;
     shiny_operations.rmdir = ShinyFuse::fuse_rmdir;
-    
-    /*
+
+    //shiny_operations.access = ShinyFuse::fuse_access;
     shiny_operations.rename = ShinyFuse::fuse_rename;
     shiny_operations.chmod = ShinyFuse::fuse_chmod;
-    shiny_operations.chown = ShinyFuse::fuse_chown;
-    */
+    //shiny_operations.chown = ShinyFuse::fuse_chown;
     
     ctx = new zmq::context_t( 1 );
-    fs = new ShinyFilesystem( "filecache.kch" );
+    fs = new ShinyFilesystem( "filecache.kct#dfunit=8" );
     sfm = new ShinyFilesystemMediator( fs, ctx );
     
     // Make sure mount point is viable
@@ -95,7 +90,7 @@ void ShinyFuse::fuse_destroy( void * private_data ) {
 }
 
 int ShinyFuse::fuse_getattr( const char *path, struct stat * stbuff ) {
-    LOG( "getattr: [%s]", path );
+    //LOG( "getattr: [%s]", path );
     // First, get a socket to the broker
     zmq::socket_t * sock = sfm->getMediator();
     if( sock ) {
@@ -195,9 +190,6 @@ int ShinyFuse::fuse_open( const char *path, struct fuse_file_info *fi ) {
     
     zmq::socket_t * sock = sfm->getMediator();
     if( sock ) {
-//        if( fi->flags & (O_WRONLY | O_RDWR) )
-//            LOG( "git-i-ness needs to save us here from requesting writelocks" );
-        
         // Just send in the path, make sure we get an ACK back (file CREATION does not happen here)
         zmq::message_t typeMsg; buildTypeMsg( ShinyFilesystemMediator::OPEN, &typeMsg );
         zmq::message_t pathMsg; buildStringMsg( path, &pathMsg );
@@ -271,7 +263,7 @@ int ShinyFuse::fuse_read(const char *path, char *buffer, size_t len, off_t offse
 }
 
 int ShinyFuse::fuse_write( const char * path, const char * buffer, size_t len, off_t offset, struct fuse_file_info * fi ) {
-    LOG( "write:   [%s]", path );
+    LOG( "write:   [%s] [%llu]", path, len );
     zmq::socket_t * sock = sfm->getMediator();
     if( sock ) {
         zmq::message_t typeMsg; buildTypeMsg( ShinyFilesystemMediator::WRITEREQ, &typeMsg );
@@ -334,7 +326,7 @@ int ShinyFuse::fuse_truncate(const char * path, off_t len ) {
             const char * data = (const char *) msgList[1]->data();
             ShinyMetaFileHandle * fh = new ShinyMetaFileHandle( &data, fs, path );
             
-            // Go out to the cache and read!
+            // Go out to the cache and truncate!
             fh->setLen( len );
             
             // send out the TRUNCDONE
@@ -390,18 +382,17 @@ int ShinyFuse::fuse_release(const char *path, struct fuse_file_info *fi) {
     return -ENOENT;
 }
 
-int ShinyFuse::fuse_mknod( const char *path, mode_t permissions, dev_t device ) {
+int ShinyFuse::fuse_mknod( const char *path, mode_t mode, dev_t device ) {
     LOG( "mknod [%s]", path );
-    
-    TODO( "permissions!" );
     
     zmq::socket_t * sock = sfm->getMediator();
     if( sock ) {
         zmq::message_t typeMsg; buildTypeMsg( ShinyFilesystemMediator::CREATEFILE, &typeMsg );
         zmq::message_t pathMsg; buildStringMsg( path, &pathMsg );
+        zmq::message_t modeMsg; buildDataMsg( (unsigned char *)&mode, sizeof(mode_t), &modeMsg );
         
         // Send
-        sendMessages( sock, 2, &typeMsg, &pathMsg );
+        sendMessages( sock, 3, &typeMsg, &pathMsg, &modeMsg );
         
         // wait for response
         std::vector<zmq::message_t *> msgList;
@@ -425,8 +416,6 @@ int ShinyFuse::fuse_mknod( const char *path, mode_t permissions, dev_t device ) 
 
 int ShinyFuse::fuse_mkdir( const char * path, mode_t permissions ) {
     LOG( "mkdir [%s]", path );
-    
-    TODO( "permissions!" );
     
     zmq::socket_t * sock = sfm->getMediator();
     if( sock ) {
@@ -492,45 +481,38 @@ int ShinyFuse::fuse_rmdir( const char * path ) {
 }
 
 int ShinyFuse::fuse_rename( const char * path, const char * newPath ) {
-    /*
     LOG( "rename [%s -> %s]", path, newPath );
-    ShinyMetaNode * node = fs->findNode( path );
-    //Return 404 if it doesn't exist
-    if( !node )
-        return -ENOENT;
-
-    //Return error if the target already exists
-    if( fs->findNode( newPath ) )
-        return -EEXIST;
-
-    //Return error if we can't find the dir we're supposed to move to
-    ShinyMetaDir * newParent = fs->findParentNode( newPath );
-    if( !newParent )
-        return -ENOENT;
-    
-    ShinyMetaDir * parent = (ShinyMetaDir *) fs->findNode( node->getParent() );
-    if( !parent ) {
-        WARN( "Couldn't find parent of node %s with inode [%llu]", path, node->getParent() );
-        return -EIO;
+    zmq::socket_t * sock = sfm->getMediator();
+    if( sock ) {
+        zmq::message_t typeMsg; buildTypeMsg( ShinyFilesystemMediator::RENAME, &typeMsg );
+        zmq::message_t pathMsg; buildStringMsg( path, &pathMsg );
+        zmq::message_t newPathMsg; buildStringMsg( path, &newPathMsg );
+        
+        // Send
+        sendMessages( sock, 3, &typeMsg, &pathMsg, &newPathMsg );
+        
+        // wait for response
+        std::vector<zmq::message_t *> msgList;
+        recvMessages( sock, msgList );
+        
+        // cleanup before all the return's
+        delete( sock );
+        
+        // yay, it's an ACK, and we win
+        if( msgList.size() == 1 && parseTypeMsg(msgList[0]) == ShinyFilesystemMediator::ACK ) {
+            return 0;
+        }
+        
+        // Otherwise, if it's not just a single NACK, we're in trouble
+        if( (msgList.size() == 1 && parseTypeMsg(msgList[0]) != ShinyFilesystemMediator::NACK) || msgList.size() != 1 ) {
+            WARN( "Unknown error in communication!" );
+        }
     }
-    
-    //Move the node over, call it all good
-    if( parent != newParent ) {
-        parent->delNode( node );
-        newParent->addNode( node );
-    }
-    
-    //Change the name
-    uint32_t start = (uint32_t) strlen(newPath) - 1;
-    while( newPath[start-1] != '/' )
-        start--;
-    node->setName( newPath + start );
-     */
-    return 0;
+    return -ENOENT;
 }
 
 int ShinyFuse::fuse_access( const char *path, int mode ) {
-    LOG( "access [%s]", path );
+    LOG( "access [%s] [%d]", path, mode );
 /*    
     ShinyMetaNode * node = fs->findNode( path );
     if( !node )
@@ -542,16 +524,35 @@ int ShinyFuse::fuse_access( const char *path, int mode ) {
 }
 
 int ShinyFuse::fuse_chmod( const char *path, mode_t mode ) {
-    /*
-    LOG( "chmod [%s]", path );
-
-    ShinyMetaNode * node = fs->findNode( path );
-    if( !node )
-        return -ENOENT;
-
-    node->setPermissions( mode );
-     */
-    return 0;
+    LOG( "chmod [%s] [%d]", path, mode );
+    
+    zmq::socket_t * sock = sfm->getMediator();
+    if( sock ) {
+        zmq::message_t typeMsg; buildTypeMsg( ShinyFilesystemMediator::CHMOD, &typeMsg );
+        zmq::message_t pathMsg; buildStringMsg( path, &pathMsg );
+        zmq::message_t modeMsg; buildDataMsg( (unsigned char *)&mode, sizeof(mode_t), &modeMsg );
+        
+        // Send
+        sendMessages( sock, 3, &typeMsg, &pathMsg, &modeMsg );
+        
+        // wait for response
+        std::vector<zmq::message_t *> msgList;
+        recvMessages( sock, msgList );
+        
+        // cleanup before all the return's
+        delete( sock );
+        
+        // yay, it's an ACK, and we win
+        if( msgList.size() == 1 && parseTypeMsg(msgList[0]) == ShinyFilesystemMediator::ACK ) {
+            return 0;
+        }
+        
+        // Otherwise, if it's not just a single NACK, we're in trouble
+        if( (msgList.size() == 1 && parseTypeMsg(msgList[0]) != ShinyFilesystemMediator::NACK) || msgList.size() != 1 ) {
+            WARN( "Unknown error in communication!" );
+        }
+    }
+    return -ENOENT;
 }
 
 int ShinyFuse::fuse_chown( const char *path, uid_t uid, gid_t gid ) {

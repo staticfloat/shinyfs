@@ -1,17 +1,7 @@
 Shinyfs todo
-    - Split ShinyFilesystem into file cache and metadata tree components
-		- NOTE, I really, really, really want to keep ShinyFilesystem as simple as possible, and keep it in such a way that usage with a single thread, and usage directly (without ShinyFuse, ShinyFSMediator, or other ideas) is possible, and is simple! The ShinyMetaNode interface and stuff is all great, but I have to make sure that this is still sufficient for ALL tasks, not only metadata, but reading/writing data as well!
-
-        - zmq socket between cache and tree; different threads even. Makes cache object do one thing and do it well; save files out to cache, load them back up out of cache.
-		- Have to do away with inodes completely.
-
-	- Instead of dirty/clean semantics, just use the "last time modified" stuff you already have!  (duh!)
-	- Make serializeation even better by not including unnecessary stuffage:
-		- parents (implicit in the )        
-
-    - Define good interface between fuse and filesystem tree
-        - Cache is talked to through ShinyMetaFile objects, and can be done through separate 
-
+    - Persistent storing, loading of the shiny tree from the cache, followed by checking
+    
+    
 	- File hashing to ensure integrity (only the entire file at once, not chunk-by-chunk)
 
 	- Allow for selective tree loading, so as to allow for only a small part of the tree to be in memory at once

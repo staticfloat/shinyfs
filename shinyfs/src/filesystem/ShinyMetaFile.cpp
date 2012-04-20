@@ -112,10 +112,8 @@ uint64_t ShinyMetaFile::read( kyotocabinet::PolyDB * db, const char * path, uint
 
 uint64_t ShinyMetaFile::write( kyotocabinet::PolyDB * db, const char * path, uint64_t offset, const char * data, uint64_t len ) {
     // If we're going to overwrite, then exteeenddd..... EXTEEEENNDDDD!!!
-    if( offset + len > this->getLen() ) {
-        LOG( "Do I ever actually do this?" );
+    if( offset + len > this->getLen() )
         this->setLen( db, path, offset + len );
-    }
     
     // First, figure out what "chunk" to start from:
     uint64_t chunk = offset/CHUNKSIZE;
@@ -200,7 +198,8 @@ void ShinyMetaFile::setLen( kyotocabinet::PolyDB * db, const char * path, uint64
             sprintf( keyChunk, "%.16llx", this->fileLen/CHUNKSIZE );
             
             // Should we take away this entire chunk, or just part of it?
-            if( this->fileLen - chunkLen <= newLen ) {
+            if( this->fileLen - chunkLen >= newLen ) {
+                LOG( "Removing chunk %s", key );
                 // TAKE THE LEG!  TAKE THE LEG DOCTOR! (remove the last chunk)
                 if( !db->remove( key, pathlen + 16 + 1 ) ) {
                     kyotocabinet::PolyDB::Error e = db->error();

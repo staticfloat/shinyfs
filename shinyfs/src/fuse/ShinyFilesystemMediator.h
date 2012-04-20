@@ -92,6 +92,7 @@ public:
         
         // [CREATEFILE] fuse -> broker
         //  - path
+        //  - permissions (uint16_t)
         // [ACK] broker -> fuse
         // [NACK] broker -> fuse
         CREATEFILE,
@@ -107,6 +108,20 @@ public:
         // [ACK] broker -> fuse
         // [NACK] broker -> fuse
         DELETE,
+        
+        // [RENAME] fuse -> broker
+        //  - path
+        //  - newPath
+        // [ACK] broker -> fuse
+        // [NACK] broker -> fuse
+        RENAME,
+        
+        // [CHMOD] fuse->broker
+        //  - path
+        //  - [permissions (uint16_t)]
+        // [ACK] broker -> fuse
+        // [NACK] broker -> fuse
+        CHMOD,
     };
 
 /////// CREATION ////////

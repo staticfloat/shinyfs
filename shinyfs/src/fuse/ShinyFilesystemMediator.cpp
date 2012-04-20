@@ -5,8 +5,8 @@
 #include "../filesystem/ShinyMetaDir.h"
 #include "../filesystem/ShinyMetaFile.h"
 #include "../filesystem/ShinyMetaFileHandle.h"
-#include <string>
-#include <libgen.h> //basename!  woohoo!
+#include <string.h>
+#include "../util/util.h"
 
 // Extreme laziness function to send a NACK to the other side
 void sendNACK( zmq::socket_t * sock, zmq::message_t * routing ) {
@@ -16,6 +16,15 @@ void sendNACK( zmq::socket_t * sock, zmq::message_t * routing ) {
     
     zmq::message_t blankMsg;
     sendMessages(sock, 3, routing, &blankMsg, &nackMsg );
+}
+
+// Same thing for an ACK
+void sendACK( zmq::socket_t *sock, zmq::message_t * routing ) {
+    zmq::message_t ackMsg;
+    buildTypeMsg( ShinyFilesystemMediator::ACK, &ackMsg );
+    
+    zmq::message_t blankMsg;
+    sendMessages(sock, 3, routing, &blankMsg, &ackMsg );
 }
 
 void * mediatorThreadLoop( void * data ) {
@@ -111,9 +120,7 @@ bool ShinyFilesystemMediator::handleMessage( zmq::socket_t * sock, std::vector<z
     switch( type ) {
         case ShinyFilesystemMediator::DESTROY: {
             // No actual response data, just sending response just to be polite
-            zmq::message_t ackMsg; buildTypeMsg( ShinyFilesystemMediator::ACK, &ackMsg );
-            
-            sendMessages( sock, 2, fuseRoute, &ackMsg );
+            sendACK( sock, fuseRoute );
             // return false as we're signaling to mediator that it's time to die.  >:}
             return false;
         }
@@ -215,14 +222,11 @@ bool ShinyFilesystemMediator::handleMessage( zmq::socket_t * sock, std::vector<z
                 }
             }
             
-            // If we were indeed able to find the file; write back an ACK
-            if( node ) {
-                zmq::message_t ackMsg; buildTypeMsg( ShinyFilesystemMediator::ACK, &ackMsg );
-                sendMessages( sock, 3, fuseRoute, blankMsg, &ackMsg );
-            } else {
-                // Otherwise, NACK it up!
+            // If we were indeed able to find the file; write back an ACK, otherwise, NACK it up!
+            if( node )
+                sendACK( sock, fuseRoute );
+            else
                 sendNACK( sock, fuseRoute );
-            }
             
             // Don't forget this too!
             delete( path );
@@ -255,8 +259,7 @@ bool ShinyFilesystemMediator::handleMessage( zmq::socket_t * sock, std::vector<z
                 }
                 
                 // Aaaand, send an ACK, just for fun
-                zmq::message_t ackMsg; buildTypeMsg( ShinyFilesystemMediator::ACK, &ackMsg );
-                sendMessages( sock, 3, fuseRoute, blankMsg, &ackMsg );
+                sendACK( sock, fuseRoute );
             } else {
                 // NACK!  NACK I SAY!
                 sendNACK( sock, fuseRoute );
@@ -355,13 +358,18 @@ bool ShinyFilesystemMediator::handleMessage( zmq::socket_t * sock, std::vector<z
                 } else {
                     // Otherwise, let's create the dir/file
                     if( type == ShinyFilesystemMediator::CREATEFILE )
-                        node = new ShinyMetaFile( basename( path ), parent );
+                        node = new ShinyMetaFile( ShinyMetaNode::basename( path ), parent );
                     else
-                        node = new ShinyMetaDir( basename( path), parent );
+                        node = new ShinyMetaDir( ShinyMetaNode::basename( path), parent );
+                    
+                    // If they have included it, set the permissions away from the defaults
+                    if( msgList.size() > 4 ) {
+                        uint16_t mode = *((uint16_t *) parseDataMsg( msgList[4] ));
+                        node->setPermissions( mode );
+                    }
                     
                     // And send back an ACK
-                    zmq::message_t ackMsg; buildTypeMsg( ShinyFilesystemMediator::ACK, &ackMsg );
-                    sendMessages( sock, 3, fuseRoute, blankMsg, &ackMsg );
+                    sendACK( sock, fuseRoute );
                 }
             }
             delete( path );
@@ -376,29 +384,88 @@ bool ShinyFilesystemMediator::handleMessage( zmq::socket_t * sock, std::vector<z
             if( !node ) {
                 // If it doesn'y, I can't very well delete it, can I?
                 sendNACK( sock, fuseRoute );
-                break;
-            }
-            
-            // Since it exists, let's make sure it's not open right now
-            std::string pathStr( path );
-            std::map<std::string, OpenFileInfo *>::iterator itty = this->openFiles.find( pathStr );
-            
-            // If it is open, queue the deletion for later
-            if( itty != this->openFiles.end() ) {
-                OpenFileInfo * ofi = (*itty).second;
-                ofi->shouldDelete = true;
             } else {
-                // Tell the db to delete him, if it's a file
-                if( node->getNodeType() == ShinyMetaNode::TYPE_FILE )
-                    ((ShinyMetaFile *)node)->setLen( 0 );
+                // Since it exists, let's make sure it's not open right now
+                std::string pathStr( path );
+                std::map<std::string, OpenFileInfo *>::iterator itty = this->openFiles.find( pathStr );
                 
-                // actually delete the sucker
-                delete( node );
+                // If it is open, queue the deletion for later
+                if( itty != this->openFiles.end() ) {
+                    OpenFileInfo * ofi = (*itty).second;
+                    ofi->shouldDelete = true;
+                } else {
+                    // Tell the db to delete him, if it's a file
+                    if( node->getNodeType() == ShinyMetaNode::TYPE_FILE )
+                        ((ShinyMetaFile *)node)->setLen( 0 );
+                    
+                    // actually delete the sucker
+                    delete( node );
+                }
+            
+                // AFFLACK.  AFFFFFLAACK.
+                sendACK( sock, fuseRoute );
+            }
+            delete( path );
+            break;
+        }
+        case ShinyFilesystemMediator::RENAME: {
+            // Grab the path, and the new path
+            char * path = parseStringMsg( msgList[3] );
+            char * newPath = parseStringMsg( msgList[4] );
+            
+            // Check that their parents actually exist
+            ShinyMetaDir * oldParent = fs->findParentNode( path );
+            ShinyMetaDir * newParent = fs->findParentNode( newPath );
+            
+            if( oldParent && newParent ) {
+                // Now that we know the parents are real, find the child
+                const char * oldName = ShinyMetaNode::basename( path );
+                const char * newName = ShinyMetaNode::basename( newPath );
+                ShinyMetaNode * node = oldParent->findNode( oldName );
+                
+                if( node ) {
+                    // Check to make sure we need to move it at all
+                    if( oldParent != newParent ) {
+                        oldParent->delNode( node );
+                        newParent->addNode( node );
+                    }
+                    
+                    // Don't setName to the same thing we had before, lol
+                    if( strcmp( oldName, newName) != 0 )
+                        node->setName( newName );
+                    
+                    // Send an ACK, for a job well done
+                    sendACK( sock, fuseRoute );
+                } else {
+                    // We cannae faind tha node cap'n!
+                    sendNACK( sock, fuseRoute );
+                }
+
+            } else {
+                // Oh noes, we couldn't find oldParent or we couldn't find newParent!
+                sendNACK( sock, fuseRoute );
             }
             
-            // AFFLACK.  AFFFFFLAACK.
-            zmq::message_t ackMsg; buildTypeMsg( ShinyFilesystemMediator::ACK, &ackMsg );
-            sendMessages( sock, 3, fuseRoute, blankMsg, &ackMsg );
+            delete( path );
+            delete( newPath );
+            break;
+        }
+        case ShinyFilesystemMediator::CHMOD: {
+            // Grab the path, and the new path
+            char * path = parseStringMsg( msgList[3] );
+            uint16_t mode = *((uint16_t *) parseDataMsg( msgList[4] ));
+            
+            // Find node
+            ShinyMetaNode * node = fs->findNode( path );
+            if( node ) {
+                // Set the permissionse
+                node->setPermissions( mode );
+                
+                // ACK
+                sendACK( sock, fuseRoute );
+            } else
+                sendNACK( sock, fuseRoute );
+
             delete( path );
             break;
         }
@@ -471,6 +538,7 @@ void ShinyFilesystemMediator::closeOFI( std::map<std::string, OpenFileInfo *>::i
     // If we should delete the file, because an unlink() was called against it
     // while some other process had it open....
     if( ofi->shouldDelete ) {
+        ofi->file->setLen( 0 );
         delete( ofi->file );
     }
     

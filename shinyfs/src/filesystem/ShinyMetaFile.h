@@ -11,7 +11,7 @@ class ShinyMetaFile : public ShinyMetaNode {
 /////// DEFINES ///////
 public:
     // The size of a "chunk" stored in the DB
-    static const uint64_t CHUNKSIZE = 1*1024;
+    static const uint64_t CHUNKSIZE = 64*1024;
     
 //////// CREATION ///////
 public:

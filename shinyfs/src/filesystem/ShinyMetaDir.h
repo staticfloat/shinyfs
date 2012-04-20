@@ -36,6 +36,9 @@ public:
     //Returns a directory listing
     virtual const std::vector<ShinyMetaNode *> * getNodes();
     
+    // Finds a node and returns it, NULL otherwise
+    virtual ShinyMetaNode * findNode( const char * name );
+    
     //Returns the number of children that belong to this dir
     virtual uint64_t getNumNodes();
 protected:
