@@ -41,7 +41,8 @@ bool ShinyFuse::init( const char * mountPoint ) {
     //shiny_operations.chown = ShinyFuse::fuse_chown;
     
     ctx = new zmq::context_t( 1 );
-    fs = new ShinyFilesystem( "filecache.kct#dfunit=8" );
+    //fs = new ShinyFilesystem( "filecache.kct#dfunit=8" );
+    fs = new ShinyFilesystem( "filecache" );
     sfm = new ShinyFilesystemMediator( fs, ctx );
     
     // Make sure mount point is viable

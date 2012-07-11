@@ -2,9 +2,9 @@
 #ifndef SHINYMETAFILE_H
 #define SHINYMETAFILE_H
 #include <sys/types.h>
-// (kyoto cabinet this clobbers my ERROR/WARN macros, so I have to include it before Logger.h)
-#include <kcpolydb.h>
+
 #include "ShinyMetaNode.h"
+#include "ShinyDBWrapper.h"
 
 class ShinyMetaDir;
 class ShinyMetaFile : public ShinyMetaNode {
@@ -49,9 +49,9 @@ protected:
     // These are the peeps that do the real work, the above read() and write() sub out to this guy,
     // and just grab the db object from the ShinyFS, (which is why I have ShinyMetafileHandle for when
     // the ShinyFS object is unreachable, but we have the db object at hand)
-    virtual uint64_t read( kyotocabinet::PolyDB * db, const char * path, uint64_t offset, char * data, uint64_t len );
-    virtual uint64_t write( kyotocabinet::PolyDB * db, const char * path, uint64_t offset, const char * data, uint64_t len );
-    virtual void setLen( kyotocabinet::PolyDB * db, const char * path, uint64_t newLen );
+    virtual uint64_t read( ShinyDBWrapper * db, const char * path, uint64_t offset, char * data, uint64_t len );
+    virtual uint64_t write( ShinyDBWrapper * db, const char * path, uint64_t offset, const char * data, uint64_t len );
+    virtual void setLen( ShinyDBWrapper * db, const char * path, uint64_t newLen );
     
     // The length of this here file
     uint64_t fileLen;

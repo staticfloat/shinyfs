@@ -12,7 +12,7 @@
 /*
  ShinyFilesystem constructor, takes in path to cache location? I need to split this out into a separate cache object.....
  */
-ShinyFilesystem::ShinyFilesystem( const char * filecache ) {
+ShinyFilesystem::ShinyFilesystem( const char * filecache ) : db( filecache ) {
     // Check if the filecache exists
 /*    struct stat st;
     if( stat( filecache, &st ) != 0 ) {
@@ -29,11 +29,7 @@ ShinyFilesystem::ShinyFilesystem( const char * filecache ) {
     cache = new ShinyCache( filecache, ctx );
      */
     
-    if( !this->db.open( filecache, kyotocabinet::PolyDB::OWRITER | kyotocabinet::PolyDB::OCREATE ) ) {
-        ERROR( "Unable to open filecache in %s", filecache );
-        throw "Unable to open filcache";
-    }
-
+    
     
     TODO( "Replace this with unserializing from the db, if we can!" );
     this->root = new ShinyMetaRootDir( this );
@@ -74,9 +70,6 @@ ShinyFilesystem::ShinyFilesystem( const char * filecache ) {
 }
 
 ShinyFilesystem::~ShinyFilesystem() {
-    // Close the DB object
-    this->db.close();
-    
     //Clear out the nodes (amazing how they just take care of themselves, so nicely and all!)
     delete( this->root );
 }
@@ -211,7 +204,7 @@ const char * ShinyFilesystem::getNodePath( ShinyMetaNode *node ) {
     return this->nodePaths[node] = path;
 }
 
-kyotocabinet::PolyDB * ShinyFilesystem::getDB() {
+ShinyDBWrapper * ShinyFilesystem::getDB() {
     return &this->db;
 }
 
@@ -381,7 +374,7 @@ void ShinyFilesystem::save() {
     uint64_t len = this->serialize( &output );
     
     // Send this to the filecache to write out
-    this->db.set( this->getShinyFilesystemDBKey(), strlen(this->getShinyFilesystemDBKey()), output, len );
+    this->db.put( this->getShinyFilesystemDBKey(), output, len );
     
     delete( output );
 }

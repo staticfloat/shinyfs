@@ -45,7 +45,7 @@ uint64_t ShinyMetaFile::getLen() {
     return this->fileLen;
 }
 
-uint64_t ShinyMetaFile::read( kyotocabinet::PolyDB * db, const char * path, uint64_t offset, char * data, uint64_t len ) {
+uint64_t ShinyMetaFile::read( ShinyDBWrapper * db, const char * path, uint64_t offset, char * data, uint64_t len ) {
     // First, figure out what "chunk" to start from:
     uint64_t chunk = offset/CHUNKSIZE;
     
@@ -73,24 +73,9 @@ uint64_t ShinyMetaFile::read( kyotocabinet::PolyDB * db, const char * path, uint
         // Build this chunk's key:
         sprintf( keyChunk, "%.16llx", chunk );
         
-        /*
-        kyotocabinet::PolyDB::Cursor * cur = db->cursor();
-        cur->jump();
-        size_t keySize = 0;
-        size_t valSize = 0;
-        char * newKey;
-        const char * val;
-        while( (newKey = cur->get(&keySize, &val, &valSize, true)) ) {
-            LOG( "%s -> %s", newKey, val );
-            if( strcmp( newKey, key ) == 0 ) {
-                LOG( "It's a match!" );
-            }
-        }*/
-        
-        int bytesJustRead = db->get( key, pathlen + 16 + 1, buffer, CHUNKSIZE );
+        int bytesJustRead = db->get( key, buffer, CHUNKSIZE );
         if( bytesJustRead == -1 ) {
-            kyotocabinet::PolyDB::Error e = db->error();
-            ERROR( "Could not read chunk %s from cache: [%d] %s", key, e.code(), e.name() );
+            ERROR( "Could not read chunk %s from cache: %s", key, db->getError() );
             // This means we couldn't read this chunk, so we must have run into the end of the file.
             break;
         }
@@ -110,7 +95,7 @@ uint64_t ShinyMetaFile::read( kyotocabinet::PolyDB * db, const char * path, uint
     return bytesRead;
 }
 
-uint64_t ShinyMetaFile::write( kyotocabinet::PolyDB * db, const char * path, uint64_t offset, const char * data, uint64_t len ) {
+uint64_t ShinyMetaFile::write( ShinyDBWrapper * db, const char * path, uint64_t offset, const char * data, uint64_t len ) {
     // If we're going to overwrite, then exteeenddd..... EXTEEEENNDDDD!!!
     if( offset + len > this->getLen() )
         this->setLen( db, path, offset + len );
@@ -141,16 +126,15 @@ uint64_t ShinyMetaFile::write( kyotocabinet::PolyDB * db, const char * path, uin
         // or there is data after where we are writing in the same chunk.
         if( offset != 0 || (len - bytesWritten < CHUNKSIZE && this->getLen() > offset + len) ) {
             char * previousData = new char[CHUNKSIZE];
-            db->get( key, pathlen + 16 + 1, previousData, CHUNKSIZE );
+            db->get( key, previousData, CHUNKSIZE );
             
             // copy over the stuff we need to
             uint64_t amntToCopy = min( CHUNKSIZE - offset, len - bytesWritten );
             memcpy( previousData + offset, data + bytesWritten, amntToCopy );
             
             // Set this chunk back
-            if( !db->set( key, pathlen + 16 + 1, previousData, CHUNKSIZE ) ) {
-                kyotocabinet::PolyDB::Error e = db->error();
-                ERROR( "Could not write chunk %s to cache: [%d] %s", key, e.code(), e.name() );
+            if( !db->put( key, previousData, CHUNKSIZE ) ) {
+                ERROR( "Could not write chunk %s to cache: %s", key, db->getError() );
             }
             
             // increment the amount we've written
@@ -161,9 +145,8 @@ uint64_t ShinyMetaFile::write( kyotocabinet::PolyDB * db, const char * path, uin
         } else {
             // Otherwise, it's a lot simpler, and we just need to copy over as much junk as we can
             uint64_t amntToCopy = min( CHUNKSIZE, len - bytesWritten );
-            if( !db->set( key, pathlen + 16 + 1, data + bytesWritten, amntToCopy ) ) {
-                kyotocabinet::PolyDB::Error e = db->error();
-                ERROR( "Could not write chunk %s to cache: [%d] %s", key, e.code(), e.name() );
+            if( !db->put( key, data + bytesWritten, amntToCopy ) ) {
+                ERROR( "Could not write chunk %s to cache: %s", key, db->getError() );
             }
 
             // increment the amount we've written
@@ -177,7 +160,7 @@ uint64_t ShinyMetaFile::write( kyotocabinet::PolyDB * db, const char * path, uin
     return bytesWritten;
 }
 
-void ShinyMetaFile::setLen( kyotocabinet::PolyDB * db, const char * path, uint64_t newLen ) {
+void ShinyMetaFile::setLen( ShinyDBWrapper * db, const char * path, uint64_t newLen ) {
     // We'll have to build a new key for every chunk
     uint64_t pathlen = strlen(path);
     char * key = new char[pathlen+16+1];   // enough room for "<path>[chunk]\0"
@@ -201,22 +184,19 @@ void ShinyMetaFile::setLen( kyotocabinet::PolyDB * db, const char * path, uint64
             if( this->fileLen - chunkLen >= newLen ) {
                 LOG( "Removing chunk %s", key );
                 // TAKE THE LEG!  TAKE THE LEG DOCTOR! (remove the last chunk)
-                if( !db->remove( key, pathlen + 16 + 1 ) ) {
-                    kyotocabinet::PolyDB::Error e = db->error();
-                    WARN( "Couldn't remove chunk %s from cache, [%d] %s", key, e.code(), e.name() );
+                if( !db->del( key ) ) {
+                    WARN( "Couldn't remove chunk %s from cache, %s", key, db->getError() );
                 }
                 this->fileLen -= chunkLen;
             } else {
                 // Here's the tricksy part, we have to remove PART of this chunk
                 // We will first get the part of the chunk that matters, and reset the key with that value
                 char * data = new char[this->fileLen - newLen];
-                if( !db->get( key, pathlen + 16 + 1, data, this->fileLen - newLen ) ) {
-                    kyotocabinet::PolyDB::Error e = db->error();
-                    ERROR( "Could not read chunk %s, from cache, [%d] %s", key, e.code(), e.name() );
+                if( !db->get( key, data, this->fileLen - newLen ) ) {
+                    ERROR( "Could not read chunk %s, from cache, %s", key, db->getError() );
                 }
-                if( !db->set( key, pathlen + 16 + 1, data, this->fileLen - newLen ) ) {
-                    kyotocabinet::PolyDB::Error e = db->error();
-                    ERROR( "Could not write chunk %s to cache, [%d] %s", key, e.code(), e.name() );
+                if( !db->put( key, data, this->fileLen - newLen ) ) {
+                    ERROR( "Could not write chunk %s to cache, %s", key, db->getError() );
                 }
                 
                 delete( data );
@@ -238,15 +218,13 @@ void ShinyMetaFile::setLen( kyotocabinet::PolyDB * db, const char * path, uint64
             // Do we have junk we need to save by reading it in, appending zeros, then writing back?
             if( this->fileLen % CHUNKSIZE ) {
                 // Get the existing data
-                if( !db->get( key, pathlen + 16 + 1, data, newChunkLen ) ) {
-                    kyotocabinet::PolyDB::Error e = db->error();
-                    ERROR( "Could not read chunk %s from cache, [%d] %s", key, e.code(), e.name() );
+                if( !db->get( key, data, newChunkLen ) ) {
+                    ERROR( "Could not read chunk %s from cache, %s", key, db->getError() );
                 }
             }
             // write it in again
-            if( !db->set( key, pathlen + 16 + 1, data, newChunkLen ) ) {
-                kyotocabinet::PolyDB::Error e = db->error();
-                ERROR( "Could not write chunk %s to cache, [%d] %s", key, e.code(), e.name() );
+            if( !db->put( key, data, newChunkLen ) ) {
+                ERROR( "Could not write chunk %s to cache, %s", key, db->getError() );
             }
             
             this->fileLen += newChunkLen;

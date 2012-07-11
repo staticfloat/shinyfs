@@ -3,13 +3,13 @@
 #define ShinyFilesystem_H
 
 #include <tr1/unordered_map>
-// (kyoto cabinet this clobbers my ERROR/WARN macros, so I have to include it before Logger.h)
-#include <kcpolydb.h>
+
 #include "ShinyMetaNode.h"
+#include "ShinyDBWrapper.h"
 
 /*
  This guy is responsible ONLY for management of the filesystem tree. Metadata, etc. are all directly
- under his purview. He subs out to kyoto cabinet to get the "actual" filesystem data.
+ under his purview. He subs out to kyoto cabinet (or leveldb) to get the "actual" filesystem data.
  */
 
 #define SHINYFS_VERSION     4
@@ -71,13 +71,11 @@ private:
 /////// FILECACHE ///////
 protected:
     // Returns the DB object, (used for FileHandle and File to write and read, etc....)
-    kyotocabinet::PolyDB * getDB();
+    ShinyDBWrapper * getDB();
 private:
     // The key used to store the ShinyFS tree when we serialize it
     const char * getShinyFilesystemDBKey();
-    
-    // The actual DB object
-    kyotocabinet::PolyDB db;
+    ShinyDBWrapper db;
     
 
 /////// MISC ///////
