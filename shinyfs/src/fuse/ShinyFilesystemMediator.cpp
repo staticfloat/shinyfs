@@ -6,7 +6,6 @@
 #include "../filesystem/ShinyMetaFile.h"
 #include "../filesystem/ShinyMetaFileHandle.h"
 #include <string.h>
-#include "../util/util.h"
 
 // Extreme laziness function to send a NACK to the other side
 void sendNACK( zmq::socket_t * sock, zmq::message_t * routing ) {

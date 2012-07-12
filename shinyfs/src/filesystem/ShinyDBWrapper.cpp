@@ -36,22 +36,27 @@ ShinyDBWrapper::~ShinyDBWrapper() {
 #endif
 }
 
-int ShinyDBWrapper::get(const char *key, char *buffer, int maxsize) {
+uint64_t ShinyDBWrapper::get(const char *key, char *buffer, uint64_t maxsize) {
 #ifdef KYOTOCABINET
     return this->db.get( key, strlen(key), buffer, maxsize );
 #else
     std::string stupidDBBuffer;
     status = this->db->Get( leveldb::ReadOptions(), key, &stupidDBBuffer );
-    memcpy( buffer, stupidDBBuffer.c_str(), min(maxsize, stupidDBBuffer.length()) );
-    return status.ok() ? min(maxsize, stupidDBBuffer.length()) : -1;
+    if( status.ok() ) {
+        uint64_t len = min(maxsize, stupidDBBuffer.length());
+        memcpy( buffer, stupidDBBuffer.c_str(), len );
+        return len;
+    }
+    return -1;
 #endif
 }
 
-int ShinyDBWrapper::put(const char *key, const char *buffer, int size) {
+uint64_t ShinyDBWrapper::put(const char *key, const char *buffer, uint64_t size) {
 #ifdef KYOTOCABINET
     return this->db.set( key, strlen(key), buffer, maxsize );
 #else
-    status = this->db->Put( leveldb::WriteOptions(), key, buffer );
+    leveldb::Slice buffSlice( buffer, size );
+    status = this->db->Put( leveldb::WriteOptions(), key, buffSlice );
     return status.ok() ? size : -1;
 #endif
 }

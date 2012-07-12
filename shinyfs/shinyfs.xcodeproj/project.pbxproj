@@ -19,7 +19,6 @@
 		56803FA6150D6C820074238D /* ShinyFuse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56803FA4150D6C820074238D /* ShinyFuse.cpp */; };
 		5681A8E715298D3F00CCDE46 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5681A8E615298D3F00CCDE46 /* main.cpp */; };
 		569184EB1549E8330060F755 /* ShinyDBWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 569184EA1549E8330060F755 /* ShinyDBWrapper.cpp */; };
-		56E876D71540929F00FA5D1E /* util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56E876D61540929F00FA5D1E /* util.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -59,10 +58,8 @@
 		56803FA5150D6C820074238D /* ShinyFuse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShinyFuse.h; path = src/fuse/ShinyFuse.h; sourceTree = "<group>"; };
 		5681A8E615298D3F00CCDE46 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
 		5681A8E815298D5C00CCDE46 /* SHINY_TODO.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = SHINY_TODO.txt; sourceTree = "<group>"; };
-		569184E91549E7FE0060F755 /* util.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = util.h; path = src/util/util.h; sourceTree = "<group>"; };
 		569184EA1549E8330060F755 /* ShinyDBWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyDBWrapper.cpp; sourceTree = "<group>"; };
 		569184EC1549E83C0060F755 /* ShinyDBWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShinyDBWrapper.h; sourceTree = "<group>"; };
-		56E876D61540929F00FA5D1E /* util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = util.cpp; path = src/util/util.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -134,8 +131,6 @@
 			children = (
 				564CC0B815214CF000D7CC3C /* zmqutils.h */,
 				564CC0B915214D5300D7CC3C /* zmqutils.cpp */,
-				569184E91549E7FE0060F755 /* util.h */,
-				56E876D61540929F00FA5D1E /* util.cpp */,
 			);
 			name = util;
 			sourceTree = "<group>";
@@ -212,7 +207,6 @@
 				564CC0BA15214D5300D7CC3C /* zmqutils.cpp in Sources */,
 				564CC0D215219D1A00D7CC3C /* ShinyFilesystemMediator.cpp in Sources */,
 				5681A8E715298D3F00CCDE46 /* main.cpp in Sources */,
-				56E876D71540929F00FA5D1E /* util.cpp in Sources */,
 				569184EB1549E8330060F755 /* ShinyDBWrapper.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

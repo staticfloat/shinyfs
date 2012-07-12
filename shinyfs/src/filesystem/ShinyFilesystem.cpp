@@ -12,64 +12,40 @@
 /*
  ShinyFilesystem constructor, takes in path to cache location? I need to split this out into a separate cache object.....
  */
-ShinyFilesystem::ShinyFilesystem( const char * filecache ) : db( filecache ) {
-    // Check if the filecache exists
-/*    struct stat st;
-    if( stat( filecache, &st ) != 0 ) {
-        WARN( "filecache %s does not exist, creating a new one!", filecache );
-        mkdir( filecache, 0700 );
-    }*/
-    
-    /*
-    // create socket for comms with shinycache
-    cacheSock = new zmq::socket_t( *this->ctx, ZMQ_DEALER );
-    cacheSock->bind( this->getZMQEndpointFileCache() );
-    
-    // Initialize cache object
-    cache = new ShinyCache( filecache, ctx );
-     */
-    
-    
-    
-    TODO( "Replace this with unserializing from the db, if we can!" );
-    this->root = new ShinyMetaRootDir( this );
-    ShinyMetaFile * testf = new ShinyMetaFile( "test" );
-    this->root->addNode( testf );
-    
-    const char * testdata = "this is a test\nawwwwww yeahhhhh\n";
-    testf->write(0, testdata, strlen(testdata) );
-
-    
-/*
-    //serializedData would be nonzero in this case if we're constructing from net-based data...
-    if( !serializedData ) {
-        //Let's look and see if an fscache exists...
-        char * fscache = new char[strlen(filecache)+1+8+1];
-        sprintf( fscache, "%s/%s", this->filecache, FSCACHE_POSTFIX );
-        if( stat( fscache, &st ) != 0 ) {
-            WARN( "fscache %s does not exist, starting over....", fscache );
-            root = new ShinyMetaRootDir(this);
-        } else {
-            int fd = open( fscache, O_RDONLY );
-            uint64_t len = lseek(fd, 0, SEEK_END);
-            lseek(fd,0,SEEK_SET);
-            
-            serializedData = new char[len];
-            read(fd, (void *)serializedData, len);
-            
-            close(fd);
-            
-            unserialize( serializedData );
-            delete( serializedData );
-        }
-        delete( fscache );
+ShinyFilesystem::ShinyFilesystem( const char * filecache ) : db( filecache ), root(NULL) {
+    // Attempt to load the size of the metadata that was saved, if it exists, then
+    // continue loading from the db. Otherwise, we need to start from scratch.
+    char sizeBuff[sizeof(uint64_t)];
+    if( this->db.get( this->getShinyFilesystemSizeDBKey(), sizeBuff, sizeof(uint64_t) ) == sizeof(uint64_t) ) {
+        int serializedLen = *((uint64_t *)&sizeBuff[0]);
+        char * serializedData = new char[serializedLen];
+        if( this->db.get( this->getShinyFilesystemDBKey(), serializedData, serializedLen ) == serializedLen ) {
+            this->root = this->unserialize( serializedData );
+        } else
+            WARN( "Corrupt/missing metadata: throwing it all away!" );
     } else
-        unserialize( serializedData );
-*/
-    TODO( "Eventually, add back in the ability to unserialize a ShinyFS" );
+        WARN( "Corrupt/missing metadata length: throwing it all away!" );
+    
+    // If we have no root, then "nothing remains" and we must make something entertaining up.
+    if( !root ) {
+        LOG( "Making crap up!" );
+        this->root = new ShinyMetaRootDir( this );
+        ShinyMetaFile * testf = new ShinyMetaFile( "test" );
+        this->root->addNode( testf );
+        const char * testdata = "this is a test\nawwwwww yeahhhhh\nf7u12 much?\n";
+        testf->write(0, testdata, strlen(testdata) );
+        
+        testf = new ShinyMetaFile( "asdf" );
+        this->root->addNode( testf );
+        testdata = "blahblahblah\n";
+        testf->write(0, testdata, strlen(testdata) );
+
+    }
 }
 
 ShinyFilesystem::~ShinyFilesystem() {
+    this->save();
+    
     //Clear out the nodes (amazing how they just take care of themselves, so nicely and all!)
     delete( this->root );
 }
@@ -209,7 +185,11 @@ ShinyDBWrapper * ShinyFilesystem::getDB() {
 }
 
 const char * ShinyFilesystem::getShinyFilesystemDBKey() {
-    return "shinyfs.state";
+    return "?shinyfs.state";
+}
+
+const char * ShinyFilesystem::getShinyFilesystemSizeDBKey() {
+    return "?shinyfs.statesize";
 }
 
 bool ShinyFilesystem::sanityCheck( void ) {
@@ -277,7 +257,10 @@ char * serializeTree( ShinyMetaNode * start, bool recursive, char * output ) {
             //Don't have to check for TYPE_ROOTDIR here, because that's an impossibility!  yay!
             if( recursive && (*startNodes)[i]->getNodeType() == ShinyMetaNode::TYPE_DIR ) {
                 output = serializeTree( (*startNodes)[i], recursive, output );
-            } else {
+            } else {            
+                *((uint8_t *)output) = (*startNodes)[i]->getNodeType();
+                output += sizeof(uint8_t);
+
                 output = (*startNodes)[i]->serialize(output);
             }
         }
@@ -310,27 +293,27 @@ uint64_t ShinyFilesystem::serialize( char ** store, ShinyMetaNode * start, bool 
     output += sizeof(uint16_t);
     
     // Next, we'll iterate through all the nodes we're going to serialize, doing them one at a time;
-    output = serializeTree( start, recursive, output );
+    serializeTree( start, recursive, output );
     
     // and finally, return the length!
     return len;
 }
 
 
-ShinyMetaNode * ShinyFilesystem::unserializeTree( const char *input ) {
-    uint8_t type = *((uint8_t *)input);
-    input += sizeof(uint8_t);
+ShinyMetaNode * ShinyFilesystem::unserializeTree( const char ** input ) {
+    uint8_t type = *((uint8_t *)*input);
+    *input += sizeof(uint8_t);
     
     switch( type ) {
         case ShinyMetaNode::TYPE_ROOTDIR:
         case ShinyMetaNode::TYPE_DIR:
         {
             // First, get the (root)dir itself. In other news, WHY THE HECK DO I WRITE THINGS LIKE THIS?!
-            ShinyMetaDir * newDir = (type == ShinyMetaNode::TYPE_ROOTDIR) ? new ShinyMetaRootDir( &input ) : new ShinyMetaDir( &input );
+            ShinyMetaDir * newDir = (type == ShinyMetaNode::TYPE_ROOTDIR) ? new ShinyMetaRootDir( input ) : new ShinyMetaDir( input );
             
             // next, get the number of children that have been serialized
-            uint64_t numNodes = *((uint64_t *)input);
-            input += sizeof(uint64_t);
+            uint64_t numNodes = *((uint64_t *)*input);
+            *input += sizeof(uint64_t);
             
             // Now, iterating over all children of this dir, LOAD 'EM IN!
             for( uint64_t i=0; i<numNodes; ++i ) {
@@ -344,7 +327,7 @@ ShinyMetaNode * ShinyFilesystem::unserializeTree( const char *input ) {
         }
         case ShinyMetaNode::TYPE_FILE:
         {
-            ShinyMetaFile * newFile = new ShinyMetaFile( &input );
+            ShinyMetaFile * newFile = new ShinyMetaFile( input );
             return newFile;
         }
         default:
@@ -355,7 +338,7 @@ ShinyMetaNode * ShinyFilesystem::unserializeTree( const char *input ) {
     return NULL;
 }
 
-ShinyMetaNode * ShinyFilesystem::unserialize( const char *input ) {
+ShinyMetaRootDir * ShinyFilesystem::unserialize( const char *input ) {
     // First, a version check
     if( *((uint16_t *)input) != this->getVersion() ) {
         ERROR( "Serialized filesystem objects are of version %d, whereas we are compatible with version(s) %d!", *((uint16_t *)input), this->getVersion() );
@@ -365,7 +348,16 @@ ShinyMetaNode * ShinyFilesystem::unserialize( const char *input ) {
     input += sizeof(uint16_t);
     
     // If a problem is too hard for you, push it off to another function!
-    return unserializeTree( input );
+    ShinyMetaNode * possibleRoot = unserializeTree( &input );
+    
+    // Check to make sure we at least have a root node
+    if( possibleRoot->getNodeType() != ShinyMetaNode::TYPE_ROOTDIR ) {
+        WARN( "Corrupt root node type" );
+        return NULL;
+    }
+    
+    // If we do, return it!
+    return (ShinyMetaRootDir *)possibleRoot;
 }
 
 void ShinyFilesystem::save() {
@@ -375,6 +367,15 @@ void ShinyFilesystem::save() {
     
     // Send this to the filecache to write out
     this->db.put( this->getShinyFilesystemDBKey(), output, len );
+    this->db.put( this->getShinyFilesystemSizeDBKey(), (const char *)&len, sizeof(uint64_t) );
+    
+    // TESTING TESTING TESTING
+    ShinyMetaRootDir * testRoot = this->unserialize( output );
+    if( testRoot ) {
+        this->printDir( testRoot );
+        LOG("---------------------------------------------------------------------");
+        this->printDir( this->root );
+    }
     
     delete( output );
 }

@@ -41,10 +41,10 @@ public:
     void save();
 
     //Helper function to unserialize a tree (or subtree)
-    ShinyMetaNode * unserialize( const char * input );
+    ShinyMetaRootDir * unserialize( const char * input );
 protected:
     // recursive helper function for unserialize
-    ShinyMetaNode * unserializeTree( const char *input );
+    ShinyMetaNode * unserializeTree( const char ** input );
 
 
 /////// NODE ROUTINES ///////
@@ -75,6 +75,7 @@ protected:
 private:
     // The key used to store the ShinyFS tree when we serialize it
     const char * getShinyFilesystemDBKey();
+    const char * getShinyFilesystemSizeDBKey();
     ShinyDBWrapper db;
     
 
@@ -88,7 +89,7 @@ public:
     
     //Debug call to print out filesystem recursively.  Uses printDir(), etc....
     void print( void );
-    void printDir( ShinyMetaDir * dir, const char * prefix );
+    void printDir( ShinyMetaDir * dir, const char * prefix = "" );
     
     //Returns the version of this ShinyFS
     const uint64_t getVersion();

@@ -2,12 +2,10 @@
 #define shinyfs_ShinyDBWrapper_h
 
 #ifdef KYOTOCABINET
-// (kyoto cabinet this clobbers my ERROR/WARN macros, so I have to include it before Logger.h)
 #include <kcpolydb.h>
 #else
 #include <leveldb/db.h>
 #endif
-
 
 class ShinyDBWrapper {
 public:
@@ -15,10 +13,11 @@ public:
     ~ShinyDBWrapper();
     
     // Assumes key is zero-terminated
-    int get( const char * key, char * buffer, int maxsize );
-    int put( const char * key, const char * buffer, int size );
+    uint64_t get( const char * key, char * buffer, uint64_t maxsize );
+    uint64_t put( const char * key, const char * buffer, uint64_t size );
     bool del( const char * key );
     
+    // Returns the last error that occured
     const char * getError();
 private:
 #ifdef KYOTOCABINET
@@ -27,8 +26,8 @@ private:
     leveldb::DB * db;
     
     leveldb::Status status;
-#endif
+#endif // KYOTOCABINET
 };
 
 
-#endif
+#endif // shinyfs_ShinyDBWrapper_h
