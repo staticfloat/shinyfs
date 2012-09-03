@@ -256,7 +256,6 @@
 					"-lfuse4x",
 					"-lcryptopp",
 					"-lzmq",
-					"-lkyotocabinet",
 					"-lleveldb",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -280,7 +279,6 @@
 					"-lfuse4x",
 					"-lcryptopp",
 					"-lzmq",
-					"-lkyotocabinet",
 					"-lleveldb",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
