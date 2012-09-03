@@ -23,7 +23,7 @@ void buildNodeMsg( ShinyMetaNode * node, zmq::message_t * msg );
 uint8_t parseTypeMsg( zmq::message_t * msg );
 char * parseDataMsg( zmq::message_t * msg );
 char * parseStringMsg( zmq::message_t * msg );
-ShinyMetaNode * parseNodeMsg( zmq::message_t * msg, ShinyMetaNode::NodeType type );
+ShinyMetaNode * parseNodeMsg( zmq::message_t * msg, ShinyMetaNode::NodeType type, ShinyFilesystem * fs );
 
 
 bool waitForEndpoint( zmq::context_t * ctx, const char * endpoint );

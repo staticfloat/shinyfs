@@ -141,7 +141,7 @@ char * parseStringMsg( zmq::message_t * msg ) {
 }
 
 // Unserializes a serialized node out of the message, and yes, needs apriori info about the type
-ShinyMetaNode * parseNodeMsg( zmq::message_t * msg, ShinyMetaNode::NodeType type ) {
+ShinyMetaNode * parseNodeMsg( zmq::message_t * msg, ShinyMetaNode::NodeType type, ShinyFilesystem * fs ) {
     const char * data = (const char *) msg->data();
     switch( type ) {
         case ShinyMetaNode::TYPE_FILE: {
@@ -151,7 +151,7 @@ ShinyMetaNode * parseNodeMsg( zmq::message_t * msg, ShinyMetaNode::NodeType type
             return new ShinyMetaDir( &data );
         }
         case ShinyMetaNode::TYPE_ROOTDIR: {
-            return new ShinyMetaRootDir( &data );
+            return new ShinyMetaRootDir( fs, &data );
         }
         default: {
             return new ShinyMetaNode( &data );
