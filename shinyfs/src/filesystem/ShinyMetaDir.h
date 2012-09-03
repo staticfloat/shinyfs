@@ -44,7 +44,6 @@ public:
 protected:
     //All of this dir's child nodes
     std::vector<ShinyMetaNode*> nodes;
-
     
     
     

@@ -17,7 +17,7 @@ ShinyFilesystem::ShinyFilesystem( const char * filecache ) : db( filecache ), ro
     // continue loading from the db. Otherwise, we need to start from scratch.
     char sizeBuff[sizeof(uint64_t)];
     if( this->db.get( this->getShinyFilesystemSizeDBKey(), sizeBuff, sizeof(uint64_t) ) == sizeof(uint64_t) ) {
-        int serializedLen = *((uint64_t *)&sizeBuff[0]);
+        uint64_t serializedLen = *((uint64_t *)&sizeBuff[0]);
         char * serializedData = new char[serializedLen];
         if( this->db.get( this->getShinyFilesystemDBKey(), serializedData, serializedLen ) == serializedLen ) {
             this->root = this->unserialize( serializedData );
@@ -309,7 +309,7 @@ ShinyMetaNode * ShinyFilesystem::unserializeTree( const char ** input ) {
         case ShinyMetaNode::TYPE_DIR:
         {
             // First, get the (root)dir itself. In other news, WHY THE HECK DO I WRITE THINGS LIKE THIS?!
-            ShinyMetaDir * newDir = (type == ShinyMetaNode::TYPE_ROOTDIR) ? new ShinyMetaRootDir( input ) : new ShinyMetaDir( input );
+            ShinyMetaDir * newDir = (type == ShinyMetaNode::TYPE_ROOTDIR) ? new ShinyMetaRootDir( this, input ) : new ShinyMetaDir( input );
             
             // next, get the number of children that have been serialized
             uint64_t numNodes = *((uint64_t *)*input);
@@ -341,18 +341,18 @@ ShinyMetaNode * ShinyFilesystem::unserializeTree( const char ** input ) {
 ShinyMetaRootDir * ShinyFilesystem::unserialize( const char *input ) {
     // First, a version check
     if( *((uint16_t *)input) != this->getVersion() ) {
-        ERROR( "Serialized filesystem objects are of version %d, whereas we are compatible with version(s) %d!", *((uint16_t *)input), this->getVersion() );
+        ERROR( "Serialized filesystem objects are of version %d, whereas we are compatible with version %d!", *((uint16_t *)input), this->getVersion() );
         return NULL;
     }
     // now gracefully scoot past that short
     input += sizeof(uint16_t);
     
-    // If a problem is too hard for you, push it off to another function!
+    // If a problem is too hard for you, push it off to another function! Preferablly, a recursive helper function!
     ShinyMetaNode * possibleRoot = unserializeTree( &input );
     
     // Check to make sure we at least have a root node
     if( possibleRoot->getNodeType() != ShinyMetaNode::TYPE_ROOTDIR ) {
-        WARN( "Corrupt root node type" );
+        ERROR( "Corrupt root node type" );
         return NULL;
     }
     
@@ -395,7 +395,10 @@ void ShinyFilesystem::printDir( ShinyMetaDir * dir, const char * prefix ) {
             this->printDir( (ShinyMetaDir *)nodes[i], newPrefix );
         } else {
             //Only print it out here if it's not a directory, because directories print themselves
-            LOG( "%s\n", newPrefix );
+            if( nodes[i]->getNodeType() == ShinyMetaNode::TYPE_FILE )
+                LOG( "%s (%d)", newPrefix, ((ShinyMetaFile *)nodes[i])->getLen() );
+            else
+                LOG( "%s", newPrefix );
         }
         delete( newPrefix );
     }

@@ -32,6 +32,13 @@ public:
         // [NACK] broker -> fuse
         GETATTR,
         
+        // [SETATTR] fuse -> broker
+        //   - path
+        //   - ShinyMetaNode
+        // [ACK] broker -> fuse
+        // [NACK] broker -> fuse
+        SETATTR,
+        
         // [READDIR] fuse -> broker
         //   - path
         // [ACK] broker -> fuse

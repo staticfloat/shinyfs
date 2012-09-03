@@ -7,7 +7,7 @@ ShinyMetaRootDir::ShinyMetaRootDir( ShinyFilesystem * fs ) : ShinyMetaDir( "/" )
     this->setParent( this );
 }
 
-ShinyMetaRootDir::ShinyMetaRootDir( const char ** serializedInput ) : ShinyMetaDir( "" ) {
+ShinyMetaRootDir::ShinyMetaRootDir( ShinyFilesystem * fs, const char ** serializedInput ) : ShinyMetaDir( "/" ), fs(fs) {
     this->unserialize( serializedInput );
 }
 

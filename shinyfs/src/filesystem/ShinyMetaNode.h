@@ -56,20 +56,20 @@ public:
     virtual void unserialize( const char **input );    
 
 //////// ATTRIBUTES ///////
-public:    
+public:
     // Name (filename, directory name, etc....)
-    virtual void setName( const char * newName );
-    virtual const char * getName();
+    void setName( const char * newName );
+    const char * getName();
     
     // Set new permissions for this node
-    virtual void setPermissions( uint16_t newPermissions);
-    virtual uint16_t getPermissions();
+    void setPermissions( uint16_t newPermissions);
+    uint16_t getPermissions();
     
     // chown() anyone?
-    virtual void setUID( const uint64_t newUID );
-    virtual const uint64_t getUID( void );
-    virtual void setGID( const uint64_t newGID );
-    virtual const uint64_t getGID( void );
+    void setUID( const uint64_t newUID );
+    const uint64_t getUID( void );
+    void setGID( const uint64_t newGID );
+    const uint64_t getGID( void );
     
     // Get/set parent
     virtual ShinyMetaDir * getParent( void );
@@ -79,20 +79,21 @@ public:
     // good known position, e.g. "?/dir 1/dir 2/file") I'm.... not sure how that can happen, but it probably can
     virtual const char * getPath();
     
-    // These return the respective times
-    virtual const uint64_t get_atime( void );
-    virtual const uint64_t get_ctime( void );
-    virtual const uint64_t get_mtime( void );
+    // Birthed, Accessed (read), Changed (metadata), Modified (file data) times
+    const uint64_t get_btime( void );
+    const uint64_t get_atime( void );
+    const uint64_t get_ctime( void );
+    const uint64_t get_mtime( void );
     
     // These set the respective times to the current time
-    virtual void set_atime( void );
-    virtual void set_ctime( void );
-    virtual void set_mtime( void );
+    void set_atime( void );
+    void set_ctime( void );
+    void set_mtime( void ); // Note; implicitly sets set_ctime!
     
     // These set the respective times to the given new time
-    virtual void set_atime( const uint64_t new_atime );
-    virtual void set_ctime( const uint64_t new_ctime );
-    virtual void set_mtime( const uint64_t new_mtime );
+    void set_atime( const uint64_t new_atime );
+    void set_ctime( const uint64_t new_ctime );
+    void set_mtime( const uint64_t new_mtime ); // Note; implicitly sets set_ctime!
     
     // Returns the node type, e.g. if it's a file, directory, etc.
     virtual ShinyMetaNode::NodeType getNodeType( void );
@@ -107,39 +108,32 @@ protected:
     uint16_t permissions;
     
     // User/Group IDs (not implemented yet)
-    uint64_t uid;
-    uint64_t gid;
+    uint64_t uid, gid;
     
-    // Time created
-    uint64_t ctime;
-    // Time accessed
-    uint64_t atime;
-    // Time modified
-    uint64_t mtime;
-    
+    // Time birthed, changed (metadata), accessed (read), modified (file data)
+    uint64_t btime, ctime, atime, mtime;    
 /////// MISC ///////
 public:
     //Performs any necessary checks (e.g. directories check for multiple entries of the same node, etc...)
     virtual bool sanityCheck( void );
-        
+
     //Since we don't want to have a pointer to the FS in _every_ _single_ node, we'll only have it in the root node
     virtual ShinyFilesystem * getFS();
 
 protected:
     // Checks to make sure our parent has us as a child
-    virtual bool check_parentHasUsAsChild( void );
+    bool check_parentHasUsAsChild( void );
     
     // Checks to make sure we don't have any duplicates in a list of inodes
-    virtual bool check_noDuplicates( std::vector<ShinyMetaNode *> * list, const char * listName );
+    bool check_noDuplicates( std::vector<ShinyMetaNode *> * list, const char * listName );
     
     // returns the "default" permissions for a new file
     virtual uint16_t getDefaultPermissions();
     
-    
 /////// UTIL ///////
 public:
     // returns permissions of a file in rwxrwxrwx style, in a shared [char *] buffer (shared across threads)
-    static const char * printPermissions( uint16_t permissions );
+    static const char * permissionStr( uint16_t permissions );
     
     // returns the filename of a full path (e.g. everything past the last "/")
     static const char * basename( const char * path );

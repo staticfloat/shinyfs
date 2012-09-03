@@ -6,7 +6,10 @@
 class ShinyMetaRootDir : public ShinyMetaDir {
 public:
     ShinyMetaRootDir( ShinyFilesystem * fs );
-    ShinyMetaRootDir( const char ** serializedInput );
+    
+    // Note that we can't unserialize off of _solely_ a serializedInput, as we are responsibly for managing the poiner
+    // to fs, therefore we require that it is passed in when we load up as well.
+    ShinyMetaRootDir( ShinyFilesystem * fs, const char ** serializedInput );
     
     // some trickery is to be done here, setting our parent to "NULL" so that ~ShinyMetaNode() doesn't do dumb things
     ~ShinyMetaRootDir();

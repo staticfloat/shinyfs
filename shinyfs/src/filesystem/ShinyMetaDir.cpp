@@ -59,7 +59,7 @@ void ShinyMetaDir::addNode( ShinyMetaNode *newNode ) {
         return;
     }
     
-    TODO( "Perhaps change ShinyMetaDir to use some kind of map instead of a list, to allow for faster inserts?" );
+    TODO( "Perhaps change ShinyMetaDir to use some kind of treemap instead of a list, to allow for faster inserts?" );
          
     //Insert so that list is always sorted in ascending order of name
     int64_t i;
@@ -77,6 +77,8 @@ void ShinyMetaDir::addNode( ShinyMetaNode *newNode ) {
     }
     nodes.insert(nodes.begin() + i, newNode );
     newNode->setParent( this );
+    this->set_mtime();
+    LOG( "Set %s mtime to %d", this->getName(), this->get_mtime() );
 }
 
 void ShinyMetaDir::delNode(ShinyMetaNode *delNode) {
@@ -86,6 +88,7 @@ void ShinyMetaDir::delNode(ShinyMetaNode *delNode) {
             return;
         }
     }
+    this->set_mtime();
 }
 
 ShinyMetaNode * ShinyMetaDir::findNode( const char *name ) {

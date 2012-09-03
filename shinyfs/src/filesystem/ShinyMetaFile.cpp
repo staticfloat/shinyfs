@@ -73,7 +73,7 @@ uint64_t ShinyMetaFile::read( ShinyDBWrapper * db, const char * path, uint64_t o
         // Build this chunk's key:
         sprintf( keyChunk, "%.16llx", chunk );
         
-        int bytesJustRead = db->get( key, buffer, CHUNKSIZE );
+        uint64_t bytesJustRead = db->get( key, buffer, CHUNKSIZE );
         if( bytesJustRead == -1 ) {
             ERROR( "Could not read chunk %s from cache: %s", key, db->getError() );
             // This means we couldn't read this chunk, so we must have run into the end of the file.
@@ -92,6 +92,8 @@ uint64_t ShinyMetaFile::read( ShinyDBWrapper * db, const char * path, uint64_t o
         offset = 0;
         chunk++;
     }
+    
+    this->set_atime();
     return bytesRead;
 }
 
@@ -157,6 +159,8 @@ uint64_t ShinyMetaFile::write( ShinyDBWrapper * db, const char * path, uint64_t 
         offset = 0;
         chunk++;
     }
+    
+    this->set_mtime();
     return bytesWritten;
 }
 
@@ -174,7 +178,7 @@ void ShinyMetaFile::setLen( ShinyDBWrapper * db, const char * path, uint64_t new
         // While the lengths are not matched, delete chunks (or pieces of them)
         while( this->fileLen != newLen ) {
             // Find the length of the last chunk
-            uint32_t chunkLen = this->fileLen - (this->fileLen/CHUNKSIZE)*CHUNKSIZE;
+            uint64_t chunkLen = this->fileLen - (this->fileLen/CHUNKSIZE)*CHUNKSIZE;
             chunkLen = (chunkLen == 0 ? CHUNKSIZE : chunkLen);
             
             // Get the key for the last chunk
@@ -230,6 +234,8 @@ void ShinyMetaFile::setLen( ShinyDBWrapper * db, const char * path, uint64_t new
             this->fileLen += newChunkLen;
         }
     }
+    
+    this->set_mtime();
 }
 
 

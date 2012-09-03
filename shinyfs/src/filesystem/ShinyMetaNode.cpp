@@ -24,19 +24,17 @@ ShinyMetaNode::ShinyMetaNode( const char * newName ) {
     this->parent = NULL;
     
     //It's HAMMAH TIME!!!
-    this->ctime = this->atime = this->mtime = time(NULL);
+    this->btime = this->atime = this->ctime = this->mtime = time(NULL);
     
     // Set default permissions
     this->setPermissions( this->getDefaultPermissions() );
     
-    // Does this work?
+    // NABIL: Change this to use the ShinyUserMap or whatever
     this->uid = getuid();
     this->gid = getgid();
-    
-    TODO( "Still need to work in modification times and stuch" );
 }
 
-ShinyMetaNode::ShinyMetaNode( const char ** serializedInput ) {
+ShinyMetaNode::ShinyMetaNode( const char ** serializedInput ) : name(NULL), parent(NULL) {
     this->unserialize(serializedInput);
 }
 
@@ -45,19 +43,18 @@ ShinyMetaNode::~ShinyMetaNode() {
         LOG( "Deleting %s", this->name );
         delete( this->name );
     }
-    
+
     //Remove myself from my parent
     if( this->getParent() )
         this->getParent()->delNode( this );
 }
-
 
 uint64_t ShinyMetaNode::serializedLen() {
     // Size of us
     uint64_t len = 0;
 
     //Time markers
-    len += sizeof(ctime) + sizeof(atime) + sizeof(mtime);
+    len += sizeof(btime) + sizeof(atime) + sizeof(ctime) + sizeof(mtime);
     
     //Then, permissions and user/group ids
     len += sizeof(uid) + sizeof(gid) + sizeof(permissions);
@@ -69,8 +66,9 @@ uint64_t ShinyMetaNode::serializedLen() {
 
 /* Serialization order is as follows:
  
- [ctime]         - uint64_t
+ [btime]         - uint64_t
  [atime]         - uint64_t
+ [ctime]         - uint64_t
  [mtime]         - uint64_t
  [uid]           - uint32_t
  [gid]           - uint32_t
@@ -81,8 +79,9 @@ uint64_t ShinyMetaNode::serializedLen() {
 #define write_and_increment( value, type )    *((type *)output) = value; output += sizeof(type)
 
 char * ShinyMetaNode::serialize(char * output) {
-    write_and_increment( this->ctime, uint64_t );
+    write_and_increment( this->btime, uint64_t );
     write_and_increment( this->atime, uint64_t );
+    write_and_increment( this->ctime, uint64_t );
     write_and_increment( this->mtime, uint64_t );
     write_and_increment( this->uid, uint64_t );
     write_and_increment( this->gid, uint64_t );
@@ -102,8 +101,9 @@ char * ShinyMetaNode::serialize(char * output) {
 
 void ShinyMetaNode::unserialize( const char ** input_double ) {
     const char * input = *input_double;
-    read_and_increment( this->ctime, uint64_t );
+    read_and_increment( this->btime, uint64_t );
     read_and_increment( this->atime, uint64_t );
+    read_and_increment( this->ctime, uint64_t );
     read_and_increment( this->mtime, uint64_t );
     read_and_increment( this->uid, uint64_t );
     read_and_increment( this->gid, uint64_t );
@@ -111,6 +111,10 @@ void ShinyMetaNode::unserialize( const char ** input_double ) {
     
     // Rather than doing even MORE strlen()'s, we'll only do one, and save the result
     uint64_t nameLen = strlen(input) + 1;
+    
+    // This is because occasionally we do an unserialize on an object that already exists
+    if( this->name )
+        delete( this->name );
     this->name = new char[nameLen];
     memcpy( this->name, input, nameLen );
     
@@ -129,7 +133,8 @@ void ShinyMetaNode::setParent( ShinyMetaDir * newParent ) {
     if( this->getParent() )
         delete( this->getFS()->nodePaths[this] );
 
-    this->parent = newParent;    
+    this->parent = newParent;
+    this->set_ctime();
 }
 
 void ShinyMetaNode::setName( const char * newName ) {
@@ -139,6 +144,7 @@ void ShinyMetaNode::setName( const char * newName ) {
     uint64_t len = strlen(newName) + 1;
     this->name = new char[len];
     memcpy( this->name, newName, len );
+    this->set_ctime();
 }
 
 const char * ShinyMetaNode::getName( void ) {
@@ -147,6 +153,7 @@ const char * ShinyMetaNode::getName( void ) {
 
 void ShinyMetaNode::setPermissions( uint16_t newPermissions ) {
     this->permissions = newPermissions;
+    this->set_ctime();
 }
 
 uint16_t ShinyMetaNode::getPermissions( void ) {
@@ -155,6 +162,7 @@ uint16_t ShinyMetaNode::getPermissions( void ) {
 
 void ShinyMetaNode::setUID( const uint64_t newUID ) {
     this->uid = newUID;
+    this->set_ctime();
 }
 
 const uint64_t ShinyMetaNode::getUID( void ) {
@@ -163,6 +171,7 @@ const uint64_t ShinyMetaNode::getUID( void ) {
 
 void ShinyMetaNode::setGID( const uint64_t newGID ) {
     this->gid = newGID;
+    this->set_ctime();
 }
 
 const uint64_t ShinyMetaNode::getGID( void ) {
@@ -171,6 +180,10 @@ const uint64_t ShinyMetaNode::getGID( void ) {
 
 const char * ShinyMetaNode::getPath( void ) {
     return this->getFS()->getNodePath( this );
+}
+
+const uint64_t ShinyMetaNode::get_btime( void ) {
+    return this->btime;
 }
 
 const uint64_t ShinyMetaNode::get_atime( void ) {
@@ -202,11 +215,12 @@ void ShinyMetaNode::set_atime( const uint64_t new_atime ) {
 }
 
 void ShinyMetaNode::set_ctime( const uint64_t new_ctime ) {
-    this->atime = new_ctime;
+    this->ctime = new_ctime;
 }
 
 void ShinyMetaNode::set_mtime( const uint64_t new_mtime ) {
-    this->atime = new_mtime;
+    this->mtime = new_mtime;
+    this->ctime = new_mtime;
 }
 
 bool ShinyMetaNode::check_parentHasUsAsChild( void ) {
@@ -224,6 +238,8 @@ bool ShinyMetaNode::check_parentHasUsAsChild( void ) {
 bool ShinyMetaNode::check_noDuplicates( std::vector<ShinyMetaNode *> * list, const char * listName ) {
     bool retVal = true;
     
+    TODO( "Verify this works");
+    
     //Because the vectors are sorted, we only need check ourselves against the people right after us
     std::vector<ShinyMetaNode *>::iterator itty = list->begin();
     std::vector<ShinyMetaNode *>::iterator last_iterator = itty++;
@@ -231,21 +247,16 @@ bool ShinyMetaNode::check_noDuplicates( std::vector<ShinyMetaNode *> * list, con
         if( *itty == *last_iterator ) {
             WARN( "Warning, %s for node %s has duplicate entries for %s in it!", listName, this->getPath(), (*itty)->getPath() );
             list->erase( last_iterator );
-            last_iterator = itty++;
             retVal = false;
-        } else
-            ++itty;
+        }
+        last_iterator = itty++;
     }
     return retVal;
 }
 
 bool ShinyMetaNode::sanityCheck() {
     bool retVal = true;
-    if( permissions == 0 ) {
-        WARN( "permissions == 0 for %s", this->getPath() );
-        retVal = false;
-    }
-    
+    // The only check we ever do is to see if our parent has us as a child.  :P
     retVal &= this->check_parentHasUsAsChild();
     return retVal;
 }
@@ -273,7 +284,7 @@ uint16_t ShinyMetaNode::getDefaultPermissions() {
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 // This follows the `ls -l` output guidelines
-const char * printPermissions( uint16_t permissions ) {
+const char * permissionStr( uint16_t permissions ) {
     // The static buffer we return every time
     static char str[10] = {0,0,0,0,0,0,0,0,0,0};
 

@@ -149,6 +149,24 @@ bool ShinyFilesystemMediator::handleMessage( zmq::socket_t * sock, std::vector<z
             delete( path );
             break;
         }
+        case ShinyFilesystemMediator::SETATTR: {
+            char * path = parseStringMsg( msgList[3] );
+            
+            ShinyMetaNode * node = fs->findNode( path );
+            if( node ) {
+                const char * data = (const char *) msgList[4]->data();
+                
+                // Apply the data to the node
+                node->unserialize( &data );
+                
+                // Send back ACK
+                sendACK( sock, fuseRoute );
+            } else
+                sendNACK( sock, fuseRoute );
+            
+            delete( path );
+            break;
+        }
         case ShinyFilesystemMediator::READDIR: {
             char * path = parseStringMsg( msgList[3] );
             

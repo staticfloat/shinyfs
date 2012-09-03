@@ -30,6 +30,7 @@ private:
     
     //Gets info about a file
     static int fuse_getattr( const char * path, struct stat * stbuf );
+    static int fuse_utimens( const char * path, const struct timespec times[2] );
     
     //Gets a directory listing
     static int fuse_readdir( const char * path, void * output, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info * fi );
