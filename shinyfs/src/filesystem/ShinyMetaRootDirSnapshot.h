@@ -1,30 +1,29 @@
 #pragma once
-#ifndef ShinyMetaRootDir_H
-#define ShinyMetaRootDir_H
-#include "ShinyMetaDir.h"
-#include "ShinyMetaRootDirSnapshot.h"
+#ifndef ShinyMetaRootDirSnapshot_H
+#define ShinyMetaRootDirSnapshot_H
+#include "ShinyMetaDirSnapshot.h"
 
-class ShinyMetaRootDir : virtual public ShinyMetaDir {
+class ShinyMetaRootDirSnapshot : virtual public ShinyMetaDirSnapshot {
 public:
-    // Creates a new one
-    ShinyMetaRootDir( ShinyFilesystem * fs );
-    
     // Note that we can't unserialize off of _solely_ a serializedInput, as we are responsibly for managing the poiner
     // to fs, therefore we require that it is passed in when we load up as well.
-    ShinyMetaRootDir( const char ** serializedInput, ShinyFilesystem * fs );
+    ShinyMetaRootDirSnapshot( const char ** serializedInput, ShinyFilesystem * fs );
     
-    // some trickery is to be done here, setting our parent to "NULL" so that ~ShinyMetaNode() doesn't do dumb things
-    ~ShinyMetaRootDir();
+    // Deconstruct, Dalek-style!
+    ~ShinyMetaRootDirSnapshot();
     
-    virtual ShinyMetaNodeSnapshot::NodeType getNodeType( void );
+    ShinyMetaNodeSnapshot::NodeType getNodeType( void );
     
     // Override this to actually return the fs object, so's we can provde it for all of our starving children
-    virtual ShinyFilesystem * getFS();
+    ShinyFilesystem * const getFS();
     
     // Override this just as a performance boost to always return '/'
-    virtual const char * getPath( void );
+    const char * getPath( void );
 protected:
+    ShinyMetaRootDirSnapshot();
+
     // LOL, Override this guy so that we don't check if our parent (us) has us as a child
+    // Refactor: don't think I need this anymore
     //virtual bool check_parentHasUsAsChild( void );
     
 private:
@@ -33,4 +32,4 @@ private:
 };
 
 
-#endif // ShinyMetaRootDir_H
+#endif // ShinyMetaRootDirSnapshot_H

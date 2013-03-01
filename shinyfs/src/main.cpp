@@ -24,7 +24,7 @@ int main (int argc, const char * argv[]) {
     getGlobalLogger()->setPrintId(0);
     getGlobalLogger()->setPrintThread(0);
     LOG( "%s starting up....", NODE_VERSION );
-    ShinyFuse::init( "/tmp/shiny" );
+//    ShinyFuse::init( "/tmp/shiny" );
     return 0;
 }
 

@@ -17,7 +17,8 @@ ShinyDBWrapper::ShinyDBWrapper( const char * path ) {
         ERROR( "Unable to open filecache in %s", filecache );
         throw "Unable to open filecache";
     }
-#else
+#endif
+#ifdef LEVELDB
     leveldb::Options options;
     options.create_if_missing = true;
     this->status = leveldb::DB::Open( options, path, &this->db );
@@ -31,7 +32,8 @@ ShinyDBWrapper::ShinyDBWrapper( const char * path ) {
 ShinyDBWrapper::~ShinyDBWrapper() {
 #ifdef KYOTOCABINET
     this->db.close();
-#else
+#endif
+#ifdef LEVELDB
     delete db;
 #endif
 }
@@ -39,7 +41,8 @@ ShinyDBWrapper::~ShinyDBWrapper() {
 uint64_t ShinyDBWrapper::get(const char *key, char *buffer, uint64_t maxsize) {
 #ifdef KYOTOCABINET
     return this->db.get( key, strlen(key), buffer, maxsize );
-#else
+#endif
+#ifdef LEVELDB
     std::string stupidDBBuffer;
     status = this->db->Get( leveldb::ReadOptions(), key, &stupidDBBuffer );
     if( status.ok() ) {
@@ -54,7 +57,8 @@ uint64_t ShinyDBWrapper::get(const char *key, char *buffer, uint64_t maxsize) {
 uint64_t ShinyDBWrapper::put(const char *key, const char *buffer, uint64_t size) {
 #ifdef KYOTOCABINET
     return this->db.set( key, strlen(key), buffer, maxsize );
-#else
+#endif
+#ifdef LEVELDB
     leveldb::Slice buffSlice( buffer, size );
     status = this->db->Put( leveldb::WriteOptions(), key, buffSlice );
     return status.ok() ? size : -1;
@@ -64,7 +68,8 @@ uint64_t ShinyDBWrapper::put(const char *key, const char *buffer, uint64_t size)
 bool ShinyDBWrapper::del(const char *key) {
 #ifdef KYOTOCABINET
     return db.remove( key, strlen(key) );
-#else
+#endif
+#ifdef LEVELDB
     status = db->Delete( leveldb::WriteOptions(), key );
     return status.ok();
 #endif
@@ -73,7 +78,8 @@ bool ShinyDBWrapper::del(const char *key) {
 const char * ShinyDBWrapper::getError() {
 #ifdef KYOTOCABINET
     return this->db.error().name();
-#else
+#endif
+#ifdef LEVELDB
     return this->status.ToString().c_str();
 #endif
 }

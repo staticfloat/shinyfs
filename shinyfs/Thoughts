@@ -1,4 +1,7 @@
-OLD thoughts:
+Random thoughts:
+
+History:
+    Each file stores its history, indexed by timestamp
 
 
 
@@ -8,7 +11,8 @@ Tree-based overlay network:
     A self-organizing hierarchical overlay network.  Network structure mirrors filesystem structure,
     with nodes assuming responsibility for files that are within directories they are responsible for
 
-    The root node is the master of all, however (almost) all work he is responsible for is recursive
+    The root node is the master of all, however (almost) all work he is responsible for is recursively
+    passed down to subnodes
 
     This overlay network is responsible for the following:
         1) Adding a node into the network (This includes partitioning the filesystem for each node)

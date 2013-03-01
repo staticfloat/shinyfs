@@ -9,9 +9,8 @@
 #include <sys/stat.h>
 #include <sys/fcntl.h>
 
-/*
- ShinyFilesystem constructor, takes in path to cache location? I need to split this out into a separate cache object.....
- */
+
+// ShinyFilesystem constructor, takes in path to cache location? I need to split this out into a separate cache object.....
 ShinyFilesystem::ShinyFilesystem( const char * filecache ) : db( filecache ), root(NULL) {
     // Attempt to load the size of the metadata that was saved, if it exists, then
     // continue loading from the db. Otherwise, we need to start from scratch.
@@ -20,7 +19,7 @@ ShinyFilesystem::ShinyFilesystem( const char * filecache ) : db( filecache ), ro
         uint64_t serializedLen = *((uint64_t *)&sizeBuff[0]);
         char * serializedData = new char[serializedLen];
         if( this->db.get( this->getShinyFilesystemDBKey(), serializedData, serializedLen ) == serializedLen ) {
-            this->root = this->unserialize( serializedData );
+            this->root = dynamic_cast<ShinyMetaRootDir *>(this->unserialize( serializedData ));
         } else
             WARN( "Corrupt/missing metadata: throwing it all away!" );
     } else
@@ -30,13 +29,11 @@ ShinyFilesystem::ShinyFilesystem( const char * filecache ) : db( filecache ), ro
     if( !root ) {
         LOG( "Making crap up!" );
         this->root = new ShinyMetaRootDir( this );
-        ShinyMetaFile * testf = new ShinyMetaFile( "test" );
-        this->root->addNode( testf );
+        ShinyMetaFile * testf = new ShinyMetaFile( "test", this->root );
         const char * testdata = "this is a test\nawwwwww yeahhhhh\nf7u12 much?\n";
         testf->write(0, testdata, strlen(testdata) );
         
-        testf = new ShinyMetaFile( "asdf" );
-        this->root->addNode( testf );
+        testf = new ShinyMetaFile( "asdf", this->root );
         testdata = "blahblahblah\n";
         testf->write(0, testdata, strlen(testdata) );
 
@@ -51,8 +48,8 @@ ShinyFilesystem::~ShinyFilesystem() {
 }
 
 //Searches a ShinyMetaDir's listing for a name, returning the child
-ShinyMetaNode * ShinyFilesystem::findMatchingChild( ShinyMetaDir * parent, const char * childName, uint64_t childNameLen ) {
-    const std::vector<ShinyMetaNode *> list = *parent->getNodes();
+ShinyMetaNodeSnapshot * ShinyFilesystem::findMatchingChild( ShinyMetaDirSnapshot * parent, const char * childName, uint64_t childNameLen ) {
+    const std::vector<ShinyMetaNodeSnapshot *> list = *parent->getNodes();
     for( uint64_t i = 0; i < list.size(); ++i ) {
         // Compare names
         if( strlen(list[i]->getName()) == childNameLen && memcmp( list[i]->getName(), childName, childNameLen ) == 0 ) {
@@ -64,20 +61,20 @@ ShinyMetaNode * ShinyFilesystem::findMatchingChild( ShinyMetaDir * parent, const
     return NULL;
 }
 
-ShinyMetaNode * ShinyFilesystem::findNode( const char * path ) {
+ShinyMetaNodeSnapshot * ShinyFilesystem::findNode( const char * path ) {
     if( path[0] != '/' ) {
         WARN( "path %s is unacceptable, must be an absolute path!", path );
         return NULL;
     }
     
-    ShinyMetaNode * currNode = (ShinyMetaNode *)this->root;
+    ShinyMetaNodeSnapshot * currNode = this->root;
     unsigned long filenameBegin = 1;
     for( unsigned int i=1; i<strlen(path); ++i ) {
         if( path[i] == '/' ) {
             //If this one actually _is_ a directory, let's get its listing
-            if( currNode->getNodeType() == ShinyMetaNode::TYPE_DIR || currNode->getNodeType() == ShinyMetaNode::TYPE_ROOTDIR ) {
+            if( currNode->getNodeType() == ShinyMetaNodeSnapshot::TYPE_DIR || currNode->getNodeType() == ShinyMetaNodeSnapshot::TYPE_ROOTDIR ) {
                 //Search currNode's children for a name match
-                ShinyMetaNode * childNode = findMatchingChild( (ShinyMetaDir *)currNode, &path[filenameBegin], i - filenameBegin );
+                ShinyMetaNodeSnapshot * childNode = findMatchingChild( dynamic_cast<ShinyMetaDir *>(currNode), &path[filenameBegin], i - filenameBegin );
                 if( !childNode )
                     return NULL;
                 else {
@@ -92,7 +89,7 @@ ShinyMetaNode * ShinyFilesystem::findNode( const char * path ) {
         }
     }
     if( filenameBegin < strlen(path) ) {
-        ShinyMetaNode * childNode = findMatchingChild( (ShinyMetaDir *)currNode, &path[filenameBegin], strlen(path) - filenameBegin );
+        ShinyMetaNodeSnapshot * childNode = findMatchingChild( dynamic_cast<ShinyMetaDir *>(currNode), &path[filenameBegin], strlen(path) - filenameBegin );
         if( !childNode )
             return NULL;
         currNode = childNode;
@@ -100,8 +97,7 @@ ShinyMetaNode * ShinyFilesystem::findNode( const char * path ) {
     return currNode;
 }
 
-
-ShinyMetaDir * ShinyFilesystem::findParentNode( const char *path ) {
+ShinyMetaDirSnapshot * ShinyFilesystem::findParentNode( const char *path ) {
     //Start at the end of the string
     uint64_t len = strlen( path );
     uint64_t end = len-1;
@@ -120,14 +116,14 @@ ShinyMetaDir * ShinyFilesystem::findParentNode( const char *path ) {
     newPath[end] = 0;
     
     //Find it and return
-    ShinyMetaDir * ret = (ShinyMetaDir *)this->findNode( newPath );
+    ShinyMetaDirSnapshot * ret = dynamic_cast<ShinyMetaDirSnapshot *>(this->findNode( newPath ));
     delete( newPath );
     return ret;
 }
 
-const char * ShinyFilesystem::getNodePath( ShinyMetaNode *node ) {
+const char * ShinyFilesystem::getNodePath( ShinyMetaNodeSnapshot *node ) {
     // If we've cached the result from a previous call, then just return that!
-    std::tr1::unordered_map<ShinyMetaNode *, const char *>::iterator itty = this->nodePaths.find( node );
+    std::unordered_map<ShinyMetaNodeSnapshot *, const char *>::iterator itty = this->nodePaths.find( node );
     if( itty != this->nodePaths.end() ) {
         return (*itty).second;
     }
@@ -141,10 +137,10 @@ const char * ShinyFilesystem::getNodePath( ShinyMetaNode *node ) {
     len += strlen( node->getName() );
     
     // Now iterate up the tree, gathering the names of parents and shoving them into the list of paths
-    ShinyMetaNode * currNode = node;
+    ShinyMetaNodeSnapshot * currNode = node;
     while( currNode != (ShinyMetaNode *) this->root ) {
         // Move up in the chain of parents
-        ShinyMetaDir * nextNode = currNode->getParent();
+        ShinyMetaDirSnapshot * nextNode = currNode->getParent();
 
         // If our parental chain is broken, just return ?/name
         if( !nextNode ) {
@@ -153,7 +149,7 @@ const char * ShinyFilesystem::getNodePath( ShinyMetaNode *node ) {
             break;
         }
         
-        else if( nextNode != (ShinyMetaNode *)this->root ) {
+        else if( nextNode != this->root ) {
             // Push node parent's path onto the list, and add its length to len
             paths.push_front( nextNode->getName() );
             len += strlen( nextNode->getName() );
@@ -196,34 +192,22 @@ bool ShinyFilesystem::sanityCheck( void ) {
     bool retVal = true;
     //Call sanity check on all of them.
     //The nodes will return false if there is an error
-    
-    /*
-    for( std::tr1::unordered_map<inode_t, ShinyMetaNode *>::iterator itty = this->nodes.begin(); itty != this->nodes.end(); ++itty ) {
-        if( (*itty).second ) {
-            if( !(*itty).second->sanityCheck() )
-                retVal = false;
-        } else {
-            WARN( "inode [%d] is not in the nodes map!" );
-            this->nodes.erase( itty++ );
-        }
-    }
-     */
     return retVal;
 }
 
 
-uint64_t getTotalSerializedLen( ShinyMetaNode * start, bool recursive ) {
+uint64_t getTotalSerializedLen( ShinyMetaNodeSnapshot * start, bool recursive ) {
     // NodeType + length of actual node
     uint64_t len = sizeof(uint8_t) + start->serializedLen();
     
-    if( start->getNodeType() == ShinyMetaNode::TYPE_DIR || start->getNodeType() == ShinyMetaNode::TYPE_ROOTDIR ) {
+    if( start->getNodeType() == ShinyMetaNodeSnapshot::TYPE_DIR || start->getNodeType() == ShinyMetaNodeSnapshot::TYPE_ROOTDIR ) {
         // number of children following this brother
         len += sizeof(uint64_t);
         
-        const std::vector<ShinyMetaNode *> * startNodes = ((ShinyMetaDir *)start)->getNodes();
+        const std::vector<ShinyMetaNode *> * startNodes = dynamic_cast<ShinyMetaDir *>(start)->getNodes();
         for( uint64_t i=0; i<startNodes->size(); ++i ) {
             //Don't have to check for TYPE_ROOTDIR here, because that's an impossibility!  yay!
-            if( recursive && (*startNodes)[i]->getNodeType() == ShinyMetaNode::TYPE_DIR )
+            if( recursive && (*startNodes)[i]->getNodeType() == ShinyMetaNodeSnapshot::TYPE_DIR )
                 len += getTotalSerializedLen( (*startNodes)[i], recursive );
             else {
                 // NodeType + length of actual node, just like we did for start
@@ -237,7 +221,7 @@ uint64_t getTotalSerializedLen( ShinyMetaNode * start, bool recursive ) {
 
 // Very similar in form to the above. Thus the liberal copypasta.
 // returns output, shifted by total serialized length, so just use [output - totalLen]
-char * serializeTree( ShinyMetaNode * start, bool recursive, char * output ) {
+char * serializeTree( ShinyMetaNodeSnapshot * start, bool recursive, char * output ) {
     // write out start first
     *((uint8_t *)output) = start->getNodeType();
     output += sizeof(uint8_t);
@@ -246,16 +230,16 @@ char * serializeTree( ShinyMetaNode * start, bool recursive, char * output ) {
     output += start->serializedLen();
     
     // Next, check if we're a dir, and if so, do the serialization dance!
-    if( start->getNodeType() == ShinyMetaNode::TYPE_DIR || start->getNodeType() == ShinyMetaNode::TYPE_ROOTDIR ) {
+    if( start->getNodeType() == ShinyMetaNodeSnapshot::TYPE_DIR || start->getNodeType() == ShinyMetaNodeSnapshot::TYPE_ROOTDIR ) {
         // Write out the number of children
-        *((uint64_t *)output) = ((ShinyMetaDir *)start)->getNumNodes();
+        *((uint64_t *)output) = dynamic_cast<ShinyMetaDirSnapshot *>(start)->getNumNodes();
         output += sizeof(uint64_t);
         
         //Write out all children
-        const std::vector<ShinyMetaNode *> * startNodes = ((ShinyMetaDir *)start)->getNodes();
+        const std::vector<ShinyMetaNodeSnapshot *> * startNodes = dynamic_cast<ShinyMetaDirSnapshot *>(start)->getNodes();
         for( uint64_t i=0; i<startNodes->size(); ++i ) {
             //Don't have to check for TYPE_ROOTDIR here, because that's an impossibility!  yay!
-            if( recursive && (*startNodes)[i]->getNodeType() == ShinyMetaNode::TYPE_DIR ) {
+            if( recursive && (*startNodes)[i]->getNodeType() == ShinyMetaNodeSnapshot::TYPE_DIR ) {
                 output = serializeTree( (*startNodes)[i], recursive, output );
             } else {            
                 *((uint8_t *)output) = (*startNodes)[i]->getNodeType();
@@ -268,7 +252,7 @@ char * serializeTree( ShinyMetaNode * start, bool recursive, char * output ) {
     return output;
 }
 
-uint64_t ShinyFilesystem::serialize( char ** store, ShinyMetaNode * start, bool recursive ) {
+uint64_t ShinyFilesystem::serialize( char ** store, ShinyMetaNodeSnapshot * start, bool recursive ) {
     // First, we're going to find the total length of this serialized monstrosity
     // We'll start with the itty bitty overhead of the version number
     uint64_t len = sizeof(uint16_t);
@@ -299,17 +283,16 @@ uint64_t ShinyFilesystem::serialize( char ** store, ShinyMetaNode * start, bool 
     return len;
 }
 
-
-ShinyMetaNode * ShinyFilesystem::unserializeTree( const char ** input ) {
+ShinyMetaNode * ShinyFilesystem::unserializeTree( const char ** input, ShinyMetaDir * parent ) {
     uint8_t type = *((uint8_t *)*input);
     *input += sizeof(uint8_t);
     
     switch( type ) {
-        case ShinyMetaNode::TYPE_ROOTDIR:
-        case ShinyMetaNode::TYPE_DIR:
+        case ShinyMetaNodeSnapshot::TYPE_ROOTDIR:
+        case ShinyMetaNodeSnapshot::TYPE_DIR:
         {
             // First, get the (root)dir itself. In other news, WHY THE HECK DO I WRITE THINGS LIKE THIS?!
-            ShinyMetaDir * newDir = (type == ShinyMetaNode::TYPE_ROOTDIR) ? new ShinyMetaRootDir( this, input ) : new ShinyMetaDir( input );
+            ShinyMetaDir * newDir = (type == ShinyMetaNodeSnapshot::TYPE_ROOTDIR) ? new ShinyMetaRootDir( input, this ) : new ShinyMetaDir( input, parent );
             
             // next, get the number of children that have been serialized
             uint64_t numNodes = *((uint64_t *)*input);
@@ -317,19 +300,15 @@ ShinyMetaNode * ShinyFilesystem::unserializeTree( const char ** input ) {
             
             // Now, iterating over all children of this dir, LOAD 'EM IN!
             for( uint64_t i=0; i<numNodes; ++i ) {
-                // The cycle continues...... we pass our troubles onto our own children
-                ShinyMetaNode * childNode = unserializeTree( input );
-                
-                // Add that newly-formed subtree (could be just a file!) to this guy's collection of children
-                newDir->addNode( childNode );
+                // The cycle continues...... we pass our troubles onto our own children.
+                // Note that we don't actually use the return value of unserializeTree, as the child will automagically
+                // get added to newDir by its constructor
+                unserializeTree( input, newDir );
             }
             return newDir;
         }
-        case ShinyMetaNode::TYPE_FILE:
-        {
-            ShinyMetaFile * newFile = new ShinyMetaFile( input );
-            return newFile;
-        }
+        case ShinyMetaNodeSnapshot::TYPE_FILE:
+            return new ShinyMetaFile( input, parent );
         default:
             WARN( "Unknown node type (%d)!", type );
             break;
@@ -351,7 +330,7 @@ ShinyMetaRootDir * ShinyFilesystem::unserialize( const char *input ) {
     ShinyMetaNode * possibleRoot = unserializeTree( &input );
     
     // Check to make sure we at least have a root node
-    if( possibleRoot->getNodeType() != ShinyMetaNode::TYPE_ROOTDIR ) {
+    if( possibleRoot->getNodeType() != ShinyMetaNodeSnapshot::TYPE_ROOTDIR ) {
         ERROR( "Corrupt root node type" );
         return NULL;
     }
@@ -391,11 +370,11 @@ void ShinyFilesystem::printDir( ShinyMetaDir * dir, const char * prefix ) {
         const char * childName = nodes[i]->getName();
         char * newPrefix = new char[strlen(prefix) + 2 + strlen(childName) + 1];
         sprintf( newPrefix, "%s/%s", prefix, childName );
-        if( nodes[i]->getNodeType() == ShinyMetaNode::TYPE_DIR ) {
+        if( nodes[i]->getNodeType() == ShinyMetaNodeSnapshot::TYPE_DIR ) {
             this->printDir( (ShinyMetaDir *)nodes[i], newPrefix );
         } else {
             //Only print it out here if it's not a directory, because directories print themselves
-            if( nodes[i]->getNodeType() == ShinyMetaNode::TYPE_FILE )
+            if( nodes[i]->getNodeType() == ShinyMetaNodeSnapshot::TYPE_FILE )
                 LOG( "%s (%d)", newPrefix, ((ShinyMetaFile *)nodes[i])->getLen() );
             else
                 LOG( "%s", newPrefix );
@@ -409,5 +388,6 @@ void ShinyFilesystem::print( void ) {
 }
 
 const uint64_t ShinyFilesystem::getVersion() {
-    return SHINYFS_VERSION;
+    return ShinyFilesystem::VERSION;
 }
+/**/

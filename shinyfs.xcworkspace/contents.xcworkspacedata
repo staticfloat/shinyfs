@@ -2,10 +2,19 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:inheritancetest/inheritancetest.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:difftest/difftest.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:extip/extip.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:shinyfs/shinyfs.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:shinytest/shinytest.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:zmqtest/zmqcrashtest/zmqcrashtest.xcodeproj">

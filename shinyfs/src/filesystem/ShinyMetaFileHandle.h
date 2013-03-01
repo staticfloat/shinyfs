@@ -2,7 +2,7 @@
 #ifndef SHINYMETAFILEHANDLE_H
 #define SHINYMETAFILEHANDLE_H
 #include "ShinyMetaFile.h"
-#include <zmq.hpp>
+#include "../util/cppzmq/zmq.hpp"
 
 // Specialized subclass of ShinyMetaFile used to allow multithreaded access to the 
 // DB object, and thus multithreaded read/write access to file data.
@@ -25,7 +25,7 @@ protected:
 /////// ATTRIBUTES //////
 public:
     // Blocks until task completion. Uses context from ShinyFilesystem to create
-    // a new socket to talk to the filecache directly.  This is significantly
+    // a new socket to talk to the database directly.  This is significantly
     // different from the read/write pair in ShinyMetaFile, and indeed is the
     // whole reason for this object's existance
     virtual uint64_t read( uint64_t offset, char * data, uint64_t len );

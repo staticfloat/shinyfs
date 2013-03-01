@@ -69,18 +69,5 @@
          landmarkName = "ShinyFilesystemMediator::handleMessage( zmq::socket_t * sock, std::vector&lt;zmq::message_t *&gt; &amp; msgList )"
          landmarkType = "5">
       </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "Yes"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "shinyfs/src/filesystem/ShinyFilesystem.cpp"
-         timestampString = "368302486.705746"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "69"
-         endingLineNumber = "69"
-         landmarkName = "ShinyFilesystem::findNode( const char * path )"
-         landmarkType = "5">
-      </FileBreakpoint>
    </FileBreakpoints>
 </Bucket>

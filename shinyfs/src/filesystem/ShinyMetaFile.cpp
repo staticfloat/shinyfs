@@ -1,11 +1,3 @@
-//
-//  ShinyMetaFile.cpp
-//  ShinyMetafs-tracker
-//
-//  Created by Elliot Nabil Saba on 5/25/11.
-//  Copyright 2011 __MyCompanyName__. All rights reserved.
-//
-
 #include "ShinyMetaFile.h"
 #include "ShinyFilesystem.h"
 #include "ShinyMetaDir.h"
@@ -13,88 +5,23 @@
 
 #define min( x, y ) ((x) > (y) ? (y) : (x))
 
-ShinyMetaFile::ShinyMetaFile( const char * newName ) : ShinyMetaNode( newName ) {
-    this->fileLen = 0;
+ShinyMetaFile::ShinyMetaFile( const char * newName, ShinyMetaDir * parent ) : ShinyMetaNode( newName, parent ) {
 }
 
-ShinyMetaFile::ShinyMetaFile( const char * newName, ShinyMetaDir * parent ) : ShinyMetaNode( newName ) {
-    this->fileLen = 0;
-    parent->addNode( (ShinyMetaNode *)this );
-}
-
-ShinyMetaFile::ShinyMetaFile( const char ** serializedInput ) : ShinyMetaNode( "" ) {
-    this->unserialize( serializedInput );
+ShinyMetaFile::ShinyMetaFile( const char ** serializedInput, ShinyMetaDir * parent ) : ShinyMetaNode( serializedInput, parent ) {
+    ShinyMetaNode::unserialize( serializedInput );
 }
 
 ShinyMetaFile::~ShinyMetaFile() {
 }
 
-uint64_t ShinyMetaFile::read( uint64_t offset, char * data, uint64_t len ) {
-    return this->read( this->getFS()->getDB(), this->getPath(), offset, data, len );
-}
-
 uint64_t ShinyMetaFile::write( uint64_t offset, const char * data, uint64_t len ) {
-    return this->write( this->getFS()->getDB(), this->getPath(), offset, data, len );
+    ShinyFilesystem * fs = ShinyMetaFileSnapshot::getFS();
+    return this->write( fs->getDB(), fs->getNodePath(this), offset, data, len );
 }
 
 void ShinyMetaFile::setLen( uint64_t newLen ) {
-    this->setLen( this->getFS()->getDB(), this->getPath(), newLen );
-}
-
-uint64_t ShinyMetaFile::getLen() {
-    return this->fileLen;
-}
-
-uint64_t ShinyMetaFile::read( ShinyDBWrapper * db, const char * path, uint64_t offset, char * data, uint64_t len ) {
-    // First, figure out what "chunk" to start from:
-    uint64_t chunk = offset/CHUNKSIZE;
-    
-    // This is the offset within that chunk that we need to start from
-    offset = offset - chunk*CHUNKSIZE;
-    
-    // We'll have to build a new key for every chunk
-    uint64_t pathlen = strlen(path);
-    char * key = new char[pathlen+16+1];   // enough room for "<path>[chunk]\0"
-    memcpy( key, path, pathlen );
-    
-    // This is where we will plop the chunk at the end of the key
-    char * keyChunk = key + pathlen;
-    
-    // Temporary storage where we'll put chunks as we load them in,
-    // then we'll copy from the chunks into data for transport back to the user
-    char buffer[CHUNKSIZE];
-    
-    // The total number of bytes read
-    uint64_t bytesRead = 0;
-    
-
-    // Start to read in from chunks:
-    while( len > bytesRead ) {
-        // Build this chunk's key:
-        sprintf( keyChunk, "%.16llx", chunk );
-        
-        uint64_t bytesJustRead = db->get( key, buffer, CHUNKSIZE );
-        if( bytesJustRead == -1 ) {
-            ERROR( "Could not read chunk %s from cache: %s", key, db->getError() );
-            // This means we couldn't read this chunk, so we must have run into the end of the file.
-            break;
-        }
-        // Otherwise, we load in as many bytes into data as we can!
-        uint64_t amntToCopy = min( bytesJustRead - offset, len - bytesRead );
-        memcpy( data + bytesRead, buffer + offset, amntToCopy );
-        bytesRead += amntToCopy;
-        
-        // If this chunk wasn't full, we're done
-        if( bytesJustRead != CHUNKSIZE )
-            break;
-        
-        // reset offset to zero, as we move on to the next chunk now
-        offset = 0;
-        chunk++;
-    }
-    
-    this->set_atime();
-    return bytesRead;
+    this->setLen( ShinyMetaFileSnapshot::getFS()->getDB(), ShinyMetaFileSnapshot::getPath(), newLen );
 }
 
 uint64_t ShinyMetaFile::write( ShinyDBWrapper * db, const char * path, uint64_t offset, const char * data, uint64_t len ) {
@@ -186,7 +113,6 @@ void ShinyMetaFile::setLen( ShinyDBWrapper * db, const char * path, uint64_t new
             
             // Should we take away this entire chunk, or just part of it?
             if( this->fileLen - chunkLen >= newLen ) {
-                LOG( "Removing chunk %s", key );
                 // TAKE THE LEG!  TAKE THE LEG DOCTOR! (remove the last chunk)
                 if( !db->del( key ) ) {
                     WARN( "Couldn't remove chunk %s from cache, %s", key, db->getError() );
@@ -238,7 +164,7 @@ void ShinyMetaFile::setLen( ShinyDBWrapper * db, const char * path, uint64_t new
     this->set_mtime();
 }
 
-
+/*
 bool ShinyMetaFile::sanityCheck( void ) {
     //First, the basic stuff
     bool retVal = ShinyMetaNode::sanityCheck();
@@ -247,37 +173,4 @@ bool ShinyMetaFile::sanityCheck( void ) {
     
     return retVal;
 }
-
-uint64_t ShinyMetaFile::serializedLen( void ) {
-    // Start off with the basic length
-    size_t len = ShinyMetaNode::serializedLen();
-    
-    // Add on length of file
-    len += sizeof(uint64_t);
-    
-    // returnamacate
-    return len;
-}
-
-char * ShinyMetaFile::serialize( char *output ) {
-    //First serialize out the basic stuff into output
-    output = ShinyMetaNode::serialize(output);
-    
-    // Next, file length
-    *((uint64_t *)output) = this->fileLen;
-    output += sizeof(uint64_t);
-    
-    return output;
-}
-
-void ShinyMetaFile::unserialize( const char ** input ) {
-    // First, call up the chain
-    ShinyMetaNode::unserialize(input);
-    
-    this->fileLen = *((uint64_t *)*input);
-    *input += sizeof(uint64_t);
-}
-
-ShinyMetaNode::NodeType ShinyMetaFile::getNodeType( void ) {
-    return ShinyMetaNode::TYPE_FILE;
-}
+*/

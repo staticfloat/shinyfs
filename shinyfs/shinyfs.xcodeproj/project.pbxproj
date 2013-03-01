@@ -13,12 +13,16 @@
 		56103A2113A04A8D00CAC395 /* ShinyMetaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56103A1713A04A8D00CAC395 /* ShinyMetaNode.cpp */; };
 		56103A2213A04A8D00CAC395 /* ShinyMetaRootDir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56103A1913A04A8D00CAC395 /* ShinyMetaRootDir.cpp */; };
 		56103A2713A04E3900CAC395 /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56103A2513A04E3900CAC395 /* Logger.cpp */; };
+		562562AB167FC63900958236 /* ShinyMetaDirSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 562562A9167FC63900958236 /* ShinyMetaDirSnapshot.cpp */; };
 		564CC0B615204B5500D7CC3C /* ShinyMetaFileHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 564CC0B515204B5500D7CC3C /* ShinyMetaFileHandle.cpp */; };
 		564CC0BA15214D5300D7CC3C /* zmqutils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 564CC0B915214D5300D7CC3C /* zmqutils.cpp */; };
 		564CC0D215219D1A00D7CC3C /* ShinyFilesystemMediator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 564CC0D115219D1A00D7CC3C /* ShinyFilesystemMediator.cpp */; };
+		567EE26D168663CD00B1FD63 /* ShinyMetaFileSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 567EE26B168663CD00B1FD63 /* ShinyMetaFileSnapshot.cpp */; };
 		56803FA6150D6C820074238D /* ShinyFuse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56803FA4150D6C820074238D /* ShinyFuse.cpp */; };
 		5681A8E715298D3F00CCDE46 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5681A8E615298D3F00CCDE46 /* main.cpp */; };
 		569184EB1549E8330060F755 /* ShinyDBWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 569184EA1549E8330060F755 /* ShinyDBWrapper.cpp */; };
+		56B0772216475AD2004F56AB /* ShinyMetaNodeSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56B0772016475AD2004F56AB /* ShinyMetaNodeSnapshot.cpp */; };
+		56C084CA1682E6B000D63153 /* ShinyMetaRootDirSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56C084C81682E6B000D63153 /* ShinyMetaRootDirSnapshot.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -48,18 +52,26 @@
 		56103A2613A04E3900CAC395 /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logger.h; path = ../../../platform/base/Logger.h; sourceTree = "<group>"; };
 		5613190613D3A6BE0014BEC0 /* Thoughts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Thoughts; sourceTree = SOURCE_ROOT; };
 		56249C03138AD6FA00AA24BB /* shinyfs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = shinyfs; sourceTree = BUILT_PRODUCTS_DIR; };
+		562562A9167FC63900958236 /* ShinyMetaDirSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyMetaDirSnapshot.cpp; sourceTree = "<group>"; };
+		562562AA167FC63900958236 /* ShinyMetaDirSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyMetaDirSnapshot.h; sourceTree = "<group>"; };
 		564CC0B315204A7200D7CC3C /* ShinyMetaFileHandle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShinyMetaFileHandle.h; sourceTree = "<group>"; };
 		564CC0B515204B5500D7CC3C /* ShinyMetaFileHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyMetaFileHandle.cpp; sourceTree = "<group>"; };
 		564CC0B815214CF000D7CC3C /* zmqutils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = zmqutils.h; path = src/util/zmqutils.h; sourceTree = "<group>"; };
 		564CC0B915214D5300D7CC3C /* zmqutils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = zmqutils.cpp; path = src/util/zmqutils.cpp; sourceTree = "<group>"; };
 		564CC0BB1521876800D7CC3C /* ShinyFilesystemMediator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ShinyFilesystemMediator.h; path = src/fuse/ShinyFilesystemMediator.h; sourceTree = "<group>"; };
 		564CC0D115219D1A00D7CC3C /* ShinyFilesystemMediator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShinyFilesystemMediator.cpp; path = src/fuse/ShinyFilesystemMediator.cpp; sourceTree = "<group>"; };
+		567EE26B168663CD00B1FD63 /* ShinyMetaFileSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyMetaFileSnapshot.cpp; sourceTree = "<group>"; };
+		567EE26C168663CD00B1FD63 /* ShinyMetaFileSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyMetaFileSnapshot.h; sourceTree = "<group>"; };
 		56803FA4150D6C820074238D /* ShinyFuse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShinyFuse.cpp; path = src/fuse/ShinyFuse.cpp; sourceTree = "<group>"; };
 		56803FA5150D6C820074238D /* ShinyFuse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShinyFuse.h; path = src/fuse/ShinyFuse.h; sourceTree = "<group>"; };
 		5681A8E615298D3F00CCDE46 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
 		5681A8E815298D5C00CCDE46 /* SHINY_TODO.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = SHINY_TODO.txt; sourceTree = "<group>"; };
 		569184EA1549E8330060F755 /* ShinyDBWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyDBWrapper.cpp; sourceTree = "<group>"; };
 		569184EC1549E83C0060F755 /* ShinyDBWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShinyDBWrapper.h; sourceTree = "<group>"; };
+		56B0772016475AD2004F56AB /* ShinyMetaNodeSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyMetaNodeSnapshot.cpp; sourceTree = "<group>"; };
+		56B0772116475AD2004F56AB /* ShinyMetaNodeSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyMetaNodeSnapshot.h; sourceTree = "<group>"; };
+		56C084C81682E6B000D63153 /* ShinyMetaRootDirSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShinyMetaRootDirSnapshot.cpp; sourceTree = "<group>"; };
+		56C084C91682E6B000D63153 /* ShinyMetaRootDirSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShinyMetaRootDirSnapshot.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,20 +88,28 @@
 		56103A1013A04A8D00CAC395 /* filesystem */ = {
 			isa = PBXGroup;
 			children = (
-				56103A1713A04A8D00CAC395 /* ShinyMetaNode.cpp */,
-				56103A1813A04A8D00CAC395 /* ShinyMetaNode.h */,
-				56103A1913A04A8D00CAC395 /* ShinyMetaRootDir.cpp */,
-				56103A1A13A04A8D00CAC395 /* ShinyMetaRootDir.h */,
-				56103A1113A04A8D00CAC395 /* ShinyMetaDir.cpp */,
-				56103A1213A04A8D00CAC395 /* ShinyMetaDir.h */,
-				56103A1313A04A8D00CAC395 /* ShinyMetaFile.cpp */,
-				56103A1413A04A8D00CAC395 /* ShinyMetaFile.h */,
-				564CC0B515204B5500D7CC3C /* ShinyMetaFileHandle.cpp */,
-				564CC0B315204A7200D7CC3C /* ShinyMetaFileHandle.h */,
-				56103A1513A04A8D00CAC395 /* ShinyFilesystem.cpp */,
-				56103A1613A04A8D00CAC395 /* ShinyFilesystem.h */,
 				569184EA1549E8330060F755 /* ShinyDBWrapper.cpp */,
 				569184EC1549E83C0060F755 /* ShinyDBWrapper.h */,
+				56103A1513A04A8D00CAC395 /* ShinyFilesystem.cpp */,
+				56103A1613A04A8D00CAC395 /* ShinyFilesystem.h */,
+				56B0772016475AD2004F56AB /* ShinyMetaNodeSnapshot.cpp */,
+				56B0772116475AD2004F56AB /* ShinyMetaNodeSnapshot.h */,
+				56103A1713A04A8D00CAC395 /* ShinyMetaNode.cpp */,
+				56103A1813A04A8D00CAC395 /* ShinyMetaNode.h */,
+				562562A9167FC63900958236 /* ShinyMetaDirSnapshot.cpp */,
+				562562AA167FC63900958236 /* ShinyMetaDirSnapshot.h */,
+				56103A1113A04A8D00CAC395 /* ShinyMetaDir.cpp */,
+				56103A1213A04A8D00CAC395 /* ShinyMetaDir.h */,
+				56103A1913A04A8D00CAC395 /* ShinyMetaRootDir.cpp */,
+				56103A1A13A04A8D00CAC395 /* ShinyMetaRootDir.h */,
+				56C084C81682E6B000D63153 /* ShinyMetaRootDirSnapshot.cpp */,
+				56C084C91682E6B000D63153 /* ShinyMetaRootDirSnapshot.h */,
+				56103A1313A04A8D00CAC395 /* ShinyMetaFile.cpp */,
+				56103A1413A04A8D00CAC395 /* ShinyMetaFile.h */,
+				567EE26B168663CD00B1FD63 /* ShinyMetaFileSnapshot.cpp */,
+				567EE26C168663CD00B1FD63 /* ShinyMetaFileSnapshot.h */,
+				564CC0B515204B5500D7CC3C /* ShinyMetaFileHandle.cpp */,
+				564CC0B315204A7200D7CC3C /* ShinyMetaFileHandle.h */,
 			);
 			name = filesystem;
 			path = src/filesystem;
@@ -172,7 +192,7 @@
 		56249BF8138AD6EB00AA24BB /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0430;
+				LastUpgradeCheck = 0440;
 			};
 			buildConfigurationList = 56249BFB138AD6EB00AA24BB /* Build configuration list for PBXProject "shinyfs" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -208,6 +228,10 @@
 				564CC0D215219D1A00D7CC3C /* ShinyFilesystemMediator.cpp in Sources */,
 				5681A8E715298D3F00CCDE46 /* main.cpp in Sources */,
 				569184EB1549E8330060F755 /* ShinyDBWrapper.cpp in Sources */,
+				56B0772216475AD2004F56AB /* ShinyMetaNodeSnapshot.cpp in Sources */,
+				562562AB167FC63900958236 /* ShinyMetaDirSnapshot.cpp in Sources */,
+				56C084CA1682E6B000D63153 /* ShinyMetaRootDirSnapshot.cpp in Sources */,
+				567EE26D168663CD00B1FD63 /* ShinyMetaFileSnapshot.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

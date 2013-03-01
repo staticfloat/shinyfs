@@ -1,0 +1,290 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		56D11AC0168A8A8000DD76BF /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56D11ABF168A8A8000DD76BF /* main.cpp */; };
+		56D11ADE168A8AB500DD76BF /* ShinyDBWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56D11AC8168A8AB500DD76BF /* ShinyDBWrapper.cpp */; };
+		56D11ADF168A8AB500DD76BF /* ShinyFilesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56D11ACA168A8AB500DD76BF /* ShinyFilesystem.cpp */; };
+		56D11AE0168A8AB500DD76BF /* ShinyMetaDir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56D11ACC168A8AB500DD76BF /* ShinyMetaDir.cpp */; };
+		56D11AE1168A8AB500DD76BF /* ShinyMetaDirSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56D11ACE168A8AB500DD76BF /* ShinyMetaDirSnapshot.cpp */; };
+		56D11AE2168A8AB500DD76BF /* ShinyMetaFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56D11AD0168A8AB500DD76BF /* ShinyMetaFile.cpp */; };
+		56D11AE3168A8AB500DD76BF /* ShinyMetaFileHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56D11AD2168A8AB500DD76BF /* ShinyMetaFileHandle.cpp */; };
+		56D11AE4168A8AB500DD76BF /* ShinyMetaFileSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56D11AD4168A8AB500DD76BF /* ShinyMetaFileSnapshot.cpp */; };
+		56D11AE5168A8AB500DD76BF /* ShinyMetaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56D11AD6168A8AB500DD76BF /* ShinyMetaNode.cpp */; };
+		56D11AE6168A8AB500DD76BF /* ShinyMetaNodeSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56D11AD8168A8AB500DD76BF /* ShinyMetaNodeSnapshot.cpp */; };
+		56D11AE7168A8AB500DD76BF /* ShinyMetaRootDir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56D11ADA168A8AB500DD76BF /* ShinyMetaRootDir.cpp */; };
+		56D11AE8168A8AB500DD76BF /* ShinyMetaRootDirSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56D11ADC168A8AB500DD76BF /* ShinyMetaRootDirSnapshot.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		56D11AB9168A8A8000DD76BF /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		56D11ABB168A8A8000DD76BF /* shinytest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = shinytest; sourceTree = BUILT_PRODUCTS_DIR; };
+		56D11ABF168A8A8000DD76BF /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = shinytest/main.cpp; sourceTree = "<group>"; };
+		56D11AC8168A8AB500DD76BF /* ShinyDBWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShinyDBWrapper.cpp; path = ../shinyfs/src/filesystem/ShinyDBWrapper.cpp; sourceTree = "<group>"; };
+		56D11AC9168A8AB500DD76BF /* ShinyDBWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShinyDBWrapper.h; path = ../shinyfs/src/filesystem/ShinyDBWrapper.h; sourceTree = "<group>"; };
+		56D11ACA168A8AB500DD76BF /* ShinyFilesystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShinyFilesystem.cpp; path = ../shinyfs/src/filesystem/ShinyFilesystem.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		56D11ACB168A8AB500DD76BF /* ShinyFilesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShinyFilesystem.h; path = ../shinyfs/src/filesystem/ShinyFilesystem.h; sourceTree = "<group>"; };
+		56D11ACC168A8AB500DD76BF /* ShinyMetaDir.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShinyMetaDir.cpp; path = ../shinyfs/src/filesystem/ShinyMetaDir.cpp; sourceTree = "<group>"; };
+		56D11ACD168A8AB500DD76BF /* ShinyMetaDir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShinyMetaDir.h; path = ../shinyfs/src/filesystem/ShinyMetaDir.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		56D11ACE168A8AB500DD76BF /* ShinyMetaDirSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShinyMetaDirSnapshot.cpp; path = ../shinyfs/src/filesystem/ShinyMetaDirSnapshot.cpp; sourceTree = "<group>"; };
+		56D11ACF168A8AB500DD76BF /* ShinyMetaDirSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShinyMetaDirSnapshot.h; path = ../shinyfs/src/filesystem/ShinyMetaDirSnapshot.h; sourceTree = "<group>"; };
+		56D11AD0168A8AB500DD76BF /* ShinyMetaFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShinyMetaFile.cpp; path = ../shinyfs/src/filesystem/ShinyMetaFile.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		56D11AD1168A8AB500DD76BF /* ShinyMetaFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShinyMetaFile.h; path = ../shinyfs/src/filesystem/ShinyMetaFile.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		56D11AD2168A8AB500DD76BF /* ShinyMetaFileHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShinyMetaFileHandle.cpp; path = ../shinyfs/src/filesystem/ShinyMetaFileHandle.cpp; sourceTree = "<group>"; };
+		56D11AD3168A8AB500DD76BF /* ShinyMetaFileHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShinyMetaFileHandle.h; path = ../shinyfs/src/filesystem/ShinyMetaFileHandle.h; sourceTree = "<group>"; };
+		56D11AD4168A8AB500DD76BF /* ShinyMetaFileSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShinyMetaFileSnapshot.cpp; path = ../shinyfs/src/filesystem/ShinyMetaFileSnapshot.cpp; sourceTree = "<group>"; };
+		56D11AD5168A8AB500DD76BF /* ShinyMetaFileSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShinyMetaFileSnapshot.h; path = ../shinyfs/src/filesystem/ShinyMetaFileSnapshot.h; sourceTree = "<group>"; };
+		56D11AD6168A8AB500DD76BF /* ShinyMetaNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShinyMetaNode.cpp; path = ../shinyfs/src/filesystem/ShinyMetaNode.cpp; sourceTree = "<group>"; };
+		56D11AD7168A8AB500DD76BF /* ShinyMetaNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShinyMetaNode.h; path = ../shinyfs/src/filesystem/ShinyMetaNode.h; sourceTree = "<group>"; };
+		56D11AD8168A8AB500DD76BF /* ShinyMetaNodeSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShinyMetaNodeSnapshot.cpp; path = ../shinyfs/src/filesystem/ShinyMetaNodeSnapshot.cpp; sourceTree = "<group>"; };
+		56D11AD9168A8AB500DD76BF /* ShinyMetaNodeSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShinyMetaNodeSnapshot.h; path = ../shinyfs/src/filesystem/ShinyMetaNodeSnapshot.h; sourceTree = "<group>"; };
+		56D11ADA168A8AB500DD76BF /* ShinyMetaRootDir.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShinyMetaRootDir.cpp; path = ../shinyfs/src/filesystem/ShinyMetaRootDir.cpp; sourceTree = "<group>"; };
+		56D11ADB168A8AB500DD76BF /* ShinyMetaRootDir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShinyMetaRootDir.h; path = ../shinyfs/src/filesystem/ShinyMetaRootDir.h; sourceTree = "<group>"; };
+		56D11ADC168A8AB500DD76BF /* ShinyMetaRootDirSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShinyMetaRootDirSnapshot.cpp; path = ../shinyfs/src/filesystem/ShinyMetaRootDirSnapshot.cpp; sourceTree = "<group>"; };
+		56D11ADD168A8AB500DD76BF /* ShinyMetaRootDirSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShinyMetaRootDirSnapshot.h; path = ../shinyfs/src/filesystem/ShinyMetaRootDirSnapshot.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		56D11AB8168A8A8000DD76BF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		56872774168BE44600C46631 /* filesystem */ = {
+			isa = PBXGroup;
+			children = (
+				56D11AC8168A8AB500DD76BF /* ShinyDBWrapper.cpp */,
+				56D11AC9168A8AB500DD76BF /* ShinyDBWrapper.h */,
+				56D11ACA168A8AB500DD76BF /* ShinyFilesystem.cpp */,
+				56D11ACB168A8AB500DD76BF /* ShinyFilesystem.h */,
+				56D11ACC168A8AB500DD76BF /* ShinyMetaDir.cpp */,
+				56D11ACD168A8AB500DD76BF /* ShinyMetaDir.h */,
+				56D11ACE168A8AB500DD76BF /* ShinyMetaDirSnapshot.cpp */,
+				56D11ACF168A8AB500DD76BF /* ShinyMetaDirSnapshot.h */,
+				56D11AD0168A8AB500DD76BF /* ShinyMetaFile.cpp */,
+				56D11AD1168A8AB500DD76BF /* ShinyMetaFile.h */,
+				56D11AD2168A8AB500DD76BF /* ShinyMetaFileHandle.cpp */,
+				56D11AD3168A8AB500DD76BF /* ShinyMetaFileHandle.h */,
+				56D11AD4168A8AB500DD76BF /* ShinyMetaFileSnapshot.cpp */,
+				56D11AD5168A8AB500DD76BF /* ShinyMetaFileSnapshot.h */,
+				56D11AD6168A8AB500DD76BF /* ShinyMetaNode.cpp */,
+				56D11AD7168A8AB500DD76BF /* ShinyMetaNode.h */,
+				56D11AD8168A8AB500DD76BF /* ShinyMetaNodeSnapshot.cpp */,
+				56D11AD9168A8AB500DD76BF /* ShinyMetaNodeSnapshot.h */,
+				56D11ADA168A8AB500DD76BF /* ShinyMetaRootDir.cpp */,
+				56D11ADB168A8AB500DD76BF /* ShinyMetaRootDir.h */,
+				56D11ADC168A8AB500DD76BF /* ShinyMetaRootDirSnapshot.cpp */,
+				56D11ADD168A8AB500DD76BF /* ShinyMetaRootDirSnapshot.h */,
+			);
+			name = filesystem;
+			sourceTree = "<group>";
+		};
+		56D11AB0168A8A8000DD76BF = {
+			isa = PBXGroup;
+			children = (
+				56D11ABF168A8A8000DD76BF /* main.cpp */,
+				56872774168BE44600C46631 /* filesystem */,
+				56D11ABC168A8A8000DD76BF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		56D11ABC168A8A8000DD76BF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				56D11ABB168A8A8000DD76BF /* shinytest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		56D11ABA168A8A8000DD76BF /* shinytest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 56D11AC5168A8A8000DD76BF /* Build configuration list for PBXNativeTarget "shinytest" */;
+			buildPhases = (
+				56D11AB7168A8A8000DD76BF /* Sources */,
+				56D11AB8168A8A8000DD76BF /* Frameworks */,
+				56D11AB9168A8A8000DD76BF /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = shinytest;
+			productName = shinytest;
+			productReference = 56D11ABB168A8A8000DD76BF /* shinytest */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		56D11AB2168A8A8000DD76BF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0450;
+				ORGANIZATIONNAME = "Elliot Saba";
+			};
+			buildConfigurationList = 56D11AB5168A8A8000DD76BF /* Build configuration list for PBXProject "shinytest" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 56D11AB0168A8A8000DD76BF;
+			productRefGroup = 56D11ABC168A8A8000DD76BF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				56D11ABA168A8A8000DD76BF /* shinytest */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		56D11AB7168A8A8000DD76BF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				56D11AC0168A8A8000DD76BF /* main.cpp in Sources */,
+				56D11ADE168A8AB500DD76BF /* ShinyDBWrapper.cpp in Sources */,
+				56D11ADF168A8AB500DD76BF /* ShinyFilesystem.cpp in Sources */,
+				56D11AE0168A8AB500DD76BF /* ShinyMetaDir.cpp in Sources */,
+				56D11AE1168A8AB500DD76BF /* ShinyMetaDirSnapshot.cpp in Sources */,
+				56D11AE2168A8AB500DD76BF /* ShinyMetaFile.cpp in Sources */,
+				56D11AE3168A8AB500DD76BF /* ShinyMetaFileHandle.cpp in Sources */,
+				56D11AE4168A8AB500DD76BF /* ShinyMetaFileSnapshot.cpp in Sources */,
+				56D11AE5168A8AB500DD76BF /* ShinyMetaNode.cpp in Sources */,
+				56D11AE6168A8AB500DD76BF /* ShinyMetaNodeSnapshot.cpp in Sources */,
+				56D11AE7168A8AB500DD76BF /* ShinyMetaRootDir.cpp in Sources */,
+				56D11AE8168A8AB500DD76BF /* ShinyMetaRootDirSnapshot.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		56D11AC3168A8A8000DD76BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"~/Dropbox/coding/platform",
+					"~/.homebrew/include",
+				);
+				LIBRARY_SEARCH_PATHS = "~/.homebrew/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "";
+			};
+			name = Debug;
+		};
+		56D11AC4168A8A8000DD76BF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"~/Dropbox/coding/platform",
+					"~/.homebrew/include",
+				);
+				LIBRARY_SEARCH_PATHS = "~/.homebrew/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "";
+			};
+			name = Release;
+		};
+		56D11AC6168A8A8000DD76BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		56D11AC7168A8A8000DD76BF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		56D11AB5168A8A8000DD76BF /* Build configuration list for PBXProject "shinytest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				56D11AC3168A8A8000DD76BF /* Debug */,
+				56D11AC4168A8A8000DD76BF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		56D11AC5168A8A8000DD76BF /* Build configuration list for PBXNativeTarget "shinytest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				56D11AC6168A8A8000DD76BF /* Debug */,
+				56D11AC7168A8A8000DD76BF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 56D11AB2168A8A8000DD76BF /* Project object */;
+}

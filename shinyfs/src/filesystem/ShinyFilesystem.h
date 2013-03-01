@@ -2,7 +2,7 @@
 #ifndef ShinyFilesystem_H
 #define ShinyFilesystem_H
 
-#include <tr1/unordered_map>
+#include <unordered_map>
 
 #include "ShinyMetaNode.h"
 #include "ShinyDBWrapper.h"
@@ -12,17 +12,20 @@
  under his purview. He subs out to kyoto cabinet (or leveldb) to get the "actual" filesystem data.
  */
 
-#define SHINYFS_VERSION     4
-
 class ShinyMetaDir;
 class ShinyMetaFile;
 class ShinyMetaRootDir;
 class ShinyFilesystem {
+/////// FRIENDS ///////
+    friend class ShinyMetaNodeSnapshot;
     friend class ShinyMetaNode;
+    friend class ShinyMetaFileSnapshot;
     friend class ShinyMetaFile;
-    friend class ShinyMetaFileHandle;
+    friend class ShinyMetaDirSnapshot;
     friend class ShinyMetaDir;
+    friend class ShinyMetaRootDirSnapshot;
     friend class ShinyMetaRootDir;
+    friend class ShinyMetaFileHandle;
     
 /////// INITIALIZATION/SAVING LOADING ///////
 public:
@@ -35,7 +38,7 @@ public:
     // Serializes a subtree starting at start into a bytestream, returning the length of said stream
     // start defaults (when NULL) to the root node of the entire tree
     // recursive defaults to true, and denotes whether dirs should include subdirs
-    uint64_t serialize( char ** output, ShinyMetaNode * start = NULL, bool recursive = true );
+    uint64_t serialize( char ** output, ShinyMetaNodeSnapshot * start = NULL, bool recursive = true );
     
     // Basically calls serialize on the root, then sends it over to ShinyCache for saving
     void save();
@@ -44,7 +47,10 @@ public:
     ShinyMetaRootDir * unserialize( const char * input );
 protected:
     // recursive helper function for unserialize
-    ShinyMetaNode * unserializeTree( const char ** input );
+    ShinyMetaNode * unserializeTree( const char ** input, ShinyMetaDir * parent = NULL );
+    
+    // recursive helper function for unserialize
+    //ShinyMetaNodeSnapshot * unserializeTreeSnapshot( const char ** input, ShinyMetaDirSnapshot * parent = NULL );
 
 
 /////// NODE ROUTINES ///////
@@ -56,16 +62,16 @@ public:
     ShinyMetaDir * findParentNode( const char * path );
     
     // reconstructs the path of a node
-    const char * getNodePath( ShinyMetaNode * node );
+    const char * getNodePath( ShinyMetaNodeSnapshot * node );
 protected:
     // cached paths for nodes
-    std::tr1::unordered_map<ShinyMetaNode *, const char *> nodePaths;
+    std::unordered_map<ShinyMetaNodeSnapshot *, const char *> nodePaths;
     
     // The root dir.  Come on, what do you want from me?!
     ShinyMetaRootDir * root;
 private:
     // Helper function for searching nodes that belong to a parent
-    ShinyMetaNode * findMatchingChild( ShinyMetaDir * parent, const char * childName, uint64_t childNameLen );
+    ShinyMetaNodeSnapshot * findMatchingChild( ShinyMetaDirSnapshot * parent, const char * childName, uint64_t childNameLen );
     
     
 /////// FILECACHE ///////
@@ -89,10 +95,12 @@ public:
     
     //Debug call to print out filesystem recursively.  Uses printDir(), etc....
     void print( void );
-    void printDir( ShinyMetaDir * dir, const char * prefix = "" );
+    void printDir( ShinyMetaDirSnapshot * dir, const char * prefix = "" );
     
     //Returns the version of this ShinyFS
     const uint64_t getVersion();
+protected:
+    static const uint64_t VERSION = 5;
 };
 
 #endif //SHINYFILESYSTEM_H

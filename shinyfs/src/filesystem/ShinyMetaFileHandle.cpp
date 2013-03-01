@@ -2,7 +2,7 @@
 #include "ShinyFilesystem.h"
 #include "base/Logger.h"
 
-ShinyMetaFileHandle::ShinyMetaFileHandle( const char ** serializedInput, ShinyFilesystem * fs, const char * path ) : ShinyMetaFile( "" ) {
+ShinyMetaFileHandle::ShinyMetaFileHandle( const char ** serializedInput, ShinyFilesystem * fs, const char * path ) : ShinyMetaFile( serializedInput, NULL ) {
     // Store away fs and path
     this->fs = fs;
     this->path = path;

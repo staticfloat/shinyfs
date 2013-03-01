@@ -1,10 +1,20 @@
 #ifndef shinyfs_ShinyDBWrapper_h
 #define shinyfs_ShinyDBWrapper_h
 
+#include <stdint.h>
+
 #ifdef KYOTOCABINET
 #include <kcpolydb.h>
-#else
+#endif
+
+#ifdef LEVELDB
 #include <leveldb/db.h>
+#endif
+
+#if !defined(KYOTOCABINET)
+#if !defined(LEVELDB)
+#warning "No database backend selected!"
+#endif
 #endif
 
 class ShinyDBWrapper {
@@ -22,11 +32,12 @@ public:
 private:
 #ifdef KYOTOCABINET
     kyotocabinet::PolyDB db;
-#else
-    leveldb::DB * db;
-    
-    leveldb::Status status;
 #endif // KYOTOCABINET
+    
+#ifdef LEVELDB
+    leveldb::DB * db;
+    leveldb::Status status;
+#endif // LEVELDB
 };
 
 

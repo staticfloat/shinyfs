@@ -1,9 +1,15 @@
-Shinyfs todo
-    - Persistent storing, loading of the shiny tree from the cache, followed by checking
-    
-    
-	- File hashing to ensure integrity (only the entire file at once, not chunk-by-chunk)
+Shinyfs TODO
 
+* Snapshot rewrite
+    - Implement a history system, saving a "filename_<timestamp>" entry in the db with a diff pointing backwards from latest -> previous version of the file.
+
+    - Retest Persistent storing, loading of the shiny tree from the cache, followed by checking
+
+	- File hashing to ensure integrity (only the entire file at once, not chunk-by-chunk)
+        - I'm thinking this should be done for latest as well as all previous versions
+
+
+* Future work
 	- Allow for selective tree loading, so as to allow for only a small part of the tree to be in memory at once
 		- Also allows for permissions where we are not _allowed_ to see inside a directory
 
@@ -16,10 +22,12 @@ Shinyfs todo
 			- Make programs to run INSIDE of the filesystem to test it!
 				- Moving, copy, linking, writing, all that good stuff!
 			- BIG files writing very quickly!  Get an idea of performance here and now!
-			
-    
+	
+    - Optimization thoughts
+        - Use treemap or somesuch on dirs for faster insertion? Compare memory usage to vectors.... (Can't have cache locality, can it?)
+        - Implement a compact() routine on e.g. dirs to resize the vector to the minimum size
     
     - Don't do encryption yet, but keep it in mind
     - Don't focus on performance yet, save it for bottleneck trials later
     - Don't do multi-computer interactions yet, we'll do that later
-    	- Once we DO start to tackle it, don't even touch encryption and user authentication and whatnot until we have multiple computers all talking harmoniously, able to share files and whatnot.  That will inform your design of the actual, authenticated and encrypted versions!
+    	- Once we DO start to tackle it, don't even touch encryption and user authentication and whatnot until we have multiple computers all talking harmoniously.  That will inform your design of the actual, authenticated and encrypted versions!

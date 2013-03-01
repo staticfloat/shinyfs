@@ -1,4 +1,4 @@
-	//
+//
 //  ShinyMetaNode.cpp
 //  ShinyMetafs-tracker
 //
@@ -12,190 +12,75 @@
 #include "ShinyFilesystem.h"
 #include <base/Logger.h>
 #include <sys/stat.h>
+#include <unistd.h> // for getuid/gid()
 #include <time.h>
 
-ShinyMetaNode::ShinyMetaNode( const char * newName ) {
-    // Set name. If NULL, then we have no name...... D:
-    this->name = NULL;
-    if( newName )
-        this->setName( newName );
+ShinyMetaNode::ShinyMetaNode( const char * newName, ShinyMetaDir * parent ) : snapshot() {
+    // This is used to actually create a new Node, it's never used when this is _just_ a snapshot,
+    // it's only used when we're creating a new node.
+    uint64_t nameLen = strlen(newName) + 1;
+    snapshot.name = new char[strlen(newName)+1];
+    memcpy( snapshot.name, newName, nameLen );
     
-    //Set parent to NULL for now
-    this->parent = NULL;
+    // Initialize parent
+    snapshot.parent = dynamic_cast<ShinyMetaDirSnapshot *>(parent->getSnapshot());
+    parent->addNode( this );
     
-    //It's HAMMAH TIME!!!
-    this->btime = this->atime = this->ctime = this->mtime = time(NULL);
+    // It's HAMMAH TIME!!!
+    snapshot.btime = snapshot.atime = snapshot.ctime = snapshot.mtime = time(NULL);
     
     // Set default permissions
-    this->setPermissions( this->getDefaultPermissions() );
+    snapshot.permissions = snapshot.getDefaultPermissions();
     
     // NABIL: Change this to use the ShinyUserMap or whatever
-    this->uid = getuid();
-    this->gid = getgid();
+    snapshot.uid = getuid();
+    snapshot.gid = getgid();
 }
 
-ShinyMetaNode::ShinyMetaNode( const char ** serializedInput ) : name(NULL), parent(NULL) {
-    this->unserialize(serializedInput);
+ShinyMetaNode::ShinyMetaNode( const char ** serializedInput, ShinyMetaDir * newParent ) : snapshot( serializedInput, dynamic_cast<ShinyMetaDirSnapshot *>(newParent->getSnapshot()) ) {
+    snapshot.parent = dynamic_cast<ShinyMetaDirSnapshot *>(newParent->getSnapshot());
 }
 
 ShinyMetaNode::~ShinyMetaNode() {
-    if( this->name ) {
-        LOG( "Deleting %s", this->name );
-        delete( this->name );
-    }
-
-    //Remove myself from my parent
-    if( this->getParent() )
-        this->getParent()->delNode( this );
+    // Do nothing again!  (refactoring is _really_ weird)
 }
 
-uint64_t ShinyMetaNode::serializedLen() {
-    // Size of us
-    uint64_t len = 0;
-
-    //Time markers
-    len += sizeof(btime) + sizeof(atime) + sizeof(ctime) + sizeof(mtime);
-    
-    //Then, permissions and user/group ids
-    len += sizeof(uid) + sizeof(gid) + sizeof(permissions);
-    
-    //Finally, filename
-    len += strlen(name) + 1;
-    return len;
-}
-
-/* Serialization order is as follows:
- 
- [btime]         - uint64_t
- [atime]         - uint64_t
- [ctime]         - uint64_t
- [mtime]         - uint64_t
- [uid]           - uint32_t
- [gid]           - uint32_t
- [permissions]   - uint16_t
- [name]          - char* (\0 terminated)
- */
-
-#define write_and_increment( value, type )    *((type *)output) = value; output += sizeof(type)
-
-char * ShinyMetaNode::serialize(char * output) {
-    write_and_increment( this->btime, uint64_t );
-    write_and_increment( this->atime, uint64_t );
-    write_and_increment( this->ctime, uint64_t );
-    write_and_increment( this->mtime, uint64_t );
-    write_and_increment( this->uid, uint64_t );
-    write_and_increment( this->gid, uint64_t );
-    write_and_increment( this->permissions, uint16_t );
-    
-    //Finally, write out a \0-terminated string of the filename
-    uint64_t i=0;
-    while( this->name[i] ) {
-        output[i] = this->name[i];
-        i += 1;
-    }
-    output[i] = 0;
-    return output + i + 1;
-}
-
-#define read_and_increment( value, type )   value = *((type *)input); input += sizeof(type)
-
-void ShinyMetaNode::unserialize( const char ** input_double ) {
-    const char * input = *input_double;
-    read_and_increment( this->btime, uint64_t );
-    read_and_increment( this->atime, uint64_t );
-    read_and_increment( this->ctime, uint64_t );
-    read_and_increment( this->mtime, uint64_t );
-    read_and_increment( this->uid, uint64_t );
-    read_and_increment( this->gid, uint64_t );
-    read_and_increment( this->permissions, uint16_t );
-    
-    // Rather than doing even MORE strlen()'s, we'll only do one, and save the result
-    uint64_t nameLen = strlen(input) + 1;
-    
-    // This is because occasionally we do an unserialize on an object that already exists
-    if( this->name )
-        delete( this->name );
-    this->name = new char[nameLen];
-    memcpy( this->name, input, nameLen );
-    
-    // Note that parent is untouched by this method!
-    
-    // Return with the extra shift by nameLen
-    *input_double = input + nameLen;
-}
-
-ShinyMetaDir * ShinyMetaNode::getParent( void ) {
-    return this->parent;
+ShinyMetaDir * ShinyMetaNode::getParent() {
+    return dynamic_cast<ShinyMetaDir *>(snapshot.parent);
 }
 
 void ShinyMetaNode::setParent( ShinyMetaDir * newParent ) {
     // Purge any cached node paths that we might have previously had
     if( this->getParent() )
-        delete( this->getFS()->nodePaths[this] );
+        delete( snapshot.getFS()->nodePaths[&snapshot] );
 
-    this->parent = newParent;
+    snapshot.parent = dynamic_cast<ShinyMetaDirSnapshot *>(newParent->getSnapshot());
     this->set_ctime();
 }
 
 void ShinyMetaNode::setName( const char * newName ) {
-    if( this->name )
-        delete( this->name );
+    if( snapshot.name )
+        delete( snapshot.name );
     
     uint64_t len = strlen(newName) + 1;
-    this->name = new char[len];
-    memcpy( this->name, newName, len );
+    snapshot.name = new char[len];
+    memcpy( snapshot.name, newName, len );
     this->set_ctime();
-}
-
-const char * ShinyMetaNode::getName( void ) {
-    return (const char *)this->name;
 }
 
 void ShinyMetaNode::setPermissions( uint16_t newPermissions ) {
-    this->permissions = newPermissions;
+    snapshot.permissions = newPermissions;
     this->set_ctime();
-}
-
-uint16_t ShinyMetaNode::getPermissions( void ) {
-    return this->permissions;
 }
 
 void ShinyMetaNode::setUID( const uint64_t newUID ) {
-    this->uid = newUID;
+    snapshot.uid = newUID;
     this->set_ctime();
-}
-
-const uint64_t ShinyMetaNode::getUID( void ) {
-    return this->uid;
 }
 
 void ShinyMetaNode::setGID( const uint64_t newGID ) {
-    this->gid = newGID;
+    snapshot.gid = newGID;
     this->set_ctime();
-}
-
-const uint64_t ShinyMetaNode::getGID( void ) {
-    return this->gid;
-}
-
-const char * ShinyMetaNode::getPath( void ) {
-    return this->getFS()->getNodePath( this );
-}
-
-const uint64_t ShinyMetaNode::get_btime( void ) {
-    return this->btime;
-}
-
-const uint64_t ShinyMetaNode::get_atime( void ) {
-    return this->atime;
-}
-
-const uint64_t ShinyMetaNode::get_ctime( void ) {
-    return this->ctime;
-}
-
-const uint64_t ShinyMetaNode::get_mtime( void ) {
-    return this->mtime;
 }
 
 void ShinyMetaNode::set_atime( void ) {
@@ -211,18 +96,19 @@ void ShinyMetaNode::set_mtime( void ) {
 }
 
 void ShinyMetaNode::set_atime( const uint64_t new_atime ) {
-    this->atime = new_atime;
+    snapshot.atime = new_atime;
 }
 
 void ShinyMetaNode::set_ctime( const uint64_t new_ctime ) {
-    this->ctime = new_ctime;
+    snapshot.ctime = new_ctime;
 }
 
 void ShinyMetaNode::set_mtime( const uint64_t new_mtime ) {
-    this->mtime = new_mtime;
-    this->ctime = new_mtime;
+    snapshot.mtime = new_mtime;
+    snapshot.ctime = new_mtime;
 }
 
+/*
 bool ShinyMetaNode::check_parentHasUsAsChild( void ) {
     //Iterate through all children of our parent, looking for us
     const std::vector<ShinyMetaNode *> children = *this->getParent()->getNodes();
@@ -260,97 +146,5 @@ bool ShinyMetaNode::sanityCheck() {
     retVal &= this->check_parentHasUsAsChild();
     return retVal;
 }
-
-ShinyFilesystem * ShinyMetaNode::getFS() {
-    // So irresponsible, ah. Just ask your parent to do it for you!
-    if( this->getParent() )
-        return this->getParent()->getFS();
-    return NULL;
-}
-
-ShinyMetaNode::NodeType ShinyMetaNode::getNodeType( void ) {
-    return ShinyMetaNode::TYPE_NODE;
-}
-
-uint16_t ShinyMetaNode::getDefaultPermissions() {
-    return S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH;
-}
-
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////                      UTIL STUFF                      ///////////////////
-////////////////////////////////////////////////////////////////////////////////////////////
-
-// This follows the `ls -l` output guidelines
-const char * permissionStr( uint16_t permissions ) {
-    // The static buffer we return every time
-    static char str[10] = {0,0,0,0,0,0,0,0,0,0};
-
-    // First, the "user" (or "owner") triplet
-    str[1] = permissions & S_IRUSR ? 'r' : '-';
-    str[2] = permissions & S_IWUSR ? 'w' : '-';
-    if( permissions & S_IXUSR ) {
-        if( permissions & S_ISUID )
-            str[3] = 's';
-        else
-            str[3] = 'x';
-    } else {
-        if( permissions & S_ISUID )
-            str[3] = 'S';
-        else
-            str[3] = '-';
-    }
-    
-    // Next, the "group" triplet:
-    str[3] = permissions & S_IRGRP ? 'r' : '-';
-    str[4] = permissions & S_IWGRP ? 'w' : '-';
-    if( permissions & S_IXGRP ) {
-        if( permissions & S_ISGID )
-            str[3] = 's';
-        else
-            str[3] = 'x';
-    } else {
-        if( permissions & S_ISGID )
-            str[3] = 'S';
-        else
-            str[3] = '-';
-    }
-   
-    // Finally, the "other" triplet:
-    str[6] = permissions & S_IROTH ? 'r' : '-';
-    str[7] = permissions & S_IWOTH ? 'w' : '-';
-    if( permissions & S_IXOTH ) {
-        if( permissions & S_ISVTX )
-            str[8] = 't';
-        else
-            str[8] = 'x';
-    } else {
-        if( permissions & S_ISVTX )
-            str[8] = 'T';
-        else
-            str[8] = '-';
-    }
-    
-    return str;
-}
-
-
-const char * ShinyMetaNode::basename( const char * path ) {
-    uint64_t slashIdx = 0;
-    uint64_t i = 0;
-    bool slashFound = false;
-    while( path[i] != 0 ) {
-        if( path[i] == '/' ) {
-            slashIdx = i;
-            slashFound = true;
-        }
-        i++;
-    }
-    
-    if( !slashFound )
-        return path;
-    return path + slashIdx + 1;
-}
+*/
 

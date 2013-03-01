@@ -5,120 +5,93 @@
 #include <stdint.h>
 #include <list>
 #include <vector>
+#include "ShinyMetaNodeSnapshot.h"
 
 class ShinyFilesystem;
 class ShinyMetaDir;
 class ShinyMetaNode {
-/////// TYPEDEFS ///////
-public:
-    // The types of nodes, used when determining whether a node is a dir or a file, and
-    // used extensively during (un)serialization
-    enum NodeType {
-        // The most generic kind of "node", the abstract base class (unused)
-        TYPE_NODE,
-        
-        // A standard file, with data, and whatnot
-        TYPE_FILE,
-
-        // A special construct used to provide thread-safe read/write access to files, used by ShinyFilesystemMediator
-        TYPE_FILEHANDLE,
-        
-        // A directory with nodes "underneath" it, etc...
-        TYPE_DIR,
-        
-        // A special case of the above, where the main difference is that the root nodes' parent is itself
-        TYPE_ROOTDIR,
-
-        // The number of types (I just always do this out of habit)
-        NUM_NODE_TYPES,
-    };
-
-
+/////// SNAPSHOT ///////
+protected:
+    ShinyMetaNodeSnapshot snapshot;
+    
 /////// CREATION ///////
 public:
     // Generate a new node with the given name, and default everything else
-    ShinyMetaNode( const char * newName );
+    ShinyMetaNode( const char * newName, ShinyMetaDir * parent );
 
     // Initialize this node, from serialized data.  Get amount of data read in via serializeLen() afterwards
-    ShinyMetaNode( const char ** serializedInput );
+    ShinyMetaNode( const char ** serializedInput, ShinyMetaDir * parent );
 
     // Clean up (free name, etc...)
     ~ShinyMetaNode();
-    
-    // Returns the length of a serialization on this node
+        
+    // Returns the length of a serialized verion of this node
     virtual uint64_t serializedLen( void );
     
     // Serializes into the buffer [output], returns output shifted forward by serializedLen
     virtual char * serialize( char * output );
-
+    
     // Called by ShinyMetaNode() to load from a serialized string, shifts input by this->serializedLen()
     // Can also be called to "update" a node after a change has been made to it, by ShinyFilesystemMediator
-    virtual void unserialize( const char **input );    
+    virtual void unserialize( const char **input );
 
-//////// ATTRIBUTES ///////
+
+/////// ATTRIBUTES ///////
 public:
     // Name (filename, directory name, etc....)
-    void setName( const char * newName );
     const char * getName();
-    
+    void setName( const char * newName );
+
     // Set new permissions for this node
+    const uint16_t getPermissions();
     void setPermissions( uint16_t newPermissions);
-    uint16_t getPermissions();
     
     // chown() anyone?
-    void setUID( const uint64_t newUID );
     const uint64_t getUID( void );
-    void setGID( const uint64_t newGID );
+    void setUID( const uint64_t newUID );
     const uint64_t getGID( void );
+    void setGID( const uint64_t newGID );
     
     // Get/set parent
-    virtual ShinyMetaDir * getParent( void );
-    virtual void setParent( ShinyMetaDir * newParent );
+    ShinyMetaDir * getParent( void );
+    void setParent( ShinyMetaDir * newParent );
     
     // Gets the absolute path to this node (If parental chain is broken, returns a question mark at the last
-    // good known position, e.g. "?/dir 1/dir 2/file") I'm.... not sure how that can happen, but it probably can
-    virtual const char * getPath();
+    // good known position, e.g. "?/dir 1/dir 2/file") I'm.... not sure how that can happen outside of nasty
+    // race conditions or data corruption, but it's good to be prepared
+    const char * getPath();
     
-    // Birthed, Accessed (read), Changed (metadata), Modified (file data) times
+    // Gets the FS associated with this node
+    ShinyFilesystem * const getFS();
+    
+    // Accessed (read), Changed (metadata), Modified (file data) times
+    // Birthed time can't be changed (obviously) and modifying filedata modifies metadata
     const uint64_t get_btime( void );
     const uint64_t get_atime( void );
     const uint64_t get_ctime( void );
     const uint64_t get_mtime( void );
     
-    // These set the respective times to the current time
     void set_atime( void );
     void set_ctime( void );
-    void set_mtime( void ); // Note; implicitly sets set_ctime!
+    void set_mtime( void ); // Note; implicitly calls set_ctime!
     
     // These set the respective times to the given new time
     void set_atime( const uint64_t new_atime );
     void set_ctime( const uint64_t new_ctime );
-    void set_mtime( const uint64_t new_mtime ); // Note; implicitly sets set_ctime!
+    void set_mtime( const uint64_t new_mtime ); // Note; implicitly calls set_ctime!
+    
+    // Returns a snapshot of this node
+    ShinyMetaNodeSnapshot * getSnapshot();
     
     // Returns the node type, e.g. if it's a file, directory, etc.
-    virtual ShinyMetaNode::NodeType getNodeType( void );
-protected:
-    // Parent of this node
-    ShinyMetaDir * parent;
-    
-    // Filename (+ extension)
-    char * name;
-    
-    // file permissions (rwx rwx rwx, 9 bits wasting 16 in my precious, precious memory!)
-    uint16_t permissions;
-    
-    // User/Group IDs (not implemented yet)
-    uint64_t uid, gid;
-    
-    // Time birthed, changed (metadata), accessed (read), modified (file data)
-    uint64_t btime, ctime, atime, mtime;    
+    virtual ShinyMetaNodeSnapshot::NodeType getNodeType( void );
+
 /////// MISC ///////
 public:
+    typedef ShinyMetaDir parentType;
+/*
     //Performs any necessary checks (e.g. directories check for multiple entries of the same node, etc...)
     virtual bool sanityCheck( void );
-
-    //Since we don't want to have a pointer to the FS in _every_ _single_ node, we'll only have it in the root node
-    virtual ShinyFilesystem * getFS();
 
 protected:
     // Checks to make sure our parent has us as a child
@@ -127,9 +100,6 @@ protected:
     // Checks to make sure we don't have any duplicates in a list of inodes
     bool check_noDuplicates( std::vector<ShinyMetaNode *> * list, const char * listName );
     
-    // returns the "default" permissions for a new file
-    virtual uint16_t getDefaultPermissions();
-    
 /////// UTIL ///////
 public:
     // returns permissions of a file in rwxrwxrwx style, in a shared [char *] buffer (shared across threads)
@@ -137,6 +107,7 @@ public:
     
     // returns the filename of a full path (e.g. everything past the last "/")
     static const char * basename( const char * path );
+*/
 };
 
 #endif
