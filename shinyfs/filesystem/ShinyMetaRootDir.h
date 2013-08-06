@@ -4,7 +4,7 @@
 #include "ShinyMetaDir.h"
 #include "ShinyMetaRootDirSnapshot.h"
 
-class ShinyMetaRootDir : virtual public ShinyMetaDir {
+class ShinyMetaRootDir : public ShinyMetaDir {
 public:
     // Creates a new one
     ShinyMetaRootDir( ShinyFilesystem * fs );

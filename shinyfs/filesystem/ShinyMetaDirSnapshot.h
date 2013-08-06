@@ -13,7 +13,7 @@ public:
     //ShinyMetaDirSnapshot( ShinyMetaDirSnapshot * copy );
     
     // Loads in from serialized input
-    explicit ShinyMetaDirSnapshot( const char ** serializedInput, ShinyMetaDirSnapshot * parent );
+    ShinyMetaDirSnapshot( const char ** serializedInput, ShinyMetaDirSnapshot * parent );
     
     // Deletes this guy, and all his children (man, that sounds violent)
     ~ShinyMetaDirSnapshot();
@@ -38,7 +38,7 @@ protected:
     // All of this dir's child nodes
     std::vector<ShinyMetaNodeSnapshot *> nodes;
 
-    /////// MISC ///////
+/////// MISC ///////
 public:
     virtual ShinyMetaNodeSnapshot::NodeType getNodeType( void );
 protected:

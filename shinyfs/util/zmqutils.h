@@ -1,6 +1,6 @@
 #ifndef ZMQUTILS_H
 #define ZMQUTILS_H
-#include <zmq.hpp>
+#include "cppzmq/zmq.hpp"
 #include <vector>
 #include <sys/types.h>
 #include "../filesystem/ShinyMetaNode.h"

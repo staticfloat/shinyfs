@@ -43,7 +43,7 @@
 			"file": "shinyfs/Makefile",
 			"settings":
 			{
-				"buffer_size": 364,
+				"buffer_size": 395,
 				"line_ending": "Unix"
 			}
 		}
@@ -231,7 +231,7 @@
 					"file": "shinyfs/Makefile",
 					"settings":
 					{
-						"buffer_size": 364,
+						"buffer_size": 395,
 						"regions":
 						{
 						},

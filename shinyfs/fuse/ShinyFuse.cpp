@@ -15,7 +15,7 @@ zmq::context_t * ::ShinyFuse::ctx;
 bool ShinyFuse::init( const char * mountPoint ) {
     //First, setup the callbacks
     struct fuse_operations shiny_operations;
-    memset( &shiny_operations, NULL, sizeof(shiny_operations) );
+    memset( &shiny_operations, 0, sizeof(shiny_operations) );
 
     shiny_operations.init = ShinyFuse::fuse_init;
     shiny_operations.destroy = ShinyFuse::fuse_destroy;
@@ -115,20 +115,20 @@ int ShinyFuse::fuse_getattr( const char *path, struct stat * stbuff ) {
         // Check to see that everything's okay
         if( msgList.size() == 3 && parseTypeMsg(msgList[0]) == ShinyFilesystemMediator::ACK ) {
             // If it worked, then we win!  Unserialize!
-            ShinyMetaNode::NodeType nodeType = (ShinyMetaNode::NodeType) *((uint8_t *)msgList[1]->data());
+            ShinyMetaNodeSnapshot::NodeType nodeType = (ShinyMetaNodeSnapshot::NodeType) *((uint8_t *)msgList[1]->data());
             
             // Parse out the node, given the nodeType that was sent
             ShinyMetaNode * node = parseNodeMsg( msgList[2], nodeType, fs );
 
             // Filll out "dat stat structure"
             switch( nodeType ) {
-                case ShinyMetaNode::TYPE_FILE:
+                case ShinyMetaNodeSnapshot::TYPE_FILE:
                     stbuff->st_mode |= S_IFREG | node->getPermissions();
                     stbuff->st_nlink = 1;                    
                     stbuff->st_size = ((ShinyMetaFile *)node)->getLen();
                     break;
-                case ShinyMetaNode::TYPE_DIR:
-                case ShinyMetaNode::TYPE_ROOTDIR:
+                case ShinyMetaNodeSnapshot::TYPE_DIR:
+                case ShinyMetaNodeSnapshot::TYPE_ROOTDIR:
                     stbuff->st_mode |= S_IFDIR | node->getPermissions();
                     stbuff->st_nlink = ((ShinyMetaDir *)node)->getNumNodes();
                     break;
@@ -139,10 +139,16 @@ int ShinyFuse::fuse_getattr( const char *path, struct stat * stbuff ) {
             if( strcmp(path, "/time_test_dir") == 0 ) {
                 LOG("------------------------- %d!", node->get_mtime() );
             }
+            #if defined( __OSX__ )
             stbuff->st_birthtimespec.tv_sec = node->get_btime();
             stbuff->st_atimespec.tv_sec = node->get_atime();
             stbuff->st_ctimespec.tv_sec = node->get_ctime();
             stbuff->st_mtimespec.tv_sec = node->get_mtime();
+            #elif defined( __linux__ )
+            stbuff->st_atime = node->get_atime();
+            stbuff->st_ctime = node->get_ctime();
+            stbuff->st_mtime = node->get_mtime();
+            #endif
             
             // NABIL: Need to add in username-conversion here.  ShinyUserMap or somesuch?
             stbuff->st_uid = (uid_t) node->getUID();
@@ -179,7 +185,7 @@ int ShinyFuse::fuse_utimens( const char *path, const struct timespec times[2] ) 
         // Check to see that everything's okay
         if( msgList.size() == 3 && parseTypeMsg(msgList[0]) == ShinyFilesystemMediator::ACK ) {
             // If it worked, then we win!  Unserialize!
-            ShinyMetaNode::NodeType nodeType = (ShinyMetaNode::NodeType) *((uint8_t *)msgList[1]->data());
+            ShinyMetaNodeSnapshot::NodeType nodeType = (ShinyMetaNodeSnapshot::NodeType) *((uint8_t *)msgList[1]->data());
             
             // Parse out the node, given the nodeType that was sent
             ShinyMetaNode * node = parseNodeMsg( msgList[2], nodeType, fs );

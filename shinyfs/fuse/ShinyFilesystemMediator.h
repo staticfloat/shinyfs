@@ -1,7 +1,7 @@
 #ifndef SHINYFILESYSTEMMEDIATOR_H
 #define SHINYFILESYSTEMMEDIATOR_H
 #include <pthread.h>
-#include <zmq.hpp>
+#include "../util/cppzmq/zmq.hpp"
 #include "../filesystem/ShinyFilesystem.h"
 #include "../filesystem/ShinyMetaFileHandle.h"
 #include <vector>

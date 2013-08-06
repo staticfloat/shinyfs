@@ -3,7 +3,7 @@
 #define ShinyMetaRootDirSnapshot_H
 #include "ShinyMetaDirSnapshot.h"
 
-class ShinyMetaRootDirSnapshot : virtual public ShinyMetaDirSnapshot {
+class ShinyMetaRootDirSnapshot : public ShinyMetaDirSnapshot {
 public:
     // Note that we can't unserialize off of _solely_ a serializedInput, as we are responsibly for managing the poiner
     // to fs, therefore we require that it is passed in when we load up as well.

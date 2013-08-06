@@ -11,4 +11,5 @@ $(SHINYFS_EXE): $(OBJ)
 
 # This is the rule that matches every .cpp file
 $(OBJDIR)/shinyfs/%.o : %.cpp
+	@mkdir -p $(shell dirname $@)
 	$(CC) $(CFLAGS) -c $< -o $@

@@ -5,7 +5,7 @@
 #include "ShinyMetaNode.h"
 #include "ShinyMetaDirSnapshot.h"
 
-class ShinyMetaDir : virtual public ShinyMetaNode {
+class ShinyMetaDir : public ShinyMetaNode {
 friend class ShinyMetaNode;
 /////// CREATION ///////
 public:

@@ -5,8 +5,8 @@ Shinyfs TODO
 
     - Retest Persistent storing, loading of the shiny tree from the cache, followed by checking
 
-	- File hashing to ensure integrity (only the entire file at once, not chunk-by-chunk)
-        - I'm thinking this should be done for latest as well as all previous versions
+	- File hashing to ensure integrity
+        - Include hashing of diffs pointing backwards as well?
 
 
 * Future work
@@ -26,6 +26,7 @@ Shinyfs TODO
     - Optimization thoughts
         - Use treemap or somesuch on dirs for faster insertion? Compare memory usage to vectors.... (Can't have cache locality, can it?)
         - Implement a compact() routine on e.g. dirs to resize the vector to the minimum size
+        - Add/removing nodes, and searching through, should take more advantage of the fact that they are sorted!
     
     - Don't do encryption yet, but keep it in mind
     - Don't focus on performance yet, save it for bottleneck trials later

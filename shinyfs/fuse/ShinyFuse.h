@@ -3,7 +3,7 @@
 #define shinyfs_node_ShinyFuse_h
 
 #include <pthread.h>
-#include <zmq.hpp>
+#include "../util/cppzmq/zmq.hpp"
 #include <vector>
 
 //Include FUSE here

@@ -8,7 +8,7 @@
 #include "ShinyDBWrapper.h"
 
 class ShinyMetaDir;
-class ShinyMetaFile : virtual public ShinyMetaNode {
+class ShinyMetaFile : public ShinyMetaNode {
 /////// DEFINES ///////
 public:
     // The size of a "chunk" stored in the DB

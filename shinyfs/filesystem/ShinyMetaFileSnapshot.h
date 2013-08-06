@@ -7,7 +7,7 @@
 #include "ShinyDBWrapper.h"
 
 class ShinyMetaDir;
-class ShinyMetaFileSnapshot : virtual public ShinyMetaNodeSnapshot {
+class ShinyMetaFileSnapshot : public ShinyMetaNodeSnapshot {
 friend class ShinyMetaFile;
 /////// DEFINES ///////
 public:

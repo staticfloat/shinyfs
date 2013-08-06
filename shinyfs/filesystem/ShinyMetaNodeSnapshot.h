@@ -42,7 +42,7 @@ public:
     ShinyMetaNodeSnapshot( ShinyMetaNodeSnapshot * node );
     
     // Make a copy from a serialized stream, with the given parent
-    explicit ShinyMetaNodeSnapshot( const char ** serializedStream, ShinyMetaDirSnapshot * newParent );
+    ShinyMetaNodeSnapshot( const char ** serializedStream, ShinyMetaDirSnapshot * newParent );
     
     // Cleanup (free name, etc...).  Note that almost always this should be invoked indirectly by deleting the parent!
     ~ShinyMetaNodeSnapshot();

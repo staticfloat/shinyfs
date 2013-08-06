@@ -2,9 +2,10 @@
 export OBJDIR=$(PWD)/.obj
 export BUILDDIR=$(PWD)/build
 
-export DEFINES=LEVELDB
+DEFINES=LEVELDB
+INCLUDES=$(shell echo ~)/Dropbox/coding/platform
 
-export CFLAGS=-I$(shell echo ~)/Dropbox/coding/platform $(addprefix -D,$(DEFINES))
+CFLAGS=-std=c++0x $(addprefix -I,$(INCLUDES)) $(addprefix -D,$(DEFINES)) 
 
 # These are the executables we'll build
 export SHINYFS_EXE=$(BUILD)/shinyfs

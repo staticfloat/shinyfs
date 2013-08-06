@@ -1,4 +1,4 @@
-#include <zmq.hpp>
+#include "util/cppzmq/zmq.hpp"
 #include <base/Logger.h>
 //#include "protocol/ShinyMsg.h"
 //#include "protocol/ShinyPartitioner.h"
@@ -21,8 +21,8 @@
 
 int main (int argc, const char * argv[]) {
     //getGlobalLogger()->setPrintLoc(0);
-    getGlobalLogger()->setPrintId(0);
-    getGlobalLogger()->setPrintThread(0);
+    Logger::getGlobalLogger()->setPrintId(0);
+    Logger::getGlobalLogger()->setPrintThread(0);
     LOG( "%s starting up....", NODE_VERSION );
 //    ShinyFuse::init( "/tmp/shiny" );
     return 0;
